@@ -287,7 +287,7 @@ their initial state. */
 {
 	FOREACH(_renderedItems,item, ETLayoutItem *)
 	{
-		/* Equivalent to [item setVisible: NO] */
+		/* Equivalent to [item setExposed: NO] */
 		[[item displayView] removeFromSuperview];
 
 		FOREACH(_renderedTemplateKeys, key, NSString *)
@@ -332,7 +332,7 @@ Does nothing by default. */
 
 	[self willRenderItems: items isNewContent: isNewContent];
 	/* Visibility of replaced and replacement items is handled in 
-	   -setVisibleItems: */
+	   -setExposedItems: */
 	return [[self positionalLayout] renderWithItems: items isNewContent: isNewContent];
 }
 
@@ -354,14 +354,14 @@ Does nothing by default. */
 	return [[self layoutContext] arrangedItems];
 }
 
-- (NSArray *) visibleItems
+- (NSArray *) exposedItems
 {
-	return [[self layoutContext] visibleItems];
+	return [[self layoutContext] exposedItems];
 }
 
-- (void) setVisibleItems: (NSArray *)visibleItems
+- (void) setExposedItems: (NSArray *)exposedItems
 {
-	[[self layoutContext] setVisibleItems: visibleItems];
+	[[self layoutContext] setExposedItems: exposedItems];
 }
 
 - (NSSize) size

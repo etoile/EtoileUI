@@ -88,11 +88,11 @@ DEALLOC(DESTROY(_itemLabelFont))
 {
 	/* We insert the item display view into the view hierarchy to let us take a 
 	   snapshot with -icon */
-	[item setVisible: YES];
+	[item setExposed: YES];
 
 	[super setUpTemplateElementsForItem: item];
 
-	[item setVisible: NO];
+	[item setExposed: NO];
 
 	//[item setFrame: [[item coverStyle] boundingFrameForItem: item]];
 	// FIXME: Shouldn't be needed if we set on the template view already

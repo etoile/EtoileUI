@@ -39,6 +39,11 @@
 /** @taskunit Decorator Item */
  
  - (ETWindowItem *) provideWindowItem;
+
+/** @taskunit Visibility and Layout Interaction */
+
+- (BOOL) isExposed;
+- (void) setExposed: (BOOL)exposed;
  
 /** @taskunit Geometry */
 

@@ -158,7 +158,7 @@
 	[parentItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [parentItem objectGraphContext]]];
 	[parentItem addItem: item];
 
-	// FIXME: Probably update ETWidgetLayout to use -setVisibleItems:
+	// FIXME: Probably update ETWidgetLayout to use -setExposedItems:
 	//UKFalse([item isVisible]);
 	UKNil([[item supervisorView] superview]);
 	UKObjectsSame(parentItem, [item parentItem]);

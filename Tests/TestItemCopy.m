@@ -409,7 +409,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[itemGroup2 setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [itemGroup2 objectGraphContext]]];
 	
 	/* We must update the layouts to mark the items as visible, otherwise 
-	   -setVisibleItems:forItems: in -deepCopy does not recreate the view hierarchy. */
+	   -setExposedItems:forItems: in -deepCopy does not recreate the view hierarchy. */
 	[itemGroup updateLayoutRecursively: YES];
 
 	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
@@ -475,7 +475,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKNotNil([[newItemGroup firstItem] view]);
 	UKObjectsEqual([[newItemGroup firstItem] supervisorView], [[[newItemGroup firstItem] view] superview]);
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup firstItem] supervisorView] superview]);*/
-	/* This test requires the items to be resized otherwise -setVisibleItems: 
+	/* This test requires the items to be resized otherwise -setExposedItems: 
 	   receives an empty array in -renderXXX. */
 	//UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup firstItem] supervisorView] superview]);
 

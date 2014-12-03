@@ -158,7 +158,8 @@
 
 - (void) setLayoutView: (NSView *)aView;
 - (NSArray *) visibleItems;
-- (void) setVisibleItems: (NSArray *)items;
+- (NSArray *) exposedItems;
+- (void) setExposedItems: (NSArray *)items;
 - (NSSize) visibleContentSize;
 
 /** @taskunit Framework Private */

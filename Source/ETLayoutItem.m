@@ -1240,19 +1240,41 @@ See also -setSelectable:. */
 
 /** Sets whether the receiver should be displayed or not.
 
-The new visibility state won't be apparent until a redisplay occurs. 
+The new visibility state won't be apparent until a redisplay occurs.
 
-When the layout changes, this receiver visibility might change. Any custom 
-value you might have set is lost too and won't be restored by switching back to 
-the previous layout in use. */
-- (void) setVisible: (BOOL)visible
+When -isHidden returns YES, -isVisible returns YES. However -isVisible can
+return YES, while -isHidden returns NO. */
+- (void) setHidden: (BOOL)hidden
 {
-	if (_visible == visible)
+	if (_hidden == hidden)
 		return;
 
-	[self willChangeValueForProperty: kETVisibleProperty];
-	_visible = visible;
-	if (visible)
+	[self willChangeValueForProperty: kETHiddenProperty];
+	_hidden = hidden;
+	[self willChangeValueForProperty: kETHiddenProperty];
+}
+
+/** Returns whether the receiver should be displayed or not. 
+ 
+See also -setHidden: and -isVisible:. */
+- (BOOL) isHidden
+{
+	return _hidden;
+}
+
+/** Sets whether the receiver should be displayed or not.
+
+The new visibility state won't be apparent until a redisplay occurs.
+ 
+See also -exposed and -[ETLayoutItemGroup setExposedItems:]. */
+- (void) setExposed: (BOOL)exposed
+{
+	if (_exposed == exposed)
+		return;
+
+	[self willChangeValueForProperty: kETExposedProperty];
+	_exposed = exposed;
+	if (exposed)
 	{
 		[[self parentItem] handleAttachViewOfItem: self];
 		ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
@@ -1262,13 +1284,32 @@ the previous layout in use. */
 		[[self parentItem] handleDetachViewOfItem: self];
 		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
 	}
-	[self willChangeValueForProperty: kETVisibleProperty];
+	[self willChangeValueForProperty: kETExposedProperty];
 }
 
-/** Returns whether the receiver should be displayed or not. See also -setVisible:. */
+/** Returns whether the receiver should be displayed or not.
+ 
+See also -setExposed: and -exposedItems. */
+- (BOOL) exposed
+{
+	return _exposed;
+}
+
+/** Returns whether the receiver is displayed or not.
+
+For an invisible item, descendant items are invisible, whether or not they
+return YES to -isVisible.
+
+An invisible item doesn't participate in the responder chain, and is ignored by
+the active tool during the event hit testing.
+
+Layouts can change the visibility state with -[ETLayoutItemGroup setExposedItems:], 
+whether or not the item is hidden.
+ 
+See also -isHidden, -setHidden: and ETTool. */
 - (BOOL) isVisible
 {
-	return _visible;
+	return (_exposed && _hidden == NO);
 }
 
 /** Returns the receiver UTI type as -[NSObject UTI], but combines it with the

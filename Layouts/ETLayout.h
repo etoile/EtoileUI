@@ -62,8 +62,10 @@ ETLayout. */
 - (BOOL) isScrollable;
 /** See -[ETLayoutItemGroup visibleItems]. */
 - (NSArray *) visibleItems;
-/** See -[ETLayoutItemGroup setVisibleItems:]. */
-- (void) setVisibleItems: (NSArray *)items;
+/** See -[ETLayoutItemGroup exposedItems]. */
+- (NSArray *) exposedItems;
+/** See -[ETLayoutItemGroup setExposedItems:]. */
+- (void) setExposedItems: (NSArray *)items;
 @end
 
 /** ETLayoutingContext optional methods the layout context might implement.

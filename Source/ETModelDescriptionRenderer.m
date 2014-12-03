@@ -558,7 +558,7 @@ See also -setRenderedPropertyNames:. */
 	}
 	/* If we have adjusted the height and no items are clipped horizontally, 
 	   all items should be visible at this point. */
-	ETAssert([[entityItem visibleItems] isEqual: [entityItem items]]);
+	ETAssert([[entityItem exposedItems] isEqual: [entityItem items]]);
 
 	if ([entityItem height] > entityItemFrame.size.height || ([self groupingKeyPath] != nil))
 	{

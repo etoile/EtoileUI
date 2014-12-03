@@ -89,7 +89,7 @@
 	ETPropertyDescription *flipped = [ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
 	ETPropertyDescription *selected = [ETPropertyDescription descriptionWithName: @"selected" type: (id)@"BOOL"];
 	ETPropertyDescription *selectable = [ETPropertyDescription descriptionWithName: @"selectable" type: (id)@"BOOL"];
-	ETPropertyDescription *visible = [ETPropertyDescription descriptionWithName: @"visible" type: (id)@"BOOL"];
+	ETPropertyDescription *exposed = [ETPropertyDescription descriptionWithName: @"exposed" type: (id)@"BOOL"];
 	ETPropertyDescription *subtype = [ETPropertyDescription descriptionWithName: @"subtype" type: (id)@"ETUTI"];
 	[subtype setValueTransformerName: @"ETUTIToString"];
 	[subtype setPersistentTypeName: @"NSString"];
@@ -120,6 +120,9 @@
 
 	// TODO: Declare -UTI in the transient properties (or rather at NSObject level)...
 
+	ETPropertyDescription *visible = [ETPropertyDescription descriptionWithName: @"visible" type: (id)@"BOOL"];
+	[visible setReadOnly: YES];
+	[visible setDerived: YES];
 	ETPropertyDescription *repObject = [ETPropertyDescription descriptionWithName: @"representedObject" type: (id)@"NSObject"];
 	ETPropertyDescription *controllerItem = [ETPropertyDescription descriptionWithName: @"controllerItem" type: (id)@"ETLayoutItemGroup"];
 	[controllerItem setReadOnly: YES];
@@ -165,13 +168,13 @@
 		actionHandler, action, persistentTarget, persistentTargetOwner,
 		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
 		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
-		visible, subtype, scrollable);
+		exposed, subtype, scrollable);
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
 	NSArray *derivedProperties = A(parentItem, hostItem, controllerItem, sourceItem,
-		isMetaItem, repObject, valueKey, value, style, frame, x, y,
+		isMetaItem, repObject, valueKey, value, visible, style, frame, x, y,
 		width, height, target, hasVerticalScroller, hasHorizontalScroller);
 	NSArray *transientProperties = [derivedProperties arrayByAddingObjectsFromArray:
 		A(title, objectValue, formatter, minValue, maxValue, pickMetadata,

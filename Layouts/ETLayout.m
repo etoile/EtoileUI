@@ -490,7 +490,7 @@ By default, returns NO. */
 	container size is altered. */
 - (BOOL) isAllContentVisible
 {
-	return ([[[self layoutContext] visibleItems] count] == [[[self layoutContext] items] count]);
+	return ([[[self layoutContext] exposedItems] count] == [[[self layoutContext] items] count]);
 }
 
 /** Sets the newly computed layout size.

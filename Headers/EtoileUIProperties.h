@@ -30,9 +30,11 @@ extern NSString * const kETDefaultFrameProperty; /** defaultFrame property name 
 extern NSString * const kETDelegateProperty; /** delegate property name */
 extern NSString * const kETDisplayNameProperty; /** displayName property name */
 extern NSString * const kETDoubleClickedItemProperty; /** doubleClickedItem property name */
+extern NSString * const kETExposedProperty; /** exposed property name */
 extern NSString * const kETFlippedProperty; /** flipped property name */
 extern NSString * const kETFrameProperty; /** frame property name */  
 extern NSString * const kETHeightProperty; /** height property name */
+extern NSString * const kETHiddenProperty; /** hidden property name */
 extern NSString * const kETIconProperty; /** icon property name */
 extern NSString * const kETIdentifierProperty; /** identifier property name */
 extern NSString * const kETImageProperty; /** image property name */

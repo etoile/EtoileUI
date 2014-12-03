@@ -213,7 +213,7 @@ See also -[NSObject descriptionWithOptions:]. */
 
 /** Inserts the display view of the given item into the receiver view.
 
-This method is used by -setVisibleItems: to manage view insertion.
+This method is used by -setExposedItems: to manage view insertion.
  
 See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item
@@ -221,7 +221,7 @@ See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 	// TODO: For now, item group mutation calls this method and causes item
 	// views to be attached immediately... In the future, we could skip calling
 	// -handleAttachViewOfItem: at mutation time and just wait the layout update
-	// to insert it (since all layouts call -setVisibleItems:). Not yet sure though...
+	// to insert it (since all layouts call -setExposedItems:). Not yet sure though...
 	ETView *itemDisplayView = [item displayView];
 	BOOL noViewToAttach = (itemDisplayView == nil);
 
@@ -248,7 +248,7 @@ See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
 
 /** Removes the display view of the given view from the receiver view.
 
-This method is used by -setVisibleItems: to manage view removal.
+This method is used by -setExposedItems: to manage view removal.
  
 See also -handleAttachViewOfItem: and -[ETUIItem displayView]. */
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item
@@ -813,8 +813,8 @@ You should never use this method unless you write an ETLayoutItem subclass. */
     ASSIGN(_layout, layout);
     /* We must remove the item views, otherwise they might remain visible as
        subviews (think ETBrowserLayout on GNUstep which has transparent areas),
-       because view-based layout won't call -setVisibleItems: in -renderWithItems:XXX:. */
-    [self setVisibleItems: [NSArray array]];
+       because view-based layout won't call -setExposedItems: in -renderWithItems:XXX:. */
+    [self setExposedItems: [NSArray array]];
     [self setHasNewLayout: YES];
     // TODO: May be safer to restore the default frame here rather than relying
     // on the next layout update and -resizeItems:toScaleFactor:...
@@ -1149,46 +1149,56 @@ You should never need to call this method directly. */
 	return _cachedDisplayImage;
 }
 
+
 /** Returns the receiver visible child items. */
 - (NSArray *) visibleItems
 {
-	return [self visibleItemsForItems: [self items]];
+	NSMutableArray *visibleItems = AUTORELEASE([[self exposedItems] mutableCopy]);
+	[[visibleItems filter] isVisible];
+	return visibleItems;
 }
 
-/** Sets the receiver visible child items, and mutates the view hierarchy when 
+/** Returns the receiver laid out child items. */
+- (NSArray *) exposedItems
+{
+	return [self exposedItemsForItems: [self items]];
+}
+
+/** Sets the receiver visible laid out items, and mutates the view hierarchy when
 some items use a view.
  
 Views are inserted or removed to match the item visibility.
 
 This method is invoked by the receiver layout just before 
 -[ETLayout renderWithItems:isNewContent:] returns, to adjust the visibility of 
-views and update each item visible property.<br />
+views and update each item 'exposed' property.
+
 You shouldn't need to call this method by yourself. */
-- (void) setVisibleItems: (NSArray *)visibleItems
+- (void) setExposedItems: (NSArray *)exposedItems
 {
-	return [self setVisibleItems: visibleItems forItems: [self items]];
+	return [self setExposedItems: exposedItems forItems: [self items]];
 }
 
-/* See -visibleItems. */
-- (NSArray *) visibleItemsForItems: (NSArray *)items
+/* See -exposedItems. */
+- (NSArray *) exposedItemsForItems: (NSArray *)items
 {
-	NSMutableArray *visibleItems = [NSMutableArray array];
+	NSMutableArray *exposedItems = [NSMutableArray array];
 
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		if ([item isVisible])
-			[visibleItems addObject: item];
+		if ([item isExposed])
+			[exposedItems addObject: item];
 	}
 
-	return visibleItems;
+	return exposedItems;
 }
 
-/* See -setVisibleItems:. */
-- (void) setVisibleItems: (NSArray *)visibleItems forItems: (NSArray *)items
+/* See -setExposedItems:. */
+- (void) setExposedItems: (NSArray *)exposedItems forItems: (NSArray *)items
 {
 	FOREACH(items, item, ETLayoutItem *)
 	{
-		[item setVisible: [visibleItems containsObject: item]];
+		[item setExposed: [exposedItems containsObject: item]];
 	}
 }
 

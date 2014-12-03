@@ -294,14 +294,14 @@ bounding box). */
 /* Flattens the given layout model by putting all items into a single array. */
 - (NSArray *) itemsUsedInFragments: (NSArray *)fragments
 {
-	NSMutableArray *visibleItems = [NSMutableArray array];
+	NSMutableArray *exposedItems = [NSMutableArray array];
 
 	FOREACH(fragments, fragment, ETLineFragment *)
 	{
-		[visibleItems addObjectsFromArray: [fragment items]];
+		[exposedItems addObjectsFromArray: [fragment items]];
 	}
 
-	return visibleItems;
+	return exposedItems;
 }
 
 - (void) adjustSeparatorItemsForLayoutSize: (NSSize)newLayoutSize 
@@ -402,7 +402,7 @@ If flexible separators are used, before -adjustSeparatorItemsForLayoutSize: we h
 </list>
 
 Finally once the layout is computed, this method set the layout item visibility 
-by calling -setVisibleItems: on the layout context. */
+by calling -setExposedItems: on the layout context. */
 - (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent
 {
 	//NSLog(@" === UPDATE LAYOUT - %@ === ", [[self itemForLayoutContext] identifier]);
@@ -437,7 +437,7 @@ by calling -setVisibleItems: on the layout context. */
 
 	[self adjustSeparatorItemsForLayoutSize: newLayoutSize];
 
-	[[self layoutContext] setVisibleItems: usedItems];
+	[[self layoutContext] setExposedItems: usedItems];
 	return newLayoutSize;
 }
 

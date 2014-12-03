@@ -642,7 +642,7 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	   We don't implement -willLoadObjectGraph to discard the supervisor view
 	   and recreate it kater in -restoreViewFromDeserialization or
 	   -restoreLayoutFromDeserialization, since -[ETLayoutItemGroup willLoadObjectGraph] 
-	   can call -[ETLayoutItemGroup setVisibleItems:] by tearing down the layout, 
+	   can call -[ETLayoutItemGroup setExposedItems:] by tearing down the layout, 
 	   and wrongly recreate some item supervisor views in this way. */
 	[self syncSupervisorViewGeometry: ETSyncSupervisorViewFromItem];
 
@@ -782,7 +782,7 @@ step is skipped when loading an item not present in memory. */
 
 - (void) restoreLayoutFromDeserialization
 {
-	[self setVisibleItems: [NSArray array]];
+	[self setExposedItems: [NSArray array]];
 	[_layout setUp: YES];
 	[self didChangeLayout: nil];
 
