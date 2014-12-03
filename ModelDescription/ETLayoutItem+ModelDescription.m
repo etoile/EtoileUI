@@ -90,6 +90,7 @@
 	ETPropertyDescription *selected = [ETPropertyDescription descriptionWithName: @"selected" type: (id)@"BOOL"];
 	ETPropertyDescription *selectable = [ETPropertyDescription descriptionWithName: @"selectable" type: (id)@"BOOL"];
 	ETPropertyDescription *exposed = [ETPropertyDescription descriptionWithName: @"exposed" type: (id)@"BOOL"];
+	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 	ETPropertyDescription *subtype = [ETPropertyDescription descriptionWithName: @"subtype" type: (id)@"ETUTI"];
 	[subtype setValueTransformerName: @"ETUTIToString"];
 	[subtype setPersistentTypeName: @"NSString"];
@@ -168,7 +169,7 @@
 		actionHandler, action, persistentTarget, persistentTargetOwner,
 		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
 		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
-		exposed, subtype, scrollable);
+		exposed, hidden, subtype, scrollable);
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
