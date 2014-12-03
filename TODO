@@ -113,6 +113,8 @@ Open Issues
 
 - Declare our own pick and drop operation mask rather than using NSDragOperation
 
+- Decide how we synchronize the selection for opaque layouts needing an update in -setSelectionIndexPaths:
+
 
 Testing
 -------
@@ -144,9 +146,18 @@ Testing
 
 - Write ETLayoutItem.valueTransformer persistency tests
 
+- Write ETTableLayout tests that ensures the selection is set on -[ETController insertItem:atIndex:] (this would exercize -setSelectionIndexPaths: with opaque layouts)
+
+- Write a test that ensures item value transformer removal works when passing a nil value to -setItemValueTransformer:forProperty:
+
+
+Persistency
+-----------
+
 - Support viewpoint persistency
 
 - Finish tool class hierarchy persistency
+
 
 
 Documentation

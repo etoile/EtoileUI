@@ -1349,6 +1349,40 @@ if ([layoutContext isChangingSelection])
 	return _changingSelection;
 }
 
+/* See -[ETLayoutExecutor updateHasNewContentForOpaqueItem:descendantItem:]. */
+- (BOOL) hasNewContentForDescendantItem: (ETLayoutItem *)anItem
+{
+	ETAssert([[self layout] isOpaque]);
+	ETLayoutItemGroup *item = (id)([anItem isGroup] ? anItem : [anItem parentItem]);
+	ETLayoutItemGroup *opaqueItem = self;
+	
+	while (item != opaqueItem)
+	{
+		if ([item hasNewContent])
+		{
+			return YES;
+		}
+		item = [item parentItem];
+	}
+
+	return NO;
+}
+
+- (BOOL) hasNewContentForIndexPaths: (NSArray *)indexPaths
+{
+	if ([self hasNewContent])
+		return YES;
+
+	for (NSIndexPath *indexPath in indexPaths)
+	{
+		ETLayoutItem *item = [self itemAtIndexPath: indexPath];
+		
+		if ([self hasNewContentForDescendantItem: item])
+			return YES;
+	}
+	return NO;
+}
+
 /** Sets the selected items in the layout item subtree attached to the receiver.
 
 Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be
@@ -1362,13 +1396,20 @@ redisplayed. */
 	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]
 	                relativeToItem: self];
 
-	ETLayout *layout = [[self ancestorItemForOpaqueLayout] layout];
+	ETLayoutItemGroup *opaqueItem = [self ancestorItemForOpaqueLayout];
 
 	/* For opaque layouts that may need to keep in sync the selection state of
 	   their custom UI. */
-	if ([layout isChangingSelection] == NO)
+	if ([[opaqueItem layout] isChangingSelection] == NO)
 	{
-		[layout selectionDidChangeInLayoutContext: self];
+		// TODO: Could be better to give up on synchronizing the selection
+		// every time the layout needs an update, and rather synchronize the
+		// selection just before -renderItems:isNewContent: returns (in opaque layouts).
+		if ([opaqueItem hasNewContentForIndexPaths: indexPaths])
+		{
+			[opaqueItem updateLayoutRecursively: YES];
+		}
+		[[opaqueItem layout] selectionDidChangeInLayoutContext: self];
 	}
 	// TODO: Evaluate whether we should send -didChangeSelection on
 	// -ancestorItemForOpaqueLayout too

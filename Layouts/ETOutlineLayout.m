@@ -157,7 +157,7 @@
 
 - (void) outlineViewSelectionDidChange: (NSNotification *)notif
 {
-	[self didChangeSelectionInLayoutView];
+	[self tableViewSelectionDidChange: notif];
 }
 
 - (ETLayoutItem *) itemAtRow: (int)rowIndex
