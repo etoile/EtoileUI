@@ -1239,8 +1239,10 @@ See also -setSelectable:. */
 }
 
 /** Sets whether the receiver should be displayed or not.
-
+ 
 The new visibility state won't be apparent until a redisplay occurs.
+ 
+This method marks the receiver as needing a redisplay.
 
 When -isHidden returns YES, -isVisible returns YES. However -isVisible can
 return YES, while -isHidden returns NO. */
@@ -1251,6 +1253,7 @@ return YES, while -isHidden returns NO. */
 
 	[self willChangeValueForProperty: kETHiddenProperty];
 	_hidden = hidden;
+	[self setNeedsDisplay: YES];
 	[self willChangeValueForProperty: kETHiddenProperty];
 }
 
@@ -1265,6 +1268,8 @@ See also -setHidden: and -isVisible:. */
 /** Sets whether the receiver should be displayed or not.
 
 The new visibility state won't be apparent until a redisplay occurs.
+ 
+This method doesn't mark the receiver as needing a redisplay.
  
 See also -exposed and -[ETLayoutItemGroup setExposedItems:]. */
 - (void) setExposed: (BOOL)exposed
