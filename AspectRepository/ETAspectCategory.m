@@ -87,7 +87,7 @@ See -initWithName:dictionary:objectGraphContext:. */
 See -initWithName:dictionary:objectGraphContext:. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithName: nil dictionary: nil objectGraphContext: nil];
+	return [self initWithName: nil dictionary: nil objectGraphContext: aContext];
 }
 
 - (void) dealloc
