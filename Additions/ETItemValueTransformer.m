@@ -50,11 +50,13 @@
 + (void) registerAspects
 {
 	// TODO: It's a bit useless to register value transformers in this way.
-	// For ETBooleanFromMaskValueTransformer, the client must copy it or we
+	// For ETBooleanFromMaskTransformer, the client must copy it or we
 	// must override -valueTransformerForName: to return copy
 	// value transformers that support/require copy.
-	[self setValueTransformer: AUTORELEASE([ETBooleanFromMaskValueTransformer new])
-	                  forName: kETBooleanFromMaskValueTransformerName];
+	[self setValueTransformer: AUTORELEASE([ETBooleanFromMaskTransformer new])
+	                  forName: kETBooleanFromMaskTransformerName];
+	[self setValueTransformer: AUTORELEASE([ETNegateBooleanTransformer new])
+	                  forName: kETNegateBooleanTransformerName];
 }
 
 - (id) initWithName: (NSString *)aName;
@@ -144,15 +146,41 @@
 @end
 
 
-NSString * const kETBooleanFromMaskValueTransformerName = @"kETBooleanFromMaskValueTransformerName";
+NSString * const kETNegateBooleanTransformerName = @"kETNegateBooleanTransformerName";
 
-@implementation ETBooleanFromMaskValueTransformer
+@implementation ETNegateBooleanTransformer
+
+- (id) init
+{
+	return [super initWithName: kETNegateBooleanTransformerName];
+}
+
+- (id) transformedValue: (id)value
+				 forKey: (NSString *)key
+				 ofItem: (ETLayoutItem *)item
+{
+	return [NSNumber numberWithBool: ![value boolValue]];
+}
+
+- (id) reverseTransformedValue: (id)value
+						forKey: (NSString *)key
+						ofItem: (ETLayoutItem *)item
+{
+	return [NSNumber numberWithBool: ![value boolValue]];
+}
+
+@end
+
+
+NSString * const kETBooleanFromMaskTransformerName = @"kETBooleanFromMaskTransformerName";
+
+@implementation ETBooleanFromMaskTransformer
 
 @synthesize editedBitValue = _editedBitValue;
 
 - (id) init
 {
-	return [super initWithName: kETBooleanFromMaskValueTransformerName];
+	return [super initWithName: kETBooleanFromMaskTransformerName];
 }
 
 - (id) transformedValue: (id)value

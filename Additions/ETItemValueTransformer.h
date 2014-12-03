@@ -109,7 +109,16 @@ This block provides a behavior equivalent to
 @end
 
 
-@interface ETBooleanFromMaskValueTransformer : ETItemValueTransformer
+extern NSString * const kETNegateBooleanTransformerName;
+
+@interface ETNegateBooleanTransformer : ETItemValueTransformer
+@property (nonatomic, assign) NSUInteger editedBitValue;
+@end
+
+
+extern NSString * const kETBooleanFromMaskTransformerName;
+
+@interface ETBooleanFromMaskTransformer : ETItemValueTransformer
 {
 	NSUInteger _editedBitValue;
 }
@@ -117,5 +126,3 @@ This block provides a behavior equivalent to
 @property (nonatomic, assign) NSUInteger editedBitValue;
 
 @end
-
-extern NSString * const kETBooleanFromMaskValueTransformerName;
