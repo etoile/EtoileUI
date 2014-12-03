@@ -57,6 +57,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	NSBezierPath *path = [NSBezierPath bezierPathWithRect: aRect];
 	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path objectGraphContext: aContext]);
 	[shape setPathResizeSelector: @selector(bezierPathWithRect:)];
+	[shape setName: _(@"Rectangle")];
 	[shape setIcon: [NSImage imageNamed: @"layer-shape"]];
 	return shape;
 }
@@ -73,6 +74,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: aRect];
 	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path objectGraphContext: aContext]);
 	[shape setPathResizeSelector: @selector(bezierPathWithOvalInRect:)];
+	[shape setName: _(@"Ellipse")];
 	[shape setIcon: [NSImage imageNamed: @"layer-shape-ellipse"]];
 	return shape;
 }
