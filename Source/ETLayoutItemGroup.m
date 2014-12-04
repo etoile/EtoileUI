@@ -1352,10 +1352,13 @@ if ([layoutContext isChangingSelection])
 /* See -[ETLayoutExecutor updateHasNewContentForOpaqueItem:descendantItem:]. */
 - (BOOL) hasNewContentForDescendantItem: (ETLayoutItem *)anItem
 {
-	ETAssert([[self layout] isOpaque]);
 	ETLayoutItemGroup *item = (id)([anItem isGroup] ? anItem : [anItem parentItem]);
-	ETLayoutItemGroup *opaqueItem = self;
-	
+	ETLayoutItemGroup *opaqueItem = [self ancestorItemForOpaqueLayout];
+	BOOL noOpaqueItem = ([[opaqueItem layout] isOpaque] == NO);
+
+	if (noOpaqueItem)
+		return NO;
+
 	while (item != opaqueItem)
 	{
 		if ([item hasNewContent])
@@ -1405,7 +1408,7 @@ redisplayed. */
 		// TODO: Could be better to give up on synchronizing the selection
 		// every time the layout needs an update, and rather synchronize the
 		// selection just before -renderItems:isNewContent: returns (in opaque layouts).
-		if ([opaqueItem hasNewContentForIndexPaths: indexPaths])
+		if ([self hasNewContentForIndexPaths: indexPaths])
 		{
 			[opaqueItem updateLayoutRecursively: YES];
 		}

@@ -115,6 +115,8 @@ Open Issues
 
 - Decide how we synchronize the selection for opaque layouts needing an update in -setSelectionIndexPaths:
 
+- Post a selection notification based on whether an item group have an observer or delegate, rather than whether -setSelectionIndexPaths: was called on it, this way we could observe selection changes at various levels in the item tree
+
 
 Testing
 -------
