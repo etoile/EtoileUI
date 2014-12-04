@@ -584,8 +584,11 @@ By default, returns YES. */
 - (void) handleSelect: (ETLayoutItem *)item
 {
 	//ETLog(@"Select %@", item);
-	[item setSelected: YES];
-	[[item parentItem] didChangeSelection];
+	ETLayoutItemGroup *parent = [item parentItem];
+	NSMutableIndexSet *indexes = AUTORELEASE([[parent selectionIndexes] mutableCopy]);
+	
+	[indexes addIndex: [parent indexOfItem: item]];
+	[parent setSelectionIndexes: indexes];
 	[item setNeedsDisplay: YES];
 }
 
@@ -603,8 +606,11 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 - (void) handleDeselect: (ETLayoutItem *)item
 {
 	//ETLog(@"Deselect %@", item);
-	[item setSelected: NO];
-	[[item parentItem] didChangeSelection];
+	ETLayoutItemGroup *parent = [item parentItem];
+	NSMutableIndexSet *indexes = AUTORELEASE([[parent selectionIndexes] mutableCopy]);
+
+	[indexes removeIndex: [parent indexOfItem: item]];
+	[parent setSelectionIndexes: indexes];
 	[item setNeedsDisplay: YES];
 }
 

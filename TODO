@@ -117,6 +117,10 @@ Open Issues
 
 - Post a selection notification based on whether an item group have an observer or delegate, rather than whether -setSelectionIndexPaths: was called on it, this way we could observe selection changes at various levels in the item tree
 
+- Synchronize selection in opaque layouts on reload/expand (otherwise selected items won't appear selected when expanding a row or switching to an opaque layout)
+
+- Implement 'operator' or 'function' property in ETCollectionViewpoint', which can be set to a block or a selector that takes a property/value pair in input and return a result. Not really sure... this seems to be duplicating ETLayoutItem.valueTransformers for simple operators such as avg, sum etc. For more complex collection operators, this seems to be the role of ETCollectionViewpoint and its subclasses.
+
 
 Testing
 -------
@@ -151,6 +155,8 @@ Testing
 - Write ETTableLayout tests that ensures the selection is set on -[ETController insertItem:atIndex:] (this would exercize -setSelectionIndexPaths: with opaque layouts)
 
 - Write a test that ensures item value transformer removal works when passing a nil value to -setItemValueTransformer:forProperty:
+
+- Write some exhaustive selection tests
 
 
 Persistency

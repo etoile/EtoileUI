@@ -39,22 +39,6 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 - (Class)viewpointClassForProperty: (NSString *)aProperty ofObject: (id)anObject;
 @end
 
-@interface ETLayoutItemGroup (Private)
-- (void) tryReloadWithSource: (id)aSource;
-- (void) assignLayout: (ETLayout *)aLayout;
-- (BOOL) hasNewLayout;
-- (void) setHasNewLayout: (BOOL)flag;
-- (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
-					 relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
-- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
-                   relativeToItem: (ETLayoutItemGroup *)pathBaseItem;
-- (void) didChangeSelection;
-- (void) display: (NSMutableDictionary *)inputValues
-            item: (ETLayoutItem *)item
-       dirtyRect: (NSRect)dirtyRect
-       inContext: (id)ctxt;
-@end
-
 @interface  ETController (Private)
 - (void) setContent: (ETLayoutItemGroup *)aContent;
 @end
@@ -1272,7 +1256,7 @@ Posts an ETItemGroupSelectionDidChangeNotification. */
 	}
 
 	/* Update selection */
-	[self setSelectionIndexPaths: [indexes indexPaths]];
+	[self setSelectionIndexPaths: [indexes indexPaths] recursively: NO];
 }
 
 - (void) collectSelectionIndexPaths: (NSMutableArray *)indexPaths
@@ -1308,13 +1292,30 @@ items we encounter during the recursive traversal of the subtree... See
 -[ETLayout setSelectionIndexPaths:] to understand the issue more thoroughly.
 Moreover the method is surely extremly slow if called many times within a short
 time interval on a subtree that consists of thousand items or more. */
-- (void) applySelectionIndexPaths: (NSMutableArray *)indexPaths
-                   relativeToItem: (ETLayoutItemGroup *)pathBaseItem
+- (BOOL) applySelectionIndexPaths: (NSMutableArray *)indexPaths
+                   relativeToItem: (ETLayoutItemGroup *)baseItem
+                      recursively: (BOOL)recursively
 {
+	BOOL changedSelection = NO;
+	BOOL emittedWillChangeSelection = NO;
+
 	FOREACHI([self items], item)
 	{
-		NSIndexPath *itemIndexPath = [item indexPathFromItem: pathBaseItem];
-		if ([indexPaths containsObject: itemIndexPath])
+		NSIndexPath *itemIndexPath = [item indexPathFromItem: baseItem];
+		BOOL select = [indexPaths containsObject: itemIndexPath];
+		
+		/* Post notifications on deselection too */
+		if (select != [item isSelected] && emittedWillChangeSelection == NO)
+		{
+			emittedWillChangeSelection = YES;
+			// TODO: Perhaps post the same for selectionIndex, selectionIndexes
+			// and selectionIndexPaths
+			// TODO: Would be better to use -will/DidChangeValueForProperty:
+			[self willChangeValueForKey: @"selectedItems"];
+			[self willChangeValueForKey: @"selectedItemsInLayout"];
+		}
+
+		if (select)
 		{
 			[item setSelected: YES];
 			[indexPaths removeObject: itemIndexPath];
@@ -1323,9 +1324,24 @@ time interval on a subtree that consists of thousand items or more. */
 		{
 			[item setSelected: NO];
 		}
-		if ([item isGroup])
-			[item applySelectionIndexPaths: indexPaths relativeToItem: pathBaseItem];
+		
+		if ([item isGroup] && recursively)
+		{
+			changedSelection = changedSelection | [item applySelectionIndexPaths: indexPaths
+			                                                      relativeToItem: baseItem
+			                                                         recursively: recursively];
+		}
+
+		if (emittedWillChangeSelection)
+		{
+			[self didChangeValueForKey: @"selectedItems"];
+			[self didChangeValueForKey: @"selectedItemsInLayout"];
+			[self didChangeSelection];
+			changedSelection = YES;
+		}
 	}
+
+	return changedSelection;
 }
 
 /** Returns YES when a selection change initiated by -setSelectionIndex:,
@@ -1386,24 +1402,38 @@ if ([layoutContext isChangingSelection])
 	return NO;
 }
 
-/** Sets the selected items in the layout item subtree attached to the receiver.
+/** Sets the selected items in the item subtree attached to the receiver.
 
-Posts an ETItemGroupSelectionDidChangeNotification and marks the receiver to be
-redisplayed. */
+Posts an ETItemGroupSelectionDidChangeNotification for:
+ 
+<list>
+<item>each item group whose selection is changed</item>
+<item>the controller item</item>
+</list>
+ 
+Marks the receiver to be redisplayed.
+ 
+See also -selectionIndexPaths, -setSelectionIndexes:, -setSelectionIndex: and
+-controllerItem. */
 - (void) setSelectionIndexPaths: (NSArray *)indexPaths
 {
-	_changingSelection = YES;
-	[self willChangeValueForKey: @"selectedItems"];
-	[self willChangeValueForKey: @"selectedItemsInLayout"];
+	[self setSelectionIndexPaths: indexPaths recursively: YES];
+}
 
-	[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]
-	                relativeToItem: self];
+- (void) setSelectionIndexPaths: (NSArray *)indexPaths recursively: (BOOL)recursively
+{
+	_changingSelection = YES;
+
+	BOOL changedSelection =
+		[self applySelectionIndexPaths: [NSMutableArray arrayWithArray: indexPaths]
+	                    relativeToItem: self
+		                   recursively: recursively];
 
 	ETLayoutItemGroup *opaqueItem = [self ancestorItemForOpaqueLayout];
 
 	/* For opaque layouts that may need to keep in sync the selection state of
 	   their custom UI. */
-	if ([[opaqueItem layout] isChangingSelection] == NO)
+	if (changedSelection && [[opaqueItem layout] isChangingSelection] == NO)
 	{
 		// TODO: Could be better to give up on synchronizing the selection
 		// every time the layout needs an update, and rather synchronize the
@@ -1414,16 +1444,19 @@ redisplayed. */
 		}
 		[[opaqueItem layout] selectionDidChangeInLayoutContext: self];
 	}
-	// TODO: Evaluate whether we should send -didChangeSelection on
-	// -ancestorItemForOpaqueLayout too
-	// TODO: [[self controllerItem] didChangeSelection];
-	[self didChangeSelection];
+
+	/* When the receiver is a controller item, the notification gets posted in 
+	   -applySelectionIndexPaths:relativeToItem: */
+	BOOL hasPostedSelectionChangeForControllerItem = ([self controller] != nil);
+
+	if (changedSelection && hasPostedSelectionChangeForControllerItem == NO)
+	{
+		[[self controllerItem] didChangeSelection];
+	}
 
 	/* Reflect selection change immediately */
 	[self setNeedsDisplay: YES];
 
-	[self didChangeValueForKey: @"selectedItems"];
-	[self didChangeValueForKey: @"selectedItemsInLayout"];
 	_changingSelection = NO;
 }
 

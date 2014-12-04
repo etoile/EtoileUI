@@ -286,14 +286,22 @@
     {
         CustomController *newController = (CustomController *)[newItemGroup controller];
 
+		/* As the controller item, newItemGroup will receive this selection change */
         [(ETLayoutItemGroup *)[newItemGroup firstItem] setSelectionIndex: 0];
-        
+
         UKTrue(newController->firstItemSelectionChanged);
-        UKFalse(newController->notificationPosted);
-    
+        UKTrue(newController->notificationPosted);
+		
+		newController->firstItemSelectionChanged = NO;
+		newController->notificationPosted = NO;
+	
         [newItemGroup setSelectionIndex: 0];
 
+		UKFalse(newController->firstItemSelectionChanged);
         UKTrue(newController->notificationPosted);
+		
+		/* Reset the selection to prevent it to be committed */
+		[newItemGroup setSelectionIndexPaths: [NSArray array]];
     }];
 }
 
