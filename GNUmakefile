@@ -30,7 +30,7 @@ endif
 
 EtoileUI_HEADER_FILES_DIR = Headers
 
-OTHER_HEADER_DIRS = Additions Base GraphicsBackend WidgetBackends WidgetBackends/AppKit ActionHandlers ItemFactoryAdditions Layouts Styles Tools AspectRepository ModelBuilder CoreObjectUI Persistency Persistency/ValueTransformers UIBuilder
+OTHER_HEADER_DIRS = Additions Base GraphicsBackend WidgetBackends WidgetBackends/AppKit ActionHandlers ItemFactoryAdditions Layouts Styles Tools AspectRepository ModelBuilder CoreObjectUI Persistency Persistency/ValueTransformers Persistency/Model UIBuilder
 
 EtoileUI_HEADER_FILES = $(notdir $(wildcard Headers/*.h))
 
