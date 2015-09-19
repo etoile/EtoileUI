@@ -9,7 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/NSObject+Etoile.h>
-#import <COreObject/COObjectGraphContext.h>
+#import <CoreObject/COObjectGraphContext.h>
 #import "ETLayout.h"
 #import "ETApplication.h"
 #import "ETAspectRepository.h"
