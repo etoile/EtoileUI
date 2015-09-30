@@ -230,7 +230,6 @@
 		609DE8441761D0C000F486FD /* ETUTI+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */; };
 		609F5B6A16CDB8FA00683BD9 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6916CDB8F300683BD9 /* AppKit.framework */; };
 		609F5B6C16CDB90800683BD9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609F5B6B16CDB90400683BD9 /* Foundation.framework */; };
-		609F5B9016CDBE6500683BD9 /* TestEtoileUI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 609F5B8F16CDBE6400683BD9 /* TestEtoileUI-Info.plist */; };
 		60A54AC413D0825000261FDC /* ETController+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54AC213D0824F00261FDC /* ETController+CoreObject.m */; };
 		60A54AC613D0825000261FDC /* ETController+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54AC213D0824F00261FDC /* ETController+CoreObject.m */; };
 		60A54C1313D2273F00261FDC /* ETLayout+CoreObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A54C1113D2273F00261FDC /* ETLayout+CoreObject.m */; };
@@ -638,27 +637,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 6072CF691360E144003256C5;
 			remoteInfo = PlugInExample;
-		};
-		602E08411A06F13F00FB8FF4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 60E08C6219792BEA00D1B7AD;
-			remoteInfo = "CoreObject (iOS)";
-		};
-		602E08431A06F13F00FB8FF4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 60F91E9D197D1B8F009F47D7;
-			remoteInfo = "TestCoreObject (iOS)";
-		};
-		602E08451A06F13F00FB8FF4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6002E28E197FD90300AC9150;
-			remoteInfo = "BasicPersistence (iOS)";
 		};
 		6048469D18B6C314006E4EDC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2630,7 +2608,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Étoilé";
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "EtoileUI" */;
@@ -2686,27 +2664,6 @@
 			fileType = wrapper.cfbundle;
 			path = PlugInExample.plugin;
 			remoteRef = 6023544915B86AA600CA49D0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		602E08421A06F13F00FB8FF4 /* libCoreObject.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libCoreObject.a;
-			remoteRef = 602E08411A06F13F00FB8FF4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		602E08441A06F13F00FB8FF4 /* TestCoreObject.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = TestCoreObject.app;
-			remoteRef = 602E08431A06F13F00FB8FF4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		602E08461A06F13F00FB8FF4 /* BasicPersistence.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BasicPersistence.app;
-			remoteRef = 602E08451A06F13F00FB8FF4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6048469E18B6C314006E4EDC /* libEtoileFoundation.a */ = {
@@ -2938,7 +2895,6 @@
 				6084046F15415C8E002F91A1 /* tick-small.png in Resources */,
 				6084047015415C8E002F91A1 /* tags-label.png in Resources */,
 				6084047115415C8E002F91A1 /* tags.png in Resources */,
-				609F5B9016CDBE6500683BD9 /* TestEtoileUI-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3634,6 +3590,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "TestEtoileUI-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = TestEtoileUI;
 			};
 			name = Debug;
@@ -3644,6 +3601,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "TestEtoileUI-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = TestEtoileUI;
 			};
 			name = Release;
@@ -3680,6 +3638,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PaneExample/PaneExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.PaneExample";
 				PRODUCT_NAME = PaneExample;
 			};
 			name = Debug;
@@ -3690,6 +3649,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PaneExample/PaneExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.PaneExample";
 				PRODUCT_NAME = PaneExample;
 			};
 			name = Release;
@@ -3700,6 +3660,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "../../Services/Private/$(PRODUCT_NAME)/DocumentEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Worktable;
 			};
 			name = Debug;
@@ -3710,6 +3671,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "../../Services/Private/$(PRODUCT_NAME)/DocumentEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Worktable;
 			};
 			name = Release;
@@ -3720,6 +3682,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "ObjectManagerExample/ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.ObjectManagerExample";
 				PRODUCT_NAME = ObjectManagerExample;
 			};
 			name = Debug;
@@ -3730,6 +3693,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "ObjectManagerExample/ObjectManagerExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.ObjectManagerExample";
 				PRODUCT_NAME = ObjectManagerExample;
 			};
 			name = Release;
@@ -3740,6 +3704,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PhotoViewExample/PhotoViewExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.PhotoViewExample";
 				PRODUCT_NAME = PhotoViewExample;
 			};
 			name = Debug;
@@ -3750,6 +3715,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "PhotoViewExample/PhotoViewExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.PhotoViewExample";
 				PRODUCT_NAME = PhotoViewExample;
 			};
 			name = Release;
@@ -3760,6 +3726,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "TableExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.TableExample";
 				PRODUCT_NAME = TableExample;
 			};
 			name = Debug;
@@ -3770,6 +3737,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "TableExample/TableExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.TableExample";
 				PRODUCT_NAME = TableExample;
 			};
 			name = Release;
@@ -3780,6 +3748,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "MarkupEditor/MarkupEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.org.MarkupEditor";
 				PRODUCT_NAME = MarkupEditor;
 			};
 			name = Debug;
@@ -3790,6 +3759,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "MarkupEditor/MarkupEditor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.org.MarkupEditor";
 				PRODUCT_NAME = MarkupEditor;
 			};
 			name = Release;
@@ -3800,6 +3770,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Collage/Collage-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Collage;
 			};
 			name = Debug;
@@ -3810,6 +3781,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Collage/Collage-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Collage;
 			};
 			name = Release;
@@ -3823,6 +3795,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "EtoileUI-Info.plist";
 				INSTALL_PATH = "@rpath";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.EtoileUI";
 				PRODUCT_NAME = EtoileUI;
 			};
 			name = Debug;
@@ -3836,6 +3809,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "EtoileUI-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.EtoileUI";
 				PRODUCT_NAME = EtoileUI;
 			};
 			name = Release;
@@ -3846,6 +3820,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "FormExample/FormExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.FormExample";
 				PRODUCT_NAME = FormExample;
 			};
 			name = Debug;
@@ -3856,6 +3831,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "FormExample/FormExample-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etoile-project.FormExample";
 				PRODUCT_NAME = FormExample;
 			};
 			name = Release;
@@ -3863,12 +3839,13 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "ETDebugAssertionEnabled=1";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -3877,7 +3854,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = macosx;
