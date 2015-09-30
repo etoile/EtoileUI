@@ -228,7 +228,7 @@ receive KVO notifications triggered by releasing objects we observe. In the
 worst case, we can be retained/released and thereby reenter -dealloc. */
 - (void) stopKVOObservation
 {
-	[_representedObject removeObserver: self];
+	[self endObserveObject: _representedObject];
 
 	NSView *view = [self view];
 
@@ -757,7 +757,7 @@ object when the view is a widget. */
 	/* Don't pass -value otherwise -[representedObject value] is not retrieved 
 	   if -valueKey is nil (for example, ETPropertyViewpoint implements -value). */
 	[self syncView: [self view] withValue: [self valueForProperty: kETValueProperty]];
-	[modelObject addObserver: self];
+	[self startObserveObject: modelObject];
 	_isSettingRepresentedObject = NO;
 }
 

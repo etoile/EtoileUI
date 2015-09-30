@@ -47,6 +47,11 @@
 - (BOOL)commitWithIdentifier: (NSString *)aCommitDescriptorId
 					metadata: (NSDictionary *)additionalMetadata;
 
+/** @taskunit KVO Utilities */
+
+- (void)startObserveObject: (id)anObject;
+- (void)endObserveObject: (id)anObject;
+
 /** @taskunit Framework Private */
 
 + (COObjectGraphContext *) defaultTransientObjectGraphContext;

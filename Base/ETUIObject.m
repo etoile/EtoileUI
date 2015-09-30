@@ -304,4 +304,32 @@ user interaction. */
 	return result;
 }
 
+#pragma mark KVO Utilities -
+
+/** Sets up the given object to observe each receiver key paths returned by 
+-observableKeyPaths. 
+
+The observer will receive NSKeyValueObservingOptionOld and 
+NSKeyValueObservingOptionNew in the change dictionary. */
+- (void)startObserveObject: (id)anObject
+{
+	FOREACH([anObject observableKeyPaths], keyPath, NSString *)
+	{
+		[anObject addObserver: self
+		           forKeyPath: keyPath
+		              options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+		              context: NULL];
+	}
+}
+
+/** Removes the observer that was observing the receiver key paths returned 
+by -observableKeyPaths. */
+- (void)endObserveObject: (id)anObject
+{
+	FOREACH([anObject observableKeyPaths], keyPath, NSString *)
+	{
+		[anObject removeObserver: self forKeyPath: keyPath];
+	}
+}
+
 @end
