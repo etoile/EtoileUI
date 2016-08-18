@@ -95,26 +95,34 @@ See also -isLayerItem. */
 	return self;
 }
 
-- (void) dealloc
+- (void)willDiscard
 {
-	_isDeallocating = YES;
-	[self stopKVOObservationIfNeeded];
-
-	DESTROY(_cachedDisplayImage);
-	DESTROY(_layout);
-	/* Arranged and sorted items are always a children subset, we don't
-	   have to worry about nullifying weak references their element might have. */
-	DESTROY(_arrangedItems);
-	DESTROY(_sortedItems);
 	if ([_items isEmpty] == NO && [[ETLayoutExecutor sharedInstance] isEmpty] == NO)
 	{
 		NSSet *itemSet = [[NSSet alloc] initWithArray: _items];
 		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
 		RELEASE(itemSet);
 	}
-	DESTROY(_items);
+	_isDeallocating = YES;
+
 	/* Tear down the receiver as a source and represented object observer */
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
+
+	/* Will mark the item as deallocating to prevent adding it to the layout 
+	   executor, stop KVO observation on properties before they get deallocated 
+	   in -dealloc, and clear cached outgoing relationships such as ETLayoutItemGroup.items. */
+	[super willDiscard];
+}
+
+- (void) dealloc
+{
+	DESTROY(_cachedDisplayImage);
+	DESTROY(_layout);
+	/* Arranged and sorted items are always a children subset, we don't
+	   have to worry about nullifying weak references their element might have. */
+	DESTROY(_arrangedItems);
+	DESTROY(_sortedItems);
+	DESTROY(_items);
 
 	[super dealloc];
 }

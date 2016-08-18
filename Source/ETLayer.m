@@ -53,7 +53,6 @@ when a layout other than ETWindowLayout is set on the receiver. */
 
 - (void) dealloc
 {
-	[self stopKVOObservationIfNeeded];
 	DESTROY(_rootWindowItem); 
 	DESTROY(_hiddenWindows);
 	[super dealloc];

@@ -239,34 +239,19 @@ worst case, we can be retained/released and thereby reenter -dealloc. */
 	}
 }
 
-/** <override-never /> 
-See -[ETLayoutItem dealloc]. */
-- (void) stopKVOObservationIfNeeded
-{
-	/* This is not really pretty, but it makes possible to have the safest and 
-	   simplest API semantic when a developer writes an ETLayoutItem subclass 
-	   and want to add/remove observers. The deveveloper won't have to check 
-	   special cases (e.g. was KVO stopped by a subclass) in -stopKVOObservation.
-	   Later we could reuse this solution in other class hierarchy too, unless 
-	   we figure out a better way to implement that. */
-	if (_wasKVOStopped)
-		return;
-
-	[self stopKVOObservation];
-
-	_wasKVOStopped = YES;
-}
-
-/** <override-dummy />
-You must call -stopKVOObservationIfNeeded right at the beginning of -dealloc in 
-every subclass that overrides -dealloc. */
-- (void) dealloc
+- (void)willDiscard
 {
 	ETAssert(_deserializationState == nil || [_deserializationState isEmpty]);
 
+	/* Prevent adding the item back to the layout executor */
 	_isDeallocating = YES;
-	[self stopKVOObservationIfNeeded];
+	[self stopKVOObservation];
 
+	[super willDiscard];
+}
+
+- (void) dealloc
+{
 	DESTROY(_deserializationState);
 	DESTROY(_defaultValues);
 	DESTROY(_styleGroup);

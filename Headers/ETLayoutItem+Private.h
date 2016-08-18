@@ -19,7 +19,6 @@
 /** @taskunit KVO Control */
 
 - (void) stopKVOObservation;
-- (void) stopKVOObservationIfNeeded;
 
 /** @taskunit Initial Values */
 
