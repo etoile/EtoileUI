@@ -101,6 +101,7 @@
 		6043D4C61756BFDD002103CC /* ETLayoutItem+AppKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */; };
 		604846C618B6C345006E4EDC /* UnitKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 604846B918B6C32A006E4EDC /* UnitKit.framework */; };
 		604B1BD41D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B1BD31D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m */; };
+		604B1BE91D66069A00C2C3C2 /* ETAspectCategory+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B1BD31D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m */; };
 		605270851966B34D00B280A4 /* TestFreeLayoutPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */; };
 		605270891966C08400B280A4 /* TestStylePersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605270881966C08400B280A4 /* TestStylePersistency.m */; };
 		605480600FA2271500048283 /* ETController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3140,6 +3141,7 @@
 				60AE4C940EED520B00DE82BC /* ETNibOwner.m in Sources */,
 				60D30279194B75B1006BA5A9 /* TestWidgetLayout.m in Sources */,
 				6077C1820F9802E1006CB3F5 /* NSImage+Etoile.m in Sources */,
+				604B1BE91D66069A00C2C3C2 /* ETAspectCategory+ModelDescription.m in Sources */,
 				60D30288194BCB42006BA5A9 /* TestWindowLayout.m in Sources */,
 				6000978F0FAB479500622E5D /* ETModelDescriptionRenderer.m in Sources */,
 				60D30289194BCBD5006BA5A9 /* TestItemPersistency.m in Sources */,
