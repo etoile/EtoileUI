@@ -548,12 +548,12 @@ This coordinate space includes the window decoration (titlebar etc.).  */
 	ETAssert([ETTool activeTool] != nil);
 	
 	ETUIItem *item = [self firstDecoratedItem];
+	ETLayoutItem *initialFocusedItem = nil;
 
-	if ([item isLayoutItem] == NO && [item isGroup] == NO)
-		return;
-
-	ETLayoutItem *initialFocusedItem =
-		[[(ETLayoutItemGroup *)item controller] initialFocusedItem];
+	if ([item isLayoutItem] && [item isGroup])
+	{
+		initialFocusedItem = [[(ETLayoutItemGroup *)item controller] initialFocusedItem];
+	}
 	BOOL usesDefaultInitialFocusedItem = (initialFocusedItem == nil);
 
 	if (usesDefaultInitialFocusedItem)
