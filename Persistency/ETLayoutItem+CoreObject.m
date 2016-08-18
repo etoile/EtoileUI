@@ -11,6 +11,7 @@
 #import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COObject.h>
 #import <CoreObject/COSerialization.h>
+#import <CoreObject/COPrimitiveCollection.h>
 #import "ETLayoutItem+CoreObject.h"
 #import "ETCollectionToPersistentCollection.h"
 #import "ETLayoutItem+Private.h"
@@ -20,6 +21,13 @@
 #import "ETView.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
+
+BOOL isSerializablePrimitiveValue(id value)
+{
+	return ([value isKindOfClass: [NSString class]]
+		|| [value isKindOfClass: [NSNumber class]]
+		|| [value isKindOfClass: [NSData class]]);
+}
 
 @interface COObject (COSerializationPrivate)
 - (id) serializedValueForPropertyDescription: (ETPropertyDescription *)aPropertyDesc;
@@ -346,7 +354,7 @@ Will involve a unnecessary -syncView:withRepresentedObject: call. */
 
 - (BOOL) isSerializableAttributeCollection: (id <ETCollection>)aCollection
 {
-	return [self isSerializablePrimitiveValue: [[aCollection objectEnumerator] nextObject]];
+	return isSerializablePrimitiveValue([[aCollection objectEnumerator] nextObject]);
 }
 
 static NSString *representedRelationshipKey = @"representedRelationship";
@@ -384,7 +392,7 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 			return representedUnorderedAttributeKey;
 		}
 	}
-	else if ([self isSerializablePrimitiveValue: _representedObject])
+	else if (isSerializablePrimitiveValue(_representedObject))
 	{
 		return representedAttributeKey;
 	}
@@ -409,12 +417,12 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 
 - (NSObject *) representedAttribute
 {
-	return ([self isSerializablePrimitiveValue: _representedObject] ? _representedObject : nil);
+	return (isSerializablePrimitiveValue(_representedObject) ? _representedObject : nil);
 }
 
 - (void) setRepresentedAttribute: (NSObject *)aValue
 {
-	ETAssert(aValue == nil || [self isSerializablePrimitiveValue: aValue]);
+	ETAssert(aValue == nil || isSerializablePrimitiveValue(aValue));
 
 	if ([[self representedObjectKey] isEqualToString: representedAttributeKey] == NO)
 		return;
@@ -432,7 +440,7 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	if (aValue == nil)
 		return;
 
-	ETAssert([self isSerializablePrimitiveValue: aValue]);
+	ETAssert(isSerializablePrimitiveValue(aValue));
 	[_deserializationState setObject: aValue
 	                          forKey: representedAttributeKey];
 }
@@ -443,9 +451,9 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 
 	if (isArray && [self isSerializableAttributeCollection: _representedObject])
 	{
-		return _representedObject;
+		return [COMutableArray arrayWithArray:_representedObject];
 	}
-	return [NSArray array];
+	return [COMutableArray array];
 }
 
 - (void) setRepresentedOrderedAttribute: (NSArray *)aValue
@@ -478,9 +486,9 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	
 	if (isSet && [self isSerializableRelationshipCollection: _representedObject])
 	{
-		return _representedObject;
+		return [COMutableSet setWithSet: _representedObject];
 	}
-	return [NSSet set];
+	return [COMutableSet set];
 }
 
 - (void) setRepresentedUnorderedAttribute: (NSSet *)aValue
@@ -546,9 +554,9 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 
 	if (isArray && [self isSerializableRelationshipCollection: _representedObject])
 	{
-		return _representedObject;
+		return [COMutableArray arrayWithArray: _representedObject];
 	}
-  return [NSArray array];
+  return [COMutableArray array];
 }
 
 - (void) setRepresentedOrderedRelationship: (NSArray *)aValue
@@ -581,9 +589,9 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 
 	if (isSet && [self isSerializableRelationshipCollection: _representedObject])
 	{
-		return _representedObject;
+		return [COMutableSet setWithSet: _representedObject];
 	}
-	return [NSSet set];
+	return [COMutableSet set];
 }
 
 - (void) setRepresentedUnorderedRelationship: (NSSet *)aValue
