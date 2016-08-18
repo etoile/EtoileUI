@@ -12,6 +12,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COPrimitiveCollection.h>
 #import "ETLayoutItemGroup.h"
 #import "ETBasicItemStyle.h"
 #import "ETController.h"
@@ -66,7 +67,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	if (nil == self)
 		return nil;
 
-	_items = [[NSMutableArray alloc] init];
+	_items = [[COMutableArray alloc] init];
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
@@ -1523,7 +1524,7 @@ redisplayed. */
 	/* Create a new sort cache in case -setHasNewContent: invalidated it */
 	if (_sortedItems == nil)
 	{
-		_sortedItems = [_items mutableCopy];
+		_sortedItems = [NSMutableArray arrayWithArray: _items];
 	}
 
 	NSArray *descriptors =

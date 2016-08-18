@@ -42,7 +42,7 @@ invalid arguments. */
 @interface ETAspectCategory : ETUIObject <ETKeyedCollection, ETCollectionMutation>
 {
 	@protected
-	NSMutableArray *_aspects; /* An array of ETKeyValuePair */
+	NSMutableArray *_aspectEntries; /* An array of ETKeyValuePair */
 	@private
 	NSSet *allowedAspectTypes;
 	NSString *name;

@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COPrimitiveCollection.h>
 #import "ETStyleGroup.h"
 #import "ETCompatibility.h"
 
@@ -62,11 +63,11 @@ in the given style collection. */
 	[self setIsShared: NO];
 	if (styles != nil)
 	{
-		_styles = [[styles contentArray] mutableCopy];
+		_styles = [[COMutableArray alloc] initWithArray: [styles contentArray]];
 	}
 	else
 	{
-		_styles = [[NSMutableArray alloc] init];
+		_styles = [[COMutableArray alloc] init];
 	}
 	return self;
 }

@@ -100,6 +100,7 @@
 		6043D4C51756BFDD002103CC /* ETLayoutItem+AppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */; };
 		6043D4C61756BFDD002103CC /* ETLayoutItem+AppKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */; };
 		604846C618B6C345006E4EDC /* UnitKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 604846B918B6C32A006E4EDC /* UnitKit.framework */; };
+		604B1BD41D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 604B1BD31D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m */; };
 		605270851966B34D00B280A4 /* TestFreeLayoutPersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */; };
 		605270891966C08400B280A4 /* TestStylePersistency.m in Sources */ = {isa = PBXBuildFile; fileRef = 605270881966C08400B280A4 /* TestStylePersistency.m */; };
 		605480600FA2271500048283 /* ETController.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C800D3F739000B4CA3D /* ETController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -694,6 +695,13 @@
 			remoteGlobalIDString = 60E23C0818B5134100CE38D0;
 			remoteInfo = "TestUnitKit (iOS)";
 		};
+		604B1BDC1D65BF7E00C2C3C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6084048815415CB2002F91A1 /* CoreObject.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6061B8D71C57E89700813C18;
+			remoteInfo = "BenchmarkCoreObject (iOS)";
+		};
 		605AD42F13BF8D8500755772 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -970,6 +978,7 @@
 		6043D1B0174E27D3002103CC /* TestCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestCommon.m; path = Tests/TestCommon.m; sourceTree = "<group>"; };
 		6043D4C31756BFD8002103CC /* ETLayoutItem+AppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+AppKit.h"; path = "WidgetBackends/AppKit/ETLayoutItem+AppKit.h"; sourceTree = "<group>"; };
 		6043D4C41756BFD9002103CC /* ETLayoutItem+AppKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+AppKit.m"; path = "WidgetBackends/AppKit/ETLayoutItem+AppKit.m"; sourceTree = "<group>"; };
+		604B1BD31D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETAspectCategory+ModelDescription.m"; path = "ModelDescription/ETAspectCategory+ModelDescription.m"; sourceTree = "<group>"; };
 		605270841966B34D00B280A4 /* TestFreeLayoutPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFreeLayoutPersistency.m; path = Tests/TestFreeLayoutPersistency.m; sourceTree = "<group>"; };
 		605270881966C08400B280A4 /* TestStylePersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestStylePersistency.m; path = Tests/TestStylePersistency.m; sourceTree = "<group>"; };
 		60539D940C240A7B006C57EC /* PaneExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaneExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1613,6 +1622,7 @@
 				601296A713C7482500980F16 /* ETController+ModelDescription.m */,
 				60908DE5186195DC00E44F24 /* ETTool+ModelDescription.m */,
 				603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */,
+				604B1BD31D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m */,
 				609DE83F1761C86900F486FD /* NSSortDescriptor+ModelDescription.m */,
 				609DE8421761D0C000F486FD /* ETUTI+ModelDescription.m */,
 				60AA9B95177C524A001919C2 /* ETViewpoint+ModelDescription.m */,
@@ -1829,6 +1839,7 @@
 				608B3F6519FFA41200304809 /* libCoreObject.a */,
 				608B3F6719FFA41200304809 /* TestCoreObject.app */,
 				608B3F6919FFA41200304809 /* BasicPersistence.app */,
+				604B1BDD1D65BF7E00C2C3C2 /* BenchmarkCoreObject (iOS).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2722,6 +2733,13 @@
 			remoteRef = 604846C418B6C32A006E4EDC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		604B1BDD1D65BF7E00C2C3C2 /* BenchmarkCoreObject (iOS).app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "BenchmarkCoreObject (iOS).app";
+			remoteRef = 604B1BDC1D65BF7E00C2C3C2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6084048F15415CB2002F91A1 /* CoreObject.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -3399,6 +3417,7 @@
 				60BBFDF218645483006A495E /* ETTool.m in Sources */,
 				60BBFE0518645684006A495E /* ETApplication.m in Sources */,
 				60BBFE0918645684006A495E /* ETEvent.m in Sources */,
+				604B1BD41D65BF7E00C2C3C2 /* ETAspectCategory+ModelDescription.m in Sources */,
 				60BBFE0F18645684006A495E /* ETResponder.m in Sources */,
 				60BBFE1318645684006A495E /* ETUIItem.m in Sources */,
 				60BBFE1718645684006A495E /* ETUIObject.m in Sources */,

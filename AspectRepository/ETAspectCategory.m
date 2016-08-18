@@ -12,6 +12,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/NSObject+Trait.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COPrimitiveCollection.h>
 #import "ETAspectCategory.h"
 #import "ETCompatibility.h"
 
@@ -54,11 +55,11 @@ name. */
 
 	if (nil == aDict)
 	{
-		_aspects = [[NSMutableArray alloc] init];
+		_aspectEntries = [[COMutableArray alloc] init];
 	}
 	else
 	{
-		_aspects = [[aDict arrayRepresentation] mutableCopy];
+		_aspectEntries = [[COMutableArray alloc] initWithArray: [aDict arrayRepresentation]];
 	}
 	allowedAspectTypes = [[NSSet alloc] initWithObjects: [[self class] anyType], nil];
 	if (aName == nil)
@@ -92,7 +93,7 @@ See -initWithName:dictionary:objectGraphContext:. */
 
 - (void) dealloc
 {
-	DESTROY(_aspects);
+	DESTROY(_aspectEntries);
 	DESTROY(allowedAspectTypes);
 	DESTROY(name);
 	DESTROY(icon);
@@ -118,7 +119,7 @@ usually use -resolvedAspectForKey: than this method.
 See also -setAspect:forKey:. */
 - (id) aspectForKey: (NSString *)aKey
 {
-	FOREACH(_aspects, pair, ETKeyValuePair *)
+	FOREACH(_aspectEntries, pair, ETKeyValuePair *)
 	{
 		if ([[pair key] isEqualToString: aKey])
 		{
@@ -166,19 +167,21 @@ See also -setAspect:forKey:. */
 		            format: @"Cannot insert %@. Aspect type %@ not allowed in %@",
 		                    anAspect, aspectType, self];
 	}
+	[self willChangeValueForProperty: @"aspectEntries"];
 
 	ETKeyValuePair *pair = [[ETKeyValuePair alloc] initWithKey: aKey value: anAspect];
 
 	if (anIndex == ETUndeterminedIndex)
 	{
-		[_aspects addObject: pair];
+		[_aspectEntries addObject: pair];
 	}
 	else
 	{
-		[_aspects insertObject: pair atIndex: anIndex];
+		[_aspectEntries insertObject: pair atIndex: anIndex];
 	}
 
 	RELEASE(pair);
+	[self didChangeValueForProperty: @"aspectEntries"];
 }
 
 /** Sets the aspect bound to the given key.
@@ -202,13 +205,15 @@ and -resolvedAspectForKey:. */
 /** Removes the aspect bound to the given key. */
 - (void) removeAspectForKey: (NSString *)aKey
 {
-	[_aspects removeObject: [self aspectForKey: aKey]];
+	[self willChangeValueForProperty: @"aspectEntries"];
+	[_aspectEntries removeObject: [self aspectForKey: aKey]];
+	[self didChangeValueForProperty: @"aspectEntries"];
 }
 
 /** Returns all the aspect keys. */
 - (NSArray *) aspectKeys
 {
-	return (id)[[_aspects mappedCollection] key];
+	return (id)[[_aspectEntries mappedCollection] key];
 }
 
 /** Returns all the aspect objects and aliased aspect names.
@@ -216,7 +221,7 @@ and -resolvedAspectForKey:. */
 Aliased aspect names are not resolved in the returned array. */
 - (NSArray *) aspects
 {
-	return (id)[[_aspects mappedCollection] value];
+	return (id)[[_aspectEntries mappedCollection] value];
 }
 
 /** Returns the aspect object bound to the given key, by resolving aliased 
@@ -254,7 +259,7 @@ See also -aspectForKey:. */
 See ETKeyValuePair and ETKeyedCollection. */
 - (NSArray *) arrayRepresentation
 {
-	return [NSArray arrayWithArray: _aspects];
+	return [NSArray arrayWithArray: _aspectEntries];
 }
 
 /** Returns a key-value pair collection.
@@ -262,7 +267,7 @@ See ETKeyValuePair and ETKeyedCollection. */
 See ETKeyValuePair. */
 - (id) content
 {
-	return _aspects;
+	return _aspectEntries;
 }
 
 /** Returns the same than -aspects. */
@@ -315,7 +320,7 @@ See ETKeyValuePair. */
 	}
 	else
 	{
-		[_aspects removeObjectAtIndex: index];
+		[_aspectEntries removeObjectAtIndex: index];
 	}
 }
 
