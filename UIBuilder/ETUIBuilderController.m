@@ -219,7 +219,7 @@
 
 	_isChangingSelection = YES;
 
-	NSArray *selectionIndexPaths = [[[self documentContentItem] ifResponds] selectionIndexPaths];
+	NSArray *selectionIndexPaths = (NSArray *)[[[self documentContentItem] ifResponds] selectionIndexPaths];
 
 	if (selectionIndexPaths == nil)
 	{

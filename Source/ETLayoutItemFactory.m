@@ -598,7 +598,7 @@ See also -buttonWithIconNamed:target:action:.  */
 	[buttonView setImage: anImage];
 	[buttonView setTarget: aTarget];
 	[buttonView setAction: aSelector];
-	[buttonView setTitle: nil];
+	[buttonView setTitle: @""];
 	/* -setTitle: resets the image position */
 	[buttonView setImagePosition: NSImageOnly];
 	

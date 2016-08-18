@@ -20,6 +20,7 @@
 #import "CoreObjectUI.h"
 #import "ETLayoutItemGroup.h"
 #import "ETColumnLayout.h"
+#import "ETItemTemplate.h"
 #import "ETItemValueTransformer.h"
 #import "ETLineLayout.h"
 #import "ETOutlineLayout.h"
