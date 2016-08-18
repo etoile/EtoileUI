@@ -180,13 +180,16 @@ original items which are replaced by the layout. */
 {
     [layout validateLayoutContext: self];
 
-    [self willChangeValueForProperty: @"positionalLayout"];
+	/* Must precede -willChangeValueForProperty: which resets the positional 
+	   layout context to nil */
 	[_positionalLayout tearDown];
+
+    [self willChangeValueForProperty: @"positionalLayout"];
 	ASSIGN(_positionalLayout, layout);
     [self didChangeValueForProperty: @"positionalLayout"];
 
-	// NOTE: The remaining code requires ETLayout.layoutContext to be set, so we
-	// execute it last
+	/* Must follow -didChangeValueForProperty: which ensures the positional 
+	   layout context is set */
 	[layout setUp: NO];
 
 	if (layout == nil)

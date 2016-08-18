@@ -796,10 +796,12 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 	//ETDebugLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 
 	ETLayout *oldLayout = RETAIN(_layout);
+	
+	/* Must precede -willChangeValueForProperty: which resets the context to nil */
+	[_layout tearDown];
 
 	[self willChangeValueForProperty: kETLayoutProperty];
 
-    [_layout tearDown];
     ASSIGN(_layout, layout);
     /* We must remove the item views, otherwise they might remain visible as
        subviews (think ETBrowserLayout on GNUstep which has transparent areas),

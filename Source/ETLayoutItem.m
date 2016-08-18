@@ -3104,8 +3104,8 @@ See also -action and -setView:. */
 	}
 	[[self layout] syncLayoutViewWithItem: self];
 
-	[self didChangeValueForProperty: kETActionProperty];
 	[self didChangeValueForProperty: @"UIBuilderAction"];
+	[self didChangeValueForProperty: kETActionProperty];
 }
 
 /** Returns the action that can be sent by the action handler associated with 
