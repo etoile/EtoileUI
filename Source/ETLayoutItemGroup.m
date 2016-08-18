@@ -1531,7 +1531,7 @@ redisplayed. */
 	/* Create a new sort cache in case -setHasNewContent: invalidated it */
 	if (_sortedItems == nil)
 	{
-		_sortedItems = [NSMutableArray arrayWithArray: _items];
+		_sortedItems = [[NSMutableArray alloc] initWithArray: _items];
 	}
 
 	NSArray *descriptors =
