@@ -18,6 +18,11 @@
 #import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
 
+@interface ETLayoutItemGroup (ETMutationCallbacks)
+- (void) attachItem:(ETLayoutItem *)item;
+- (void) detachItem: (ETLayoutItem *)item;
+@end
+
 @interface ETLayoutItemGroup (ETSource)
 - (BOOL) isReloading;
 - (int) checkSourceProtocolConformance;
@@ -156,6 +161,7 @@ To do so, -canReload checks -isMutating. */
 		return;
 	}
 
+	RETAIN(item);
     [self willChangeValueForProperty: @"items"
                            atIndexes: [self insertionIndexesForIndex: index]
                          withObjects: A(item)
@@ -169,7 +175,7 @@ To do so, -canReload checks -isMutating. */
 
 	[self beginCoalescingModelMutation];
 
-	[self handleAttachItem: item];
+	[self attachItem: item];
 	/* For ETUndeterminedIndex, will use -addObject: */
 	[_items insertObject: item atIndex: index hint: nil];
 	[self didChangeContentWithMoreComing: moreComing];
@@ -181,6 +187,8 @@ To do so, -canReload checks -isMutating. */
                           atIndexes: [self insertionIndexesForIndex: index]
                         withObjects: A(item)
                        mutationKind: ETCollectionMutationKindInsertion];
+	[self didAttachItem: item];
+	RELEASE(item);
 }
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
@@ -238,7 +246,7 @@ To do so, -canReload checks -isMutating. */
 {
 	NSParameterAssert(item != nil);
 
-	/* Very important to return immediately, -handleDetachItem: execution would 
+	/* Very important to return immediately, -detachItem: execution would 
 	   lead to a weird behavior: the item parent item would be set to nil. */
 	if ([[item parentItem] isEqual: self] == NO)
 		return;
@@ -247,6 +255,7 @@ To do so, -canReload checks -isMutating. */
     // snapshot the item collection.
     NSIndexSet *indexes = [self removalIndexesForItem: item atIndex: index];
 
+	RETAIN(item);
     [self willChangeValueForProperty: @"items"
                            atIndexes: indexes
                          withObjects: A(item)
@@ -262,7 +271,7 @@ To do so, -canReload checks -isMutating. */
 
 	[self beginCoalescingModelMutation];
 
-	[self handleDetachItem: item];
+	[self detachItem: item];
 	/* For ETUndeterminedIndex, will use -removeObject: */
 	[_items removeObject: item atIndex: index hint: nil];
 	[self didChangeContentWithMoreComing: moreComing];
@@ -274,6 +283,8 @@ To do so, -canReload checks -isMutating. */
                           atIndexes: indexes
                         withObjects: A(item)
                        mutationKind: ETCollectionMutationKindRemoval];
+	[self didDetachItem: item];
+	RELEASE(item);
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item

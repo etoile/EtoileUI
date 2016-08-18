@@ -244,17 +244,7 @@ See also -handleAttachViewOfItem: and -[ETUIItem displayView]. */
 	[[item displayView] removeFromSuperview];
 }
 
-/** <override-dummy />Handles any necessary adjustments to be done right before
-item is made a child item of the receiver. This method is available to be
-overriden in subclasses that want to extend or modify the item insertion
-behavior.
-
-The default implementation takes to care to remove item from any existing parent
-item, then updates the parent item reference to be the receiver.<br />
-You must always call the superclass implementation.
-
-Symetric method to -handleDetachItem: */
-- (void) handleAttachItem: (ETLayoutItem *)item
+- (void) attachItem: (ETLayoutItem *)item
 {
 	RETAIN(item);
 	if ([item parentItem] != nil)
@@ -265,18 +255,33 @@ Symetric method to -handleDetachItem: */
 	[self handleAttachViewOfItem: item];
 }
 
-/** <override-dummy />Handles any necessary adjustments to be done right before
-item is removed as a child item from the receiver. This method is available to
-be overriden in subclasses that want to extend or modify the item removal
-behavior.
+/** <override-dummy />Adjusts the item tree once the item has become a child of 
+the receiver. This method is available to be overriden in subclasses that want 
+to extend or modify the item insertion behavior.
 
-The default implementation only updates the parent item reference to be nil. <br />
-You must always call the superclass implementation.
+The default implementation does nothing.
 
-Symetric method to -handleAttachItem: */
-- (void) handleDetachItem: (ETLayoutItem *)item
+Symetric method to -didDetachItem: */
+- (void) didAttachItem:(ETLayoutItem *)item
+{
+
+}
+
+- (void) detachItem: (ETLayoutItem *)item
 {
 	[self handleDetachViewOfItem: item];
+}
+
+/** <override-dummy />Adjusts the item tree once the item has been removed from 
+the receiver. This method is available to be overriden in subclasses that want 
+to extend or modify the item removal behavior.
+
+The default implementation does nothing.
+
+Symetric method to -attachItem: */
+- (void) didDetachItem: (ETLayoutItem *)item
+{
+
 }
 
 - (BOOL) isCollectionViewpoint: (id)anObject

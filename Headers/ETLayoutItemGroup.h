@@ -166,9 +166,9 @@
 
 - (BOOL) canReload;
 - (void) reload;
-- (void) handleAttachItem: (ETLayoutItem *)item;
+- (void) didAttachItem: (ETLayoutItem *)item;
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item;
-- (void) handleDetachItem: (ETLayoutItem *)item;
+- (void) didDetachItem: (ETLayoutItem *)item;
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item;
 - (void) didChangeSelection;
 - (id) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext;

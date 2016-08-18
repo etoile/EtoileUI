@@ -27,7 +27,7 @@ a remove. If a layout item is moved to a new parent item on insert or add, and
 this new parent that differs from the existing parent, the new parent will 
 require that the item to be inserted removes itself from its existing parent, 
 before truly inserting it.<br />
-See -[ETLayoutItemGroup handleAttachItem:], -[ETLayoutItemGroup handleDetachItem:] 
+See -[ETLayoutItemGroup attachItem:], -[ETLayoutItemGroup detachItem:] 
 and -isCoalescingModelMutation.
    
 Take note, you can induce implicit mutations in your code if you write a 
