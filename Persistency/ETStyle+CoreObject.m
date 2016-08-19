@@ -22,21 +22,3 @@
 }
 
 @end
-
-
-@interface ETShape (CoreObject)
-@end
-
-@implementation ETShape (CoreObject)
-
-- (NSString *) serializedPathResizeSelector
-{
-	return NSStringFromSelector(_resizeSelector);
-}
-
-- (void) setSerializedPathResizeSelector: (NSString *)aSelString
-{
-	_resizeSelector = NSSelectorFromString(aSelString);
-}
-
-@end

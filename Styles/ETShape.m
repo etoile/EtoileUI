@@ -28,11 +28,6 @@ typedef NSBezierPath* (*PathProviderFunction)(id, SEL, NSRect);
 	return @"Shape";
 }
 
-+ (NSSet *) keyPathsForValuesAffectingBounds
-{
-    return S(@"path");
-}
-
 static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 
 + (NSRect) defaultShapeRect
@@ -113,6 +108,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	DESTROY(_path);
     DESTROY(_fillColor);
     DESTROY(_strokeColor);
+	DESTROY(_pathResizeSelectorName);
     [super dealloc];
 }
 
@@ -148,6 +144,11 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 	[self didChangeValueForProperty: @"path"];
 }
 
++ (NSSet *) keyPathsForValuesAffectingBounds
+{
+    return S(@"path");
+}
+
 - (NSRect) bounds
 {
 	return [_path bounds];
@@ -162,7 +163,7 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 		return;
 
 	[self willChangeValueForProperty: @"bounds"];
-	if (_resizeSelector != NULL)
+	if ([self pathResizeSelector] != NULL)
 	{
 		NSBezierPath *resizedPath = [self providedPathWithRect: aRect];
 
@@ -183,12 +184,12 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 {
 	PathProviderFunction resizeFunction;
 	
-	resizeFunction = (PathProviderFunction)[[self pathProvider] methodForSelector: _resizeSelector];
+	resizeFunction = (PathProviderFunction)[[self pathProvider] methodForSelector: [self pathResizeSelector]];
 	
 	if (resizeFunction == NULL)
 		return nil;
 
-	return resizeFunction([self pathProvider], _resizeSelector, aRect);
+	return resizeFunction([self pathProvider], [self pathResizeSelector], aRect);
 }
 
 - (id) pathProvider
@@ -196,16 +197,23 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 	return [NSBezierPath class];
 }
 
+/* At deserialization time, this ensures objects observing pathResizeSelector
+are notified. */
++ (NSSet *) keyPathsForValuesAffectingPathResizeSelector
+{
+	return S(@"pathResizeSelectorName");
+}
+
 - (SEL) pathResizeSelector
 {
-	return _resizeSelector;
+   return NSSelectorFromString(_pathResizeSelectorName);
 }
 
 - (void) setPathResizeSelector: (SEL)aSelector
 {
-	[self willChangeValueForProperty: @"pathResizeSelector"];
-	_resizeSelector = aSelector;
-	[self didChangeValueForProperty: @"pathResizeSelector"];
+	[self willChangeValueForProperty: @"pathResizeSelectorName"];
+	ASSIGN(_pathResizeSelectorName, NSStringFromSelector(aSelector));
+	[self didChangeValueForProperty: @"pathResizeSelectorName"];
 }
 
 - (NSColor *) fillColor

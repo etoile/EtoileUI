@@ -116,7 +116,7 @@
 	[shape setHidden: YES];
 
 	UKRectsEqual(rect, [[shape roundTripValueForProperty: @"path"] bounds]);
-	UKStringsEqual(@"resizedPathWithRect:", [shape roundTripValueForProperty: @"pathResizeSelector"]);
+	UKStringsEqual(@"resizedPathWithRect:", [shape roundTripValueForProperty: @"pathResizeSelectorName"]);
 	UKObjectsEqual([NSColor redColor], [shape roundTripValueForProperty: @"fillColor"]);
 	UKNil([shape roundTripValueForProperty: @"strokeColor"]);
 	UKTrue([[shape roundTripValueForProperty: @"hidden"] boolValue]);

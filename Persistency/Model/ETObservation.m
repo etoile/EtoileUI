@@ -52,6 +52,13 @@
 	return entity;
 }
 
+/* At deserialization time, this ensures objects observing ETObservation.selector 
+are notified. */
++ (NSSet *) keyPathsForValuesAffectingSelector
+{
+	return S(@"selectorName");
+}
+
 - (SEL) selector
 {
     return NSSelectorFromString([self selectorName]);
@@ -60,11 +67,7 @@
 - (void) setSelector: (SEL)aSelector
 {
     [self willChangeValueForProperty: @"selector"];
-    [self willChangeValueForProperty: @"selectorName"];
-
     [self setSelectorName: NSStringFromSelector(aSelector)];
-
-    [self didChangeValueForProperty: @"selectorName"];
     [self didChangeValueForProperty: @"selector"];
 }
 

@@ -30,7 +30,7 @@ returns NO unlike ETStyle. */
 	NSColor *_strokeColor;
 	CGFloat _alphaValue;
 	BOOL _hidden;
-	SEL _resizeSelector;
+	NSString *_pathResizeSelectorName;
 }
 
 + (NSRect) defaultShapeRect;

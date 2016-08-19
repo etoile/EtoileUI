@@ -153,7 +153,7 @@
     [path setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *bounds = [ETPropertyDescription descriptionWithName: @"bounds" type: (id)@"NSRect"];
 	ETPropertyDescription *pathResizeSel = [ETPropertyDescription descriptionWithName: @"pathResizeSelector" type: (id)@"SEL"];
-    [pathResizeSel setPersistentTypeName: @"NSString"];
+	ETPropertyDescription *pathResizeSelName = [ETPropertyDescription descriptionWithName: @"pathResizeSelectorName" typeName: @"NSString"];
 	ETPropertyDescription *fillColor = [ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
     [fillColor setValueTransformerName: @"COColorToHTMLString"];
     [fillColor setPersistentTypeName: @"NSString"];
@@ -163,8 +163,8 @@
 	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"CGFloat"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
-	NSArray *transientProperties = A(bounds);
-	NSArray *persistentProperties = A(path, pathResizeSel, fillColor, strokeColor, alpha, hidden);
+	NSArray *transientProperties = A(bounds, pathResizeSel);
+	NSArray *persistentProperties = A(path, pathResizeSelName, fillColor, strokeColor, alpha, hidden);
 
 	[entity setUIBuilderPropertyNames: (id)[[A(path, fillColor, strokeColor,
 		alpha) mappedCollection] name]];
