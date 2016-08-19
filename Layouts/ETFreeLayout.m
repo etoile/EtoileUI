@@ -36,11 +36,11 @@ unlike ETPositionalLayout.  */
 	return self;
 }
 
-- (void) dealloc
+- (void) willDiscard
 {
-	[self updateKVOForItems: [NSArray array]]; /* Release _observedItems */
-
-	[super dealloc];
+	/* Release the observed items */
+	[self updateKVOForItems: [NSArray array]];
+	[super willDiscard];
 }
 
 - (NSImage *) icon

@@ -203,6 +203,7 @@ objects as a collection distinct from the content. */
 /* Framework Private */
 
 + (id <ETTemplateProvider>) basicTemplateProviderForObjectGraphContext: (COObjectGraphContext *)aContext;
+- (void) stopObservation;
 
 @end
 

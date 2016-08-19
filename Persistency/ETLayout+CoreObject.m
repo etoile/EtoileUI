@@ -67,6 +67,19 @@ or a layout without a context. */
 
 @implementation ETFreeLayout (CoreObject)
 
+/**
+ * Will prevent KVO notifications to be received during the reloading.
+ *
+ * Unused items are retained by the object graph context until the next GC phase 
+ * (e.g. on commit), so if we just wanted to discard invalid/outdated observed 
+ * items, we could do it in -didLoadObjectGraph.
+ */
+- (void) willLoadObjectGraph
+{
+	[super willLoadObjectGraph];
+	[self updateKVOForItems: [NSArray array]];
+}
+
 - (void) didLoadObjectGraph
 {
     /* Will call -mapLayerItemIntoLayoutContext to recreate the layer item */

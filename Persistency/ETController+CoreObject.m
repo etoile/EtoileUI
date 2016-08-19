@@ -91,6 +91,19 @@
 	[self prepareTransientState];
 }
 
+/**
+ * Will prevent notifications to be received during the reloading.
+ *
+ * Unused items are retained by the object graph context until the next GC phase 
+ * (e.g. on commit), so if we just wanted to discard invalid/outdated observed 
+ * objects, we could do it in -didLoadObjectGraph.
+ */
+- (void) willLoadObjectGraph
+{
+	[super willLoadObjectGraph];
+	[self stopObservation];
+}
+
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
