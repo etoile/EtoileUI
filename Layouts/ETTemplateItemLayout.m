@@ -285,7 +285,7 @@ by the value returned by the template item. */
 		[self setUpTemplateElementsForItem: item];
 	}
 
-	ASSIGN(_renderedTemplateKeys, _templateKeys);
+	ASSIGNCOPY(_renderedTemplateKeys, _templateKeys);
 	_needsPrepareItems = NO;
 }
 
