@@ -351,6 +351,11 @@ The observed object must not be nil, the selector must not be NULL either. */
     ETObservation *observation = AUTORELEASE([[ETObservation alloc]
         initWithObjectGraphContext: [self objectGraphContext]]);
 
+	[self willChangeValueForProperty: @"observations"
+	                       atIndexes: [NSIndexSet indexSet]
+	                     withObjects: @[observation]
+	                    mutationKind: ETCollectionMutationKindInsertion];
+
     [observation setObject: anObject];
     [observation setName: aName];
     [observation setSelector: aSelector];
@@ -361,6 +366,11 @@ The observed object must not be nil, the selector must not be NULL either. */
 	                                         selector: aSelector
 	                                             name: aName
 	                                           object: anObject];
+	
+	[self didChangeValueForProperty: @"observations"
+	                      atIndexes: [NSIndexSet indexSet]
+	                    withObjects: @[observation]
+	                   mutationKind: ETCollectionMutationKindInsertion];
 }
 
 /** Removes the receiver as an observer on the given object and notification 
@@ -373,6 +383,8 @@ The observed object must not be nil. */
 - (void) stopObserveObject: (COObject *)anObject forNotificationName: (NSString *)aName
 {
 	NILARG_EXCEPTION_TEST(anObject);
+	
+	[self willChangeValueForProperty: @"observations"];
 
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 	BOOL removeAll = (nil == aName);
@@ -390,6 +402,8 @@ The observed object must not be nil. */
 			[notifCenter removeObserver: self name: aName object: anObject];
 		}
 	}
+	
+	[self didChangeValueForProperty: @"observations"];
 }
 
 /* Templates */
@@ -411,7 +425,9 @@ See also -setCurrentObjectType: and -setTemplate:forType:. */
 See also -setTemplate:forType:. */
 - (void) setCurrentObjectType: (ETUTI *)aUTI
 {
+	[self willChangeValueForProperty: @"currentObjectType"];
 	ASSIGN(_currentObjectType, aUTI);
+	[self didChangeValueForProperty: @"currentObjectType"];
 }
 
 /** Returns the type of the template to be instantiated on -addNewGroup: and 
@@ -462,7 +478,17 @@ element type.
 See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (void) setTemplate: (ETItemTemplate *)aTemplate forType: (ETUTI *)aUTI
 {
+    [self willChangeValueForProperty: @"templates"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(aTemplate)
+                        mutationKind: ETCollectionMutationKindReplacement];
+
 	[_templates setObject: aTemplate forKey: [aUTI stringValue]];
+
+    [self didChangeValueForProperty: @"templates"
+                          atIndexes: [NSIndexSet indexSet]
+                        withObjects: A(aTemplate)
+                       mutationKind: ETCollectionMutationKindReplacement];
 }
 
 /** Returns the object that manages persistency.
@@ -989,7 +1015,9 @@ By default, return YES. */
 item is inserted. */
 - (void) setClearsFilterPredicateOnInsertion: (BOOL)clear
 {
+	[self willChangeValueForProperty: @"clearsFilterPredicateOnInsertion"];
 	_clearsFilterPredicateOnInsertion = YES;
+	[self didChangeValueForProperty: @"clearsFilterPredicateOnInsertion"];
 }
 
 /** Returns whether new items should be selected on insertion.
@@ -1003,7 +1031,9 @@ By default, returns YES. */
 /** Sets whether new items should be selected on insertion. */
 - (void) setSelectsInsertedObjects: (BOOL)select
 {
+	[self willChangeValueForProperty: @"selectsInsertedObjects"];
 	_selectsInsertedObjects = select;
+	[self didChangeValueForProperty: @"selectsInsertedObjects"];
 }
 
 /** Returns the sort descriptors used to sort the content associated with the 
@@ -1012,24 +1042,21 @@ receiver.
 By default, returns an empty array. */
 - (NSArray *) sortDescriptors
 {
-	return AUTORELEASE([_sortDescriptors copy]);
+	return _sortDescriptors;
 }
 
 /** Set the sort descriptors used to sort the content associated with the 
 receiver. */
 - (void) setSortDescriptors: (NSArray *)sortDescriptors
 {
-	if (sortDescriptors != nil)
-	{
-		ASSIGNCOPY(_sortDescriptors, sortDescriptors);
-	}
-	else
-	{
-		_sortDescriptors = [[NSArray alloc] init];
-	}
+	[self willChangeValueForProperty: @"sortDescriptors"];
+
+	[_sortDescriptors setArray: (sortDescriptors!= nil ? sortDescriptors : @[])];
 	_hasNewSortDescriptors = YES;
 	if ([self automaticallyRearrangesObjects])
 		[self rearrangeObjects];
+
+	[self didChangeValueForProperty: @"sortDescriptors"];
 }
 
 /** Returns the search predicate to filter the controller content. */
@@ -1041,10 +1068,12 @@ receiver. */
 /** Sets the search predicate to filter the controller content. */
 - (void) setFilterPredicate: (NSPredicate *)searchPredicate
 {
+	[self willChangeValueForProperty: @"filterPredicate"];
 	ASSIGN(_filterPredicate, searchPredicate);
 	_hasNewFilterPredicate = YES;
 	if ([self automaticallyRearrangesObjects])
 		[self rearrangeObjects];
+	[self didChangeValueForProperty: @"filterPredicate"];
 }
 
 /** Arranges the objects in the content by sorting them, then filtering them 
@@ -1090,7 +1119,9 @@ Returns YES by default. */
 -setFilterPredicate: is called. */
 - (void) setAutomaticallyRearrangesObjects: (BOOL)flag
 {
+	[self willChangeValueForProperty: @"automaticallyRearrangesObjects"];
 	_automaticallyRearrangesObjects = flag;
+	[self didChangeValueForProperty: @"automaticallyRearrangesObjects"];
 }
 
 /* Pick and Drop */
@@ -1104,17 +1135,9 @@ Returns YES by default. */
 {
 	NILARG_EXCEPTION_TEST(UTIs);
 
-    [self willChangeValueForProperty: @"allowedPickTypes"
-                           atIndexes: [NSIndexSet indexSet]
-                         withObjects: A(UTIs)
-                        mutationKind: ETCollectionMutationKindReplacement];
-
-	ASSIGN(_allowedPickTypes, UTIs);
-
-    [self didChangeValueForProperty: @"allowedPickTypes"
-                           atIndexes: [NSIndexSet indexSet]
-                         withObjects: A(UTIs)
-                        mutationKind: ETCollectionMutationKindReplacement];
+    [self willChangeValueForProperty: @"allowedPickTypes"];
+	[_allowedPickTypes setArray: UTIs];
+    [self didChangeValueForProperty: @"allowedPickTypes"];
 }
 
 /* -allowedDropTypesForTargetType: can be rewritten with HOM. Not sure it won't
@@ -1151,11 +1174,6 @@ too slow given that the method tends to be invoked repeatedly.
 	NILARG_EXCEPTION_TEST(targetUTI);
 	NILARG_EXCEPTION_TEST(UTIs);
 
-    [self willChangeValueForProperty: @"allowedDropTypes"
-                           atIndexes: [NSIndexSet indexSet]
-                         withObjects: A(UTIs)
-                        mutationKind: ETCollectionMutationKindReplacement];
-
 	ETUTITuple *UTITuples = [_allowedDropTypes objectForKey: [targetUTI stringValue]];
 
     if (UTITuples == nil)
@@ -1164,12 +1182,17 @@ too slow given that the method tends to be invoked repeatedly.
     }
     [UTITuples setContent: UTIs];
 
+    [self willChangeValueForProperty: @"allowedDropTypes"
+                           atIndexes: [NSIndexSet indexSet]
+                         withObjects: A(UTITuples)
+                        mutationKind: ETCollectionMutationKindReplacement];
+
     [_allowedDropTypes setObject: UTITuples
                           forKey: [targetUTI stringValue]];
 
     [self didChangeValueForProperty: @"allowedDropTypes"
                           atIndexes: [NSIndexSet indexSet]
-                        withObjects: A(UTIs)
+                        withObjects: A(UTITuples)
                        mutationKind: ETCollectionMutationKindReplacement];
 }
 
