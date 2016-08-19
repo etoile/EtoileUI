@@ -10,6 +10,7 @@
 #import <EtoileFoundation/ETCollection+HOM.h>
 #import <EtoileFoundation/ETUTI.h>
 #import <EtoileFoundation/NSObject+Model.h>
+#import <CoreObject/COPrimitiveCollection.h>
 #import "ETController.h"
 #import "ETUTITuple.h"
 #import "ETEventProcessor.h"
@@ -73,12 +74,14 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	if (nil == self)
 		return nil;
 
-	_observations = [[NSMutableSet alloc] init];
-	_templates = [[NSMutableDictionary alloc] init];
+	_observations = [[COUnsafeRetainedMutableSet alloc] init];
+	// FIXME: Should be COUnsafeRetainedMutableDictionary
+	_templates = [[COMutableDictionary alloc] init];
 	ASSIGN(_currentObjectType, kETTemplateObjectType);
-	[self setSortDescriptors: nil];
-	_allowedPickTypes = [[NSArray alloc] init];
-	_allowedDropTypes = [[NSMutableDictionary alloc] init];
+	_sortDescriptors = [[COMutableArray alloc] init];
+	_allowedPickTypes = [[COMutableArray alloc] init];
+	// FIXME: Should be COUnsafeRetainedMutableDictionary
+	_allowedDropTypes = [[COMutableDictionary alloc] init];
 	_automaticallyRearrangesObjects = YES;
 	_clearsFilterPredicateOnInsertion = YES;
 	_selectsInsertedObjects = YES;

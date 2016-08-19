@@ -83,9 +83,9 @@ objects as a collection distinct from the content. */
 	ETUTI *_currentObjectType;
 	id <COPersistentObjectContext> _persistentObjectContext;
 	ETLayoutItem *_initialFocusedItem;
-	NSArray *_sortDescriptors;
+	NSMutableArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;
-	NSArray *_allowedPickTypes;
+	NSMutableArray *_allowedPickTypes;
 	NSMutableDictionary *_allowedDropTypes; /* Allowed drop UTIs by drop target UTIs */
 	NSMutableArray *_editedItems;
 	NSMutableArray *_editableProperties;

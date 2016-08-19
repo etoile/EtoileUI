@@ -67,7 +67,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	if (nil == self)
 		return nil;
 
-	_items = [[COMutableArray alloc] init];
+	_items = [[COUnsafeRetainedMutableArray alloc] init];
 	_sortedItems = nil;
 	_arrangedItems = nil;
 
