@@ -719,7 +719,7 @@ object when the view is a widget. */
 	id oldObject = _representedObject;
 
 	_isSettingRepresentedObject = YES;
-	[_representedObject removeObserver: self];
+	[self endObserveObject: _representedObject];
 
 	/* To ensure the values are not released before the KVO notification ends */
 	RETAIN(oldObject);
