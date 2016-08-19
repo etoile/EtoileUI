@@ -9,6 +9,7 @@
 #import <EtoileFoundation/ETCollection.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COPrimitiveCollection.h>
 #import "ETTemplateItemLayout.h"
 #import "ETBasicItemStyle.h"
 #import "ETColumnLayout.h"
@@ -52,8 +53,8 @@ returned instance (usually in a subclass initializer). */
 	
 	[self setPositionalLayout: [ETFlowLayout layoutWithObjectGraphContext: aContext]];
 	[(ETFlowLayout *)_positionalLayout setItemSizeConstraintStyle: ETSizeConstraintStyleNone];
-	_templateKeys = [[NSArray alloc] init];
-	_localBindings = [[NSMutableDictionary alloc] init];
+	_templateKeys = [[COMutableArray alloc] init];
+	_localBindings = [[COMutableDictionary alloc] init];
 	[self prepareTransientState];
 
 	return self;
@@ -123,7 +124,7 @@ See -setTemplateItem:. */
 - (void) setTemplateKeys: (NSArray *)keys
 {
 	[self willChangeValueForProperty: @"templateKeys"];
-	ASSIGN(_templateKeys, keys);
+	[_templateKeys setArray: keys];
 	_needsPrepareItems = YES;
 	[self didChangeValueForProperty: @"templateKeys"];
 }
@@ -131,14 +132,18 @@ See -setTemplateItem:. */
 - (void) bindTemplateItemKeyPath: (NSString *)templateKeyPath 
                toItemWithKeyPath: (NSString *)itemProperty
 {
+	[self willChangeValueForProperty: @"localBindings"];
 	[_localBindings setObject: itemProperty forKey: templateKeyPath];
+	[self didChangeValueForProperty: @"localBindings"];
 }
 
 /** Discards all bindings currently set up between the template item and the 
 original items which are replaced by the layout. */
 - (void) unbindTemplateItem
 {
+	[self willChangeValueForProperty: @"localBindings"];
 	[_localBindings removeAllObjects];
+	[self didChangeValueForProperty: @"localBindings"];
 }
 
 

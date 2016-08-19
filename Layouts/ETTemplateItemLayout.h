@@ -68,7 +68,7 @@ possible and how to use ETTemplateItemLayout. */
 	@private
 	id <ETComputableLayout> _positionalLayout;
 	ETLayoutItem *_templateItem;
-	NSArray *_templateKeys;
+	NSMutableArray *_templateKeys;
 	NSMutableDictionary *_localBindings;
 	/* All the items that got rendered since the layout has been set up */
 	NSMutableSet *_renderedItems;
