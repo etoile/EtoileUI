@@ -125,6 +125,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 - (void) willDiscard
 {
     [self stopObservation];
+	[super willDiscard];
 }
 
 - (void) dealloc
