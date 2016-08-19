@@ -723,7 +723,7 @@ step is skipped when loading an item not present in memory. */
 
 - (NSArray *) serializedItems
 {
-	return ([self sourceItem] == nil ? _items : [NSArray array]);
+	return ([self sourceItem] == nil ? _items : [COMutableArray array]);
 }
 
 - (void) setSerializedItems: (NSArray *)items
