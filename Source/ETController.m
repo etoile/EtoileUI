@@ -29,6 +29,10 @@
 
 #pragma GCC diagnostic ignored "-Wprotocol"
 
+@interface ETController (CoreObject)
+- (ETUUID *) UUIDFromPersistentObjectContext: (id)aPersistentContext;
+@end
+
 @implementation ETController
 
 + (void) initialize
@@ -135,6 +139,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	DESTROY(_templates);
 	DESTROY(_currentObjectType);
 	DESTROY(_persistentObjectContext);
+	DESTROY(_persistentObjectContextUUID);
 	DESTROY(_initialFocusedItem);
 	DESTROY(_sortDescriptors);
 	DESTROY(_filterPredicate);
@@ -540,7 +545,10 @@ See -persistentObjectContext for more details. */
         INVALIDARG_EXCEPTION_TEST(aContext, [(id <NSObject>)aContext conformsToProtocol: NSProtocolFromString(@"COPersistentObjectContext")]);
     }
     [self willChangeValueForProperty: @"persistentObjectContext"];
+    [self willChangeValueForProperty: @"persistentObjectContextUUID"];
 	ASSIGN(_persistentObjectContext, aContext);
+	ASSIGN(_persistentObjectContextUUID, [self UUIDFromPersistentObjectContext: aContext]);
+    [self didChangeValueForProperty: @"persistentObjectContextUUID"];
     [self didChangeValueForProperty: @"persistentObjectContext"];
 }
 

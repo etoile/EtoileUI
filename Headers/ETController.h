@@ -82,6 +82,7 @@ objects as a collection distinct from the content. */
 	NSMutableDictionary *_templates;
 	ETUTI *_currentObjectType;
 	id <COPersistentObjectContext> _persistentObjectContext;
+	ETUUID *_persistentObjectContextUUID;
 	ETLayoutItem *_initialFocusedItem;
 	NSMutableArray *_sortDescriptors;
 	NSPredicate *_filterPredicate;

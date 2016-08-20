@@ -87,9 +87,10 @@
 		[ETPropertyDescription descriptionWithName: @"currentGroupType" type: (id)@"ETUTI"];
 	[currentGroupType setReadOnly: YES];
 	// FIXME: Register a dummy class for the protocol COPersistentObjectContext
-	ETPropertyDescription *persistentObjectContext =
-		[ETPropertyDescription descriptionWithName: @"persistentObjectContext" type: (id)@"NSObject"];
-    [persistentObjectContext setPersistentTypeName: @"NSString"];
+	ETPropertyDescription *persistentObjectContextUUID =
+		[ETPropertyDescription descriptionWithName: @"persistentObjectContextUUID" typeName: @"ETUUID"];
+	[persistentObjectContextUUID setValueTransformerName: @"ETUUIDToString"];
+    [persistentObjectContextUUID setPersistentTypeName: @"NSString"];
 	ETPropertyDescription *initialFocusedItem =
 		[ETPropertyDescription descriptionWithName: @"initialFocusedItem" type: (id)@"ETLayoutItem"];
 	ETPropertyDescription *clearsFilterPredicate =
@@ -130,6 +131,9 @@
 		[ETPropertyDescription descriptionWithName: @"nibMainContent" type: (id)@"NSObject"];
 	ETPropertyDescription *builder =
 		[ETPropertyDescription descriptionWithName: @"builder" type: (id)@"ETLayoutItemBuilder"];
+	// FIXME: Register a dummy class for the protocol COPersistentObjectContext
+	ETPropertyDescription *persistentObjectContext =
+		[ETPropertyDescription descriptionWithName: @"persistentObjectContext" type: (id)@"NSObject"];
 	ETPropertyDescription *nextResponder =
 		[ETPropertyDescription descriptionWithName: @"nextResponder" type: (id)@"NSObject"];
 	[nextResponder setReadOnly: YES];
@@ -168,12 +172,12 @@
     [editedProperties setOrdered: YES];
     [editedProperties setReadOnly: YES];
 
-	NSArray *transientProperties = A(content, nibMainContent, builder,
+	NSArray *transientProperties = A(content, nibMainContent, builder, persistentObjectContext,
         currentGroupType, nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing,
         editedItems, editedProperties);
 	NSArray *persistentProperties = A(observations, templates, currentObjectType,
-        initialFocusedItem, persistentObjectContext, clearsFilterPredicate,
+        initialFocusedItem, persistentObjectContextUUID, clearsFilterPredicate,
         selectsInsertedObjects, sortDescriptors, filterPredicate,
         automaticallyRearranges, allowedPickTypes, allowedDropTypes);
 

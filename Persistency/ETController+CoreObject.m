@@ -20,43 +20,50 @@
 
 @implementation ETController (CoreObject)
 
-- (COPersistentRoot *) editedPersistentRoot
+COPersistentRoot *editedPersistentRoot(id aPersistentObjectContext)
 {
-    if ([_persistentObjectContext isObjectGraphContext] == NO)
+    if ([aPersistentObjectContext isObjectGraphContext] == NO)
         return nil;
 
-    return [(COObjectGraphContext *)_persistentObjectContext persistentRoot];
+    return [(COObjectGraphContext *)aPersistentObjectContext persistentRoot];
 }
 
-- (COBranch *) editedBranch
+COBranch *editedBranch(id aPersistentContext)
 {
-    if ([_persistentObjectContext isObjectGraphContext] == NO)
+    if ([aPersistentContext isObjectGraphContext] == NO)
         return nil;
     
-    return [(COObjectGraphContext *)_persistentObjectContext branch];
+    return [(COObjectGraphContext *)aPersistentContext branch];
 }
 
-- (NSString *) serializedPersistentObjectContext
+- (ETUUID *) UUIDFromPersistentObjectContext: (id)aPersistentContext
 {
+	if (aPersistentContext == nil)
+        return nil;
+
     BOOL isTrackingCurrentBranch =
-        ([[self editedPersistentRoot] objectGraphContext] == _persistentObjectContext);
-    ETUUID *UUID = [[self editedBranch] UUID];
+        ([editedPersistentRoot(aPersistentContext) objectGraphContext] == aPersistentContext);
+    ETUUID *UUID = [editedBranch(aPersistentContext) UUID];
 
     if (isTrackingCurrentBranch)
     {
-        UUID = [[self editedPersistentRoot] UUID];
+        UUID = [editedPersistentRoot(aPersistentContext) UUID];
     }
-    return [UUID stringValue];
+    return UUID;
 }
 
-- (void) setSerializedPersistentObjectContext: (NSString *)aUUIDString
+- (void) recreatePersistentObjectContext
 {
-    if (aUUIDString == nil)
-        return;
+	[self willChangeValueForProperty: @"persistentObjectContext"];
 
-    ETUUID *UUID = [ETUUID UUIDWithString: aUUIDString];
+    if (_persistentObjectContextUUID == nil)
+	{
+		_persistentObjectContext = nil;
+        return;
+	}
+
     COPersistentRoot *persistentRoot =
-        [[self editingContext] persistentRootForUUID: UUID];
+        [[self editingContext] persistentRootForUUID: _persistentObjectContextUUID];
 
     if (persistentRoot != nil)
     {
@@ -67,15 +74,19 @@
     COSQLiteStore *store = [[self editingContext] store];
     
     persistentRoot = [[self editingContext]
-        persistentRootForUUID: [store persistentRootUUIDForBranchUUID: UUID]];
+        persistentRootForUUID: [store persistentRootUUIDForBranchUUID: _persistentObjectContextUUID]];
 
-    COBranch *branch = [persistentRoot branchForUUID: UUID];
+    COBranch *branch = [persistentRoot branchForUUID: _persistentObjectContextUUID];
 
     ASSIGN(_persistentObjectContext, [branch objectGraphContext]);
+	
+	[self didChangeValueForProperty: @"persistentObjectContext"];
 }
 
 - (void) recreateObservations
 {
+	[self willChangeValueForProperty: @"observations"];
+
     for (ETObservation *observation in _observations)
     {
         [[NSNotificationCenter defaultCenter] addObserver: self
@@ -83,6 +94,8 @@
                                                      name: [observation name]
 	                                               object: [observation object]];
     }
+
+	[self didChangeValueForProperty: @"observations"];
 }
 
 - (void) awakeFromDeserialization
@@ -107,6 +120,7 @@
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
+	[self recreatePersistentObjectContext];
     [self recreateObservations];
 	/* At this point, the item tree should be ready to be sorted and filtered.
 	   For the items and their aspects, the current property values are ready, 
@@ -120,11 +134,4 @@
 	[self rearrangeObjects];
 }
 
-@end
-
-
-@interface ETItemTemplate (CoreObject)
-@end
-
-@implementation ETItemTemplate (CoreObject)
 @end
