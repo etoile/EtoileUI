@@ -30,7 +30,7 @@
 		return nil;
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];;
-	ETBasicItemStyle *formStyle = AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: aContext]);
+	ETBasicItemStyle *formStyle = [[ETBasicItemStyle alloc] initWithObjectGraphContext: aContext];
 
 	[self setTemplateItem: templateItem];
 	[formStyle setLabelPosition: ETLabelPositionOutsideLeft];
@@ -84,8 +84,8 @@
 - (void) setItemLabelFont: (NSFont *)aFont
 {
 	ETAssert([[[self templateItem] coverStyle] isKindOfClass: [ETBasicItemStyle class]]);
-	NSMutableDictionary *attributes = [[[[[self templateItem] coverStyle]
-		labelAttributes] mutableCopy] autorelease];
+	NSMutableDictionary *attributes = [[[[self templateItem] coverStyle]
+		labelAttributes] mutableCopy];
 
 	if (attributes == nil)
 		return;

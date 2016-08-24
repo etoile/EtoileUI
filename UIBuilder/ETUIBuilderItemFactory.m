@@ -52,20 +52,12 @@
 	if (self == nil)
 		return nil;
 
-	COSQLiteStore *store = AUTORELEASE([[COSQLiteStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.store"]]);
+	COSQLiteStore *store = [[COSQLiteStore alloc] initWithURL: [NSURL URLWithString: @"~/UIBuilderStore.store"]];
 	_editingContext = [[COEditingContext alloc] initWithStore: store];
 	_renderer = [self newRenderer];
 	[_renderer setGroupingKeyPath: @"owner"];
 	_valueTransformerRenderer = [self newValueTransformerRenderer];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_renderer);
-	DESTROY(_valueTransformerRenderer);
-	DESTROY(_editingContext);
-	[super dealloc];
 }
 
 - (ETLayout *) defaultMasterViewLayoutWithController: (ETUIBuilderController *)aController
@@ -103,7 +95,7 @@
 	[layout setEditable: YES forProperty: @"UIBuilderModel"];
 	[layout setEditable: YES forProperty: @"UIBuilderController"];
 
-	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	ETObjectValueFormatter *formatter = [ETObjectValueFormatter new];
 
 	[formatter setDelegate: aController];
 
@@ -389,8 +381,8 @@
                                controller: (id)aController
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroupWithSize: [self defaultBrowserSize]];
-	ETUIBuilderBrowserController *browserController = AUTORELEASE([[ETUIBuilderBrowserController alloc]
-		initWithObjectGraphContext: [self objectGraphContext]]);
+	ETUIBuilderBrowserController *browserController = [[ETUIBuilderBrowserController alloc]
+		initWithObjectGraphContext: [self objectGraphContext]];
 	ETItemTemplate *objectTemplate = [browserController templateForType: [browserController currentObjectType]];
 	ETItemTemplate *groupTemplate = [browserController templateForType: [browserController currentGroupType]];
 
@@ -639,7 +631,7 @@
 	ETLayoutItemGroup *picker =
 		[self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
 	ETController *controller =
-		AUTORELEASE([[ETController alloc] initWithObjectGraphContext: [self objectGraphContext]]);
+		[[ETController alloc] initWithObjectGraphContext: [self objectGraphContext]];
 	ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
 
 	[[template item] setActionHandler:
@@ -671,8 +663,8 @@
 {
 	ETUIBuilderItemFactory *itemFactory =
 		[ETUIBuilderItemFactory factoryWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
-	ETUIBuilderController *controller = AUTORELEASE([[ETUIBuilderController alloc]
-		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+	ETUIBuilderController *controller = [[ETUIBuilderController alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	ETLayoutItemGroup *inspector = [itemFactory inspectorWithObject: self
 	                                                     controller: controller];
 
@@ -689,8 +681,8 @@
 {
 	ETLayoutItem *editedItem = [ETApp keyItem];
 	ETUIBuilderItemFactory *itemFactory = [ETUIBuilderItemFactory factory];
-	ETUIBuilderController *controller = AUTORELEASE([[ETUIBuilderController alloc]
-		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+	ETUIBuilderController *controller = [[ETUIBuilderController alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	ETLayoutItemGroup *editor = [itemFactory editorWithObject: editedItem
 	                                               controller: controller];
 

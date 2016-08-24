@@ -49,15 +49,6 @@
 	return @"TablePrototype";
 }
 
-- (void) dealloc
-{
-	/* ivar lazily initialized in -setLayoutView: */
-	DESTROY(_propertyColumns);
-	DESTROY(_currentSortDescriptors);
-	DESTROY(_contentFont);
-	[super dealloc];
-}
-
 - (void) awakeFromNib
 {
 	/* Finish to initialize attributes that cannot be set in the nib/gorm and 
@@ -99,7 +90,7 @@
 	/* ivar cannot be initialized by overriding -initWithLayoutView: because 
 	   superclass initializer called -loadNibNamed: before returning, moreover
 	   the ivar must be reset for each new layout view. */
-	ASSIGN(_propertyColumns, [NSMutableDictionary dictionary]);
+	_propertyColumns = [NSMutableDictionary dictionary];
 	_sortable = YES;
 
 	/* Retain initial columns to be able to restore exactly identical columns later */	
@@ -377,7 +368,7 @@ returned by -allTableColumns. */
 {
 	[self willChangeValueForProperty: @"contentFont"];
 	[self willChangeValueForProperty: @"layoutView"];
-	ASSIGN(_contentFont, aFont);
+	_contentFont = aFont;
 	FOREACH([self allTableColumns], column, NSTableColumn *)
 	{
 		[[column dataCell] setFont: _contentFont];
@@ -421,8 +412,8 @@ yet, it is created. */
 	NSString *keyPath = [NSString stringWithFormat: @"%@.%@", kETSubjectProperty, property];
 	// TODO: -compare: is really a suboptimal choice in various cases.
 	// For example, NSString provides -localizedCompare: unlike NSNumber, NSDate etc.
-	return AUTORELEASE([[NSSortDescriptor alloc] 
-		initWithKey: keyPath ascending: YES selector: @selector(compare:)]);
+	return [[NSSortDescriptor alloc]
+		initWithKey: keyPath ascending: YES selector: @selector(compare:)];
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -437,7 +428,6 @@ ETTableLayout machinery. */
 	NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier: property];
 
 	[column setHeaderCell: headerCell];
-	RELEASE(headerCell);
 
 	NSParameterAssert([[column dataCell] isKindOfClass: [NSTextFieldCell class]]);
 	if ([self contentFont] != nil)
@@ -450,7 +440,7 @@ ETTableLayout machinery. */
 #ifndef GNUSTEP
 	[column setResizingMask: NSTableColumnUserResizingMask];
 #endif
-	return AUTORELEASE(column);
+	return column;
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -834,11 +824,10 @@ Note: For now, private method. */
 	ETEvent *dragEvent = ETEVENT(backendEvent, nil, ETDragPickingMask);
 	NSPoint point = NSZeroPoint;
 
-	DESTROY(_dragImage);
-	ASSIGN(_dragImage, [tv dragImageForRowsWithIndexes: rowIndexes 
-	                                      tableColumns: [tv visibleTableColumns] 
-	                                             event: backendEvent
-	                                            offset: &point]);
+	_dragImage = [tv dragImageForRowsWithIndexes: rowIndexes
+	                                tableColumns: [tv visibleTableColumns]
+	                                       event: backendEvent
+	                                      offset: &point];
 
 	ETTool *pickTool = ([self attachedTool] != nil ? [self attachedTool] : [ETTool activeTool]);
 	ETPickDropCoordinator *coordinator = [ETPickDropCoordinator sharedInstanceWithEvent: dragEvent];
@@ -973,7 +962,7 @@ Note: For now, private method. */
 
 	NSArray *tableSortDescriptors = [[self tableView] sortDescriptors];
 	NSArray *currentSortKeys = (id)[[currentSortDescriptors mappedCollection] key];
-	NSMutableArray *sortDescriptors = AUTORELEASE([currentSortDescriptors mutableCopy]);
+	NSMutableArray *sortDescriptors = [currentSortDescriptors mutableCopy];
 
 	FOREACH(tableSortDescriptors, descriptor, NSSortDescriptor *)
 	{
@@ -1087,7 +1076,7 @@ Returns the cell substituting for the given view in this layout. */
 	
 	if ([cell isKindOfClass: [NSTextFieldCell class]])
 	{
-		cell = [[cell copy] autorelease];
+		cell = [cell copy];
 		[cell setBordered: NO];
 	}
 	else if ([aView isKindOfClass: [NSTextView class]])
@@ -1095,14 +1084,14 @@ Returns the cell substituting for the given view in this layout. */
 		NSCell *defaultTextCell =
 			[(NSTableColumn *)[self columnForProperty: kETDisplayNameProperty] dataCell];
 		
-		cell = [[defaultTextCell copy] autorelease];
+		cell = [defaultTextCell copy];
 	}
 	else if ([aView isKindOfClass: [NSImageView class]])
 	{
 		NSCell *defaultImageCell =
 			[(NSTableColumn *)[self columnForProperty: kETIconProperty] dataCell];
 		
-		cell = [[defaultImageCell copy] autorelease];
+		cell = [defaultImageCell copy];
 	}
 	
 	return cell;

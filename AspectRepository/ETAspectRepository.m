@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ETAspectRepository.h"
+#import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 #import "ETPickDropCoordinator.h"
 #import "ETCompatibility.h"

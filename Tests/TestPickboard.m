@@ -45,12 +45,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(pickboard);
-	[super dealloc];
-}
-
 - (void) testPushObject
 {
 	id string = [NSString string];

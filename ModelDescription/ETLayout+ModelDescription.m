@@ -118,7 +118,7 @@
 		[ETPropertyDescription descriptionWithName: @"constrainedItemSize" type: (id)@"NSSize"];
 	ETPropertyDescription *itemSizeConstraintStyle = 
 		[ETPropertyDescription descriptionWithName: @"itemSizeConstraintStyle" type: (id)@"NSUInteger"];
-	[itemSizeConstraintStyle setRole: AUTORELEASE([ETMultiOptionsRole new])];
+	[itemSizeConstraintStyle setRole: [ETMultiOptionsRole new]];
 	[[itemSizeConstraintStyle role] setAllowedOptions:
 	 	[D(@(ETSizeConstraintStyleNone), _(@"None"),
 		   @(ETSizeConstraintStyleVertical), _(@"Vertical"),
@@ -342,7 +342,7 @@ so -propertyColumns is never used unless the user inspects the object. */
 	
 		[formatters setObject: formatterViewpoint forKey: property];
 	}
-	return AUTORELEASE([formatters copy]);
+	return [formatters copy];
 }
 
 @end

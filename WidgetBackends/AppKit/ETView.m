@@ -65,36 +65,9 @@ See also -[ETUIItem supervisorView]. */
 	return self;
 }
 
-// NOTE: Mac OS X doesn't always update the ref count returned by 
-// NSExtraRefCount if the memory management methods aren't overriden to use
-// the extra ref count functions.
-#ifndef GNUSTEP
-- (id) retain
-{
-	NSIncrementExtraRefCount(self);
-	return self;
-}
-
-- (NSUInteger) retainCount
-{
-	return NSExtraRefCount(self) + 1;
-}
-
-- (oneway void) release
-{
-	if (NSDecrementExtraRefCountWasZero(self))
-		[self dealloc];
-}
-#endif
-
 - (void) dealloc
 {
 	[NC removeObserver: self];
-
-	// NOTE: item (our owner) and _temporaryView are weak references
-	DESTROY(_wrappedView);
-	
-	[super dealloc];
 }
 
 /** Returns a receiver copy but without an UI item bound to it.
@@ -291,7 +264,7 @@ You must never call this method but -[ETLayoutItem setView:]. */
 		"cannot be set as a wrapped view.");
 
 	[self setContentView: view temporary: NO];
-	ASSIGN(_wrappedView, view);
+	_wrappedView = view;
 	[self tileContentView: view temporary: NO];
 }
 

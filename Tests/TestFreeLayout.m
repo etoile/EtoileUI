@@ -36,12 +36,12 @@
 	SUPERINIT
 
 	[mainItem setLayout: [ETFreeLayout layoutWithObjectGraphContext: [mainItem objectGraphContext]]];
-	ASSIGN(tool, [[mainItem layout] attachedTool]);
-	ASSIGN(rootItem, [[mainItem layout] layerItem]);
-	ASSIGN(item1, [itemFactory rectangleWithRect: NSMakeRect(50, 30, 50, 30)]);
-	ASSIGN(item2, [itemFactory graphicsGroup]);
+	tool = [[mainItem layout] attachedTool];
+	rootItem = [[mainItem layout] layerItem];
+	item1 = [itemFactory rectangleWithRect: NSMakeRect(50, 30, 50, 30)];
+	item2 = [itemFactory graphicsGroup];
 	[item2 setFrame: NSMakeRect(0, 0, 100, 50)];
-	ASSIGN(item21, [itemFactory rectangleWithRect: NSMakeRect(10, 10, 80, 30)]);
+	item21 = [itemFactory rectangleWithRect: NSMakeRect(10, 10, 80, 30)];
 
 	/* We need a active tool in order to have -observeValueForKeyPath:XXX 
 	   in ETFreeLayout reacts to a selection change by toggling the handle visibility */
@@ -53,15 +53,6 @@
 	[self updateObservedItemsInTree];
 
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(rootItem);
-	DESTROY(item1);
-	DESTROY(item2);
-	DESTROY(item21);
-	[super dealloc];
 }
 
 /* For handle creation on selection change, we must run -[ETFreeLayout updateKVOForItems:] */
@@ -310,8 +301,6 @@
 	[tool group: self];
 
 	ETLayoutItemGroup *newItem = (ETLayoutItemGroup *)[mainItem firstItem];
-	
-	RETAIN(newItem);
 
 	UKObjectsEqual(A(newItem), [mainItem items]);
 	UKObjectsEqual(A(item1, item2), [newItem items]);
@@ -328,8 +317,6 @@
 	UKIntsEqual(0, [[[item2 layout] layerItem] numberOfItems]);
 	// FIXME: UKObjectsEqual(A(item1, item2), [mainItem selectedItems]);
 	UKObjectsEqual(mainItem, [tool targetItem]);
-
-	RELEASE(newItem);
 }
 
 @end

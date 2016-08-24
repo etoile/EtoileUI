@@ -127,7 +127,7 @@ or a layout without a context. */
 
 	NSParameterAssert([newView superview] == nil);
 
-	ASSIGN(layoutView, newView);
+	layoutView = newView;
 }
 
 
@@ -178,7 +178,7 @@ is not an option. */
 
 - (void) setSerializedPropertyColumns: (NSDictionary *)serializedColumns
 {
-	ASSIGN(_propertyColumns, AUTORELEASE([serializedColumns mutableCopy]));
+	_propertyColumns = [serializedColumns mutableCopy];
 }
 
 - (void) awakeFromDeserialization
@@ -187,7 +187,7 @@ is not an option. */
 
 	[super awakeFromDeserialization];
 	
-	NSDictionary *deserializedPropertyColumns = RETAIN(_propertyColumns);
+	NSDictionary *deserializedPropertyColumns = _propertyColumns;
 
 	/* The table view is deserialized in layoutView ivar by CoreObject, but
 	   the internal state related to the table view can only recreated by 

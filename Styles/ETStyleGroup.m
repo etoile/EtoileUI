@@ -72,12 +72,6 @@ in the given style collection. */
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_styles);
-	[super dealloc];
-}
-
 - (NSImage *) icon
 {
 	return [NSImage imageNamed: @"layers-stack"];

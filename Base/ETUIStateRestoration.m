@@ -26,12 +26,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_UICreationInvocations);
-	[super dealloc];
-}
-
 - (NSString *) keyForUserDefaults
 {
 	return @"UIStateRestoration";
@@ -70,7 +64,7 @@
 
 - (void) setPersistentItemUUID: (ETUUID *)aUUID forName: (NSString *)aName
 {
-	NSMutableDictionary *settings = AUTORELEASE([[self settings] mutableCopy]);
+	NSMutableDictionary *settings = [[self settings] mutableCopy];
 	if (aUUID == nil)
 	{
 		[settings removeObjectForKey: aName];

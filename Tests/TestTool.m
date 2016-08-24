@@ -37,20 +37,12 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(otherItem, [[ETLayoutItemFactory factory] itemGroup]);
-	ASSIGN(iconLayout,
-		[ETIconLayout layoutWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
-	ASSIGN(lineLayout,
-		[ETLineLayout layoutWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+	otherItem = [[ETLayoutItemFactory factory] itemGroup];
+	iconLayout = [ETIconLayout layoutWithObjectGraphContext:
+		[ETUIObject defaultTransientObjectGraphContext]];
+	lineLayout = [ETLineLayout layoutWithObjectGraphContext:
+		[ETUIObject defaultTransientObjectGraphContext]];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(otherItem);
-	DESTROY(iconLayout);
-	DESTROY(lineLayout);
-	[super dealloc];
 }
 
 - (void) testBasicTool

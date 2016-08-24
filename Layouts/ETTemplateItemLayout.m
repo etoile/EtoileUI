@@ -20,6 +20,7 @@
 #import "ETLayoutItem+Private.h"
 #import "ETLayoutItemGroup.h"
 #import "ETLayoutItemFactory.h"
+#import "ETView.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
 #import "ETWidgetBackend.h"
 #import "NSView+EtoileUI.h"
@@ -32,8 +33,8 @@
 
 - (void) prepareTransientState
 {
-	ASSIGN(_renderedItems, [NSMutableSet set]);
-	ASSIGN(_renderedTemplateKeys, [NSArray array]);
+	_renderedItems = [NSMutableSet set];
+	_renderedTemplateKeys = [NSArray array];
 	_needsPrepareItems = YES;
 }
 
@@ -60,17 +61,6 @@ returned instance (usually in a subclass initializer). */
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_positionalLayout);
-	DESTROY(_templateItem);
-	DESTROY(_templateKeys);
-	DESTROY(_localBindings);
-	DESTROY(_renderedItems);
-	DESTROY(_renderedTemplateKeys);
-	[super dealloc];
-}
-
 /** Returns the template item whose property values are used to override the 
 equivalent values on every item that gets layouted. 
 
@@ -95,7 +85,7 @@ See -setTemplateKeys:. */
 - (void) setTemplateItem: (ETLayoutItem *)item
 {
 	[self willChangeValueForProperty: @"templateItem"];
-	ASSIGN(_templateItem, item);
+	_templateItem = item;
 	_needsPrepareItems = YES;
 	[self didChangeValueForProperty: @"templateItem"];
 }
@@ -190,7 +180,7 @@ original items which are replaced by the layout. */
 	[_positionalLayout tearDown];
 
     [self willChangeValueForProperty: @"positionalLayout"];
-	ASSIGN(_positionalLayout, layout);
+	_positionalLayout = layout;
     [self didChangeValueForProperty: @"positionalLayout"];
 
 	/* Must follow -didChangeValueForProperty: which ensures the positional 
@@ -285,7 +275,7 @@ by the value returned by the template item. */
 		[self setUpTemplateElementsForItem: item];
 	}
 
-	ASSIGNCOPY(_renderedTemplateKeys, _templateKeys);
+	_renderedTemplateKeys = [_templateKeys copy];
 	_needsPrepareItems = NO;
 }
 

@@ -101,7 +101,6 @@ See also -isLayerItem. */
 	{
 		NSSet *itemSet = [[NSSet alloc] initWithArray: _items];
 		[(ETLayoutExecutor *)[ETLayoutExecutor sharedInstance] removeItems: itemSet];
-		RELEASE(itemSet);
 	}
 	_isDeallocating = YES;
 
@@ -112,19 +111,6 @@ See also -isLayerItem. */
 	   executor, stop KVO observation on properties before they get deallocated 
 	   in -dealloc, and clear cached outgoing relationships such as ETLayoutItemGroup.items. */
 	[super willDiscard];
-}
-
-- (void) dealloc
-{
-	DESTROY(_cachedDisplayImage);
-	DESTROY(_layout);
-	/* Arranged and sorted items are always a children subset, we don't
-	   have to worry about nullifying weak references their element might have. */
-	DESTROY(_arrangedItems);
-	DESTROY(_sortedItems);
-	DESTROY(_items);
-
-	[super dealloc];
 }
 
 - (BOOL)validateProposedFirstResponder:(NSResponder *)responder forEvent:(NSEvent *)event
@@ -254,12 +240,10 @@ See also -handleAttachViewOfItem: and -[ETUIItem displayView]. */
 
 - (void) attachItem: (ETLayoutItem *)item
 {
-	RETAIN(item);
 	if ([item parentItem] != nil)
 	{
 		[[item parentItem] removeItem: item];
 	}
-	RELEASE(item);
 	[self handleAttachViewOfItem: item];
 }
 
@@ -505,16 +489,10 @@ See also -setSource:, -controllerItem and -nextResponder. */
 	ETLayoutItemGroup *newControllerOldContent = [newController content];
 	ETController *oldController = [self valueForVariableStorageKey: kETControllerProperty];
 
-	RETAIN(newControllerOldContent);
-	RETAIN(oldController);
-
 	[self setValue: newController forVariableStorageKey: kETControllerProperty];
 
 	[oldController didChangeContent: self toContent: nil];
 	[newController didChangeContent: newControllerOldContent toContent: self];
-
-	RELEASE(newControllerOldContent);
-	RELEASE(oldController);
 
 	[self didChangeValueForProperty: kETControllerProperty];
 }
@@ -803,14 +781,14 @@ You should never use this method unless you write an ETLayoutItem subclass. */
 
 	//ETDebugLog(@"Modify layout from %@ to %@ in %@", _layout, layout, self);
 
-	ETLayout *oldLayout = RETAIN(_layout);
+	ETLayout *oldLayout = _layout;
 	
 	/* Must precede -willChangeValueForProperty: which resets the context to nil */
 	[_layout tearDown];
 
 	[self willChangeValueForProperty: kETLayoutProperty];
 
-    ASSIGN(_layout, layout);
+    _layout = layout;
     /* We must remove the item views, otherwise they might remain visible as
        subviews (think ETBrowserLayout on GNUstep which has transparent areas),
        because view-based layout won't call -setExposedItems: in -renderWithItems:XXX:. */
@@ -827,7 +805,6 @@ You should never use this method unless you write an ETLayoutItem subclass. */
     // execute it last
 	[_layout setUp: NO];
     [self didChangeLayout: oldLayout];
-    RELEASE(oldLayout);
     [self setNeedsLayoutUpdate];
 }
 
@@ -1127,7 +1104,7 @@ You should never need to call this method directly. */
 
 - (void) setCachedDisplayImage: (NSImage *)anImage
 {
-	ASSIGN(_cachedDisplayImage, anImage);
+	_cachedDisplayImage = anImage;
 
 	if (nil != anImage)
 	{
@@ -1153,7 +1130,7 @@ You should never need to call this method directly. */
 /** Returns the receiver visible child items. */
 - (NSArray *) visibleItems
 {
-	NSMutableArray *visibleItems = AUTORELEASE([[self exposedItems] mutableCopy]);
+	NSMutableArray *visibleItems = [[self exposedItems] mutableCopy];
 	[[visibleItems filter] isVisible];
 	return visibleItems;
 }
@@ -1548,7 +1525,7 @@ redisplayed. */
 	if (hasValidSortDescriptors)
 	{
 		[_sortedItems sortUsingDescriptors: descriptors];
-		ASSIGN(_arrangedItems, _sortedItems);
+		_arrangedItems = _sortedItems;
 		_sorted = YES;
 		_filtered = NO;
 		_hasNewArrangement = YES;
@@ -1557,7 +1534,7 @@ redisplayed. */
 	{
 		// NOTE: -arrangedItems returns a defensive copy, but it could be less
 		// expansive to make a single defensive copy here.
-		ASSIGN(_arrangedItems, _items);
+		_arrangedItems = _items;
 		_sorted = NO;
 		_filtered = NO;
 		_hasNewArrangement = YES;
@@ -1627,9 +1604,9 @@ redisplayed. */
 
 	if (hasValidPredicate)
 	{
-		ASSIGN(_arrangedItems, [self filteredItemsWithItems: itemsToFilter
-		                                     usingPredicate: predicate
-		                                      ignoringItems: itemsWithMatchingDescendants]);
+		_arrangedItems = [self filteredItemsWithItems: itemsToFilter
+		                               usingPredicate: predicate
+		                                ignoringItems: itemsWithMatchingDescendants];
 		_filtered = YES;
 		_hasNewArrangement = YES;
 	}
@@ -1637,7 +1614,7 @@ redisplayed. */
 	{
 		// NOTE: -arrangedItems returns a defensive copy, but it could be less
 		// expansive to make a single defensive copy here.
-		ASSIGN(_arrangedItems, itemsToFilter);
+		_arrangedItems = itemsToFilter;
 		_filtered = NO;
 		_hasNewArrangement = YES;
 	}
@@ -1667,11 +1644,11 @@ If the receiver has not been sorted or filtered yet, returns a nil array. */
 {
 	if (_sorted || _filtered)
 	{
-		return AUTORELEASE([_arrangedItems copy]);
+		return [_arrangedItems copy];
 	}
 	else
 	{
-		return AUTORELEASE([_items copy]);
+		return [_items copy];
 	}
 }
 

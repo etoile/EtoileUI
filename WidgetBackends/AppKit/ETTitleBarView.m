@@ -25,8 +25,8 @@
 	if (self == nil)
 		return nil;
 	
-	NSTextField *labelField = AUTORELEASE([[NSTextField alloc] initWithFrame: NSMakeRect(24, 3, rect.size.width-24, 18)]);
-	NSButton *disclosureButton = AUTORELEASE([[NSButton alloc] initWithFrame: NSMakeRect(0, 0, 24,24)]);
+	NSTextField *labelField = [[NSTextField alloc] initWithFrame: NSMakeRect(24, 3, rect.size.width-24, 18)];
+	NSButton *disclosureButton = [[NSButton alloc] initWithFrame: NSMakeRect(0, 0, 24,24)];
 	
 	[disclosureButton setTag: DISCLOSURE_BUTTON_TAG];
 	[disclosureButton setButtonType: NSOnOffButton];
@@ -124,7 +124,7 @@
 	NSColor *topBorderColor = [NSColor colorWithCalibratedWhite: 0.66 alpha: 1.0];
 	NSColor *bottomBorderColor = [NSColor colorWithCalibratedWhite: 0.61 alpha: 1.0];
 #endif
-	NSGradient *gradient = AUTORELEASE([[NSGradient alloc] initWithStartingColor: startColor endingColor: endColor]);
+	NSGradient *gradient = [[NSGradient alloc] initWithStartingColor: startColor endingColor: endColor];
 	CGFloat angle = ([self drawsGradientFlipped] ? 270 : 90);
 
 	[gradient drawInRect: rect angle: angle];

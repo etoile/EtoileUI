@@ -99,7 +99,7 @@ unlike ETPositionalLayout.  */
 				  forKeyPath: kETSelectedProperty];
 	}
 
-	ASSIGN(_observedItems, items);
+	_observedItems = items;
 
 	FOREACHI(items, newItem)
     {
@@ -159,8 +159,8 @@ unlike ETPositionalLayout.  */
 
 - (void) showHandlesForItem: (ETLayoutItem *)item
 {
-	ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc]
-		initWithManipulatedObject: item objectGraphContext: [[self layerItem] objectGraphContext]]);
+	ETHandleGroup *handleGroup = [[ETResizeRectangle alloc]
+		initWithManipulatedObject: item objectGraphContext: [[self layerItem] objectGraphContext]];
 		
 	[[self layerItem] addItem: handleGroup];
 	// FIXME: Should [handleGroup display]; and display should retrieve the 
@@ -202,8 +202,8 @@ unlike ETPositionalLayout.  */
 	{
 		if ([item isSelected])
 		{
-			ETHandleGroup *handleGroup = AUTORELEASE([[ETResizeRectangle alloc]
-				initWithManipulatedObject: item objectGraphContext: [[self layerItem] objectGraphContext]]);
+			ETHandleGroup *handleGroup = [[ETResizeRectangle alloc]
+				initWithManipulatedObject: item objectGraphContext: [[self layerItem] objectGraphContext]];
 			[[self layerItem] addItem: handleGroup];
 		}
 	}
@@ -228,7 +228,6 @@ layout context, based on the rules or policy of the given layout. */
 {
 	id layoutContext = [self layoutContext];
 
-	RETAIN(self);
 	/* The next line makes [self layoutContext] returns nil because 'layout' 
 	   takes control over it with -setLayout:. */
 	// FIXME: -setLayout: won't recompute every item frames, only the visible 
@@ -243,7 +242,6 @@ layout context, based on the rules or policy of the given layout. */
 	}
 
 	[layoutContext setLayout: self];
-	RELEASE(self);
 }
 
 - (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent

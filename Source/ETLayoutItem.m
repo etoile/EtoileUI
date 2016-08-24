@@ -195,7 +195,7 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	[self setCoverStyle: aStyle];
 	[self setActionHandler: aHandler];
 
-	ASSIGN(_transform, [NSAffineTransform transform]);
+	_transform = [NSAffineTransform transform];
 	 /* Will be overriden by -setView: when the view is not nil */
 	_autoresizingMask = NSViewNotSizable;
 	_contentAspect = ETContentAspectStretchToFill;
@@ -248,18 +248,6 @@ worst case, we can be retained/released and thereby reenter -dealloc. */
 	[self stopKVOObservation];
 
 	[super willDiscard];
-}
-
-- (void) dealloc
-{
-	DESTROY(_deserializationState);
-	DESTROY(_defaultValues);
-	DESTROY(_styleGroup);
-	DESTROY(_coverStyle);
-	DESTROY(_representedObject);
-	DESTROY(_transform);
-
-    [super dealloc];
 }
 
 - (NSString *) description
@@ -368,11 +356,7 @@ if no other objects retains it. */
 {
 	if ([self parentItem] != nil)
 	{
-		/* -removeItem: will release us, so to be sure we won't deallocated 
-		   right now we use retain/autorelease */
-		RETAIN(self);
 		[[self parentItem] removeItem: self];
-		AUTORELEASE(self);
 	}
 }
 
@@ -721,12 +705,10 @@ object when the view is a widget. */
 	_isSettingRepresentedObject = YES;
 	[self endObserveObject: _representedObject];
 
-	/* To ensure the values are not released before the KVO notification ends */
-	RETAIN(oldObject);
 	[self willChangeValueForProperty: kETRepresentedObjectProperty];
 	NSSet *affectedKeys = [self willChangeRepresentedObjectFrom: oldObject 
 	                                                         to: modelObject];
-	ASSIGN(_representedObject, modelObject);
+	_representedObject = modelObject;
 
 	/* Affected keys contain represented object properties, and the Core object 
 	   editing context must not be notified about these, otherwise identically 
@@ -737,7 +719,6 @@ object when the view is a widget. */
 	   notifications.   */
 	[self didChangeValuesForKeys: affectedKeys];
 	[self didChangeValueForProperty: kETRepresentedObjectProperty];
-	RELEASE(oldObject);
 
 	/* Don't pass -value otherwise -[representedObject value] is not retrieved 
 	   if -valueKey is nil (for example, ETPropertyViewpoint implements -value). */
@@ -754,7 +735,7 @@ see -[ETLayoutItem awakeFromDeserialization]. */
 	if (supervisorView != nil)
 		return supervisorView;
 
-	[self setSupervisorView: AUTORELEASE([ETView new])
+	[self setSupervisorView: [ETView new]
 	                   sync: ETSyncSupervisorViewFromItem];
 	return supervisorView;
 }
@@ -1280,7 +1261,7 @@ See also -exposed and -[ETLayoutItemGroup setExposedItems:]. */
 /** Returns whether the receiver should be displayed or not.
  
 See also -setExposed: and -exposedItems. */
-- (BOOL) exposed
+- (BOOL) isExposed
 {
 	return _exposed;
 }
@@ -1775,7 +1756,7 @@ See ETStyle to understand how to customize the layout item look. */
 - (void) setStyleGroup: (ETStyleGroup *)aStyle
 {
 	[self willChangeValueForProperty: kETStyleGroupProperty];
-	ASSIGN(_styleGroup, aStyle);
+	_styleGroup = aStyle;
 	[self didChangeValueForProperty: kETStyleGroupProperty];
 }
 
@@ -1806,7 +1787,7 @@ If the given style is nil, the style group becomes empty. */
 - (void) setCoverStyle: (ETStyle *)aStyle
 {
 	[self willChangeValueForProperty: kETCoverStyleProperty];
-	ASSIGN(_coverStyle, aStyle);
+	_coverStyle = aStyle;
 	[self didChangeValueForProperty: kETCoverStyleProperty];
 }
 
@@ -2503,7 +2484,7 @@ the receiver has no decorator. */
 - (void) setTransform: (NSAffineTransform *)aTransform
 {
 	[self willChangeValueForProperty: kETTransformProperty];
-	ASSIGN(_transform, aTransform);
+	_transform = aTransform;
 	[self setNeedsLayoutUpdate];
 	if (_decoratorItem == nil)
 	{
@@ -2832,7 +2813,7 @@ item backed either, returns nil. */
 		rectInView = [windowItem convertDecoratorRectToContent: rectInView];
 	}
 
-	return AUTORELEASE([[NSImage alloc] initWithView: [viewBackedItem displayView] fromRect: rectInView]);
+	return [[NSImage alloc] initWithView: [viewBackedItem displayView] fromRect: rectInView];
 }
 
 - (NSAffineTransform *) boundsTransform
@@ -2996,13 +2977,14 @@ be sent by the UI element in the EtoileUI responder chain. */
 	if ([actionHandler respondsToSelector: twoParamSelector])
 	{
 		id sender = nil;
+		ETLayoutItem *item = self;
 
 		[inv getArgument: &sender atIndex: 2];
 		NSInvocation *twoParamInv = [NSInvocation invocationWithMethodSignature:
 			[actionHandler methodSignatureForSelector: twoParamSelector]];
 		[twoParamInv setSelector: twoParamSelector];
 		[twoParamInv setArgument: &sender atIndex: 2];
-		[twoParamInv setArgument: &self atIndex: 3];
+		[twoParamInv setArgument: &item atIndex: 3];
 
 		[twoParamInv invokeWithTarget: actionHandler];
 	}

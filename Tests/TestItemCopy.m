@@ -26,6 +26,7 @@
 #import "ETOutlineLayout.h"
 #import "ETUIItem.h"
 #import "ETLayoutItemFactory.h"
+#import "ETView.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 
@@ -79,12 +80,10 @@
 	return self;
 }
 
-DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
-
 - (NSArray *) nonCheckablePropertiesForAnyObject
 {
 	ETModelDescriptionRepository *repo = [ETModelDescriptionRepository mainRepository];
-	NSArray *rootObjectProperties = [(NSObject *)AUTORELEASE([[NSObject alloc] init]) propertyNames];
+	NSArray *rootObjectProperties = [(NSObject *)[[NSObject alloc] init] propertyNames];
 	NSArray *coreObjectProperties =
 		[[repo entityDescriptionForClass: [COObject class]] propertyDescriptionNames];
 	NSArray *excludedProperties =
@@ -182,8 +181,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKNil([newItem parentItem]);
 	UKNil([newItem layout]);
 	UKNil([newItem view]);
-
-	RELEASE(newItem);
 }
 
 - (void) testItemCopy
@@ -195,7 +192,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[item setRepresentedObject: [NSSet set]];
 	[item setSubtype: [ETUTI typeWithClass: [NSSet class]]];
 	// NOTE: -UIBuilderTarget and -UIBuilderAction still returns nil and NULL
-	[item setView: AUTORELEASE([[NSButton alloc] init])];
+	[item setView: [[NSButton alloc] init]];
 	[item setTarget: item];
 	[item setAction: @selector(wibble:)];
 	//[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
@@ -236,8 +233,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsEqual([[newItem view] class], [[item view] class]);
 
 	[self checkViewCopy: [newItem supervisorView] ofView: [item supervisorView]];
-
-	RELEASE(newItem);
 }
 
 - (NSArray *) defaultNilItemGroupProperties
@@ -282,13 +277,11 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsSame(newItemGroup, [newItem parentItem]);
 	UKObjectsNotEqual([item UUID], [newItem UUID]);
 	UKObjectsEqual(newItemGroup, [[newItemGroup layout] layoutContext]);
-
-	RELEASE(newItemGroup);
 }
 
 - (void) testItemGroupCopyAndAddItem
 {
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 
 	[newItemGroup addItem: item];
 
@@ -298,15 +291,15 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 - (void) testEmptyItemGroupCopy
 {
-	ETController *controller = AUTORELEASE([[ETController alloc]
-		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+	ETController *controller = [[ETController alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	[itemGroup setName: @"Whatever"];
 	[itemGroup setImage: [NSImage imageNamed: @"NSApplicationIcon"]];
 	//[itemGroup setIcon: [[NSWorkspace sharedWorkspace] iconForFile: @"/"]];
 	[itemGroup setRepresentedObject: [NSSet set]];
 	[itemGroup setSubtype: [ETUTI typeWithClass: [NSSet class]]];
-	[itemGroup setView: AUTORELEASE([[NSButton alloc] init])];
+	[itemGroup setView: [[NSButton alloc] init]];
 	[itemGroup setTarget: controller];
 	[itemGroup setAction: @selector(wibble:)];
 	//[itemGroup setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
@@ -354,8 +347,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKObjectsNotEqual([[itemGroup layout] layoutView], [[newItemGroup layout] layoutView]);
 	UKObjectsEqual([[newItemGroup supervisorView] contentView], [[newItemGroup layout] layoutView]);
 	UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup layout] layoutView] superview]);
-
-	RELEASE(newItemGroup);
 }
 
 - (void) testBasicItemGroupCopyWithOutlineLayout
@@ -378,8 +369,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	[[ETLayoutExecutor sharedInstance] execute];
 
 	UKIntsEqual(2, [[(ETOutlineLayout *)[newItemGroup layout] outlineView] numberOfRows]);
-
-	RELEASE(newItemGroup);
 }
 
 #define IPATH(x) [NSIndexPath indexPathWithString: x]
@@ -444,8 +433,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 
 	UKObjectsEqual([newItemGroup supervisorView], [[newOutlineItem supervisorView] superview]);
 	UKObjectsEqual([newItemGroup supervisorView], [[newButtonItem supervisorView] superview]);
-
-	RELEASE(newItemGroup);
 }
 
 // NOTE: Test ETTemplateItemLayout copying at the same time.
@@ -478,8 +465,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	/* This test requires the items to be resized otherwise -setExposedItems: 
 	   receives an empty array in -renderXXX. */
 	//UKObjectsEqual([newItemGroup supervisorView], [[[newItemGroup firstItem] supervisorView] superview]);
-
-	RELEASE(newItemGroup);
 }
 
 #if 0
@@ -525,8 +510,6 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item); DESTROY(itemGroup))
 	UKIntsEqual(1, [[layoutCopy contentItem] numberOfItems]);
 	UKStringsEqual(@"Ubiquity", [[[layoutCopy contentItem] firstItem] name]);
 	UKObjectsEqual([layoutCopy contentItem], [[[layoutCopy contentItem] firstItem] parentItem]);
-
-	RELEASE(newItemGroup);
 }
 #endif
 

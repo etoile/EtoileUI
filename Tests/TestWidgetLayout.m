@@ -40,10 +40,8 @@
 	[tv setAutoresizingMask: NSViewHeightSizable];
 	[tv addTableColumn: column];
 	[prebuiltTableView setDocumentView: tv];
-	DESTROY(column);
-	RELEASE(tv);
-	AUTORELEASE(prebuiltTableView);
-	
+	column = nil;
+
 	[tv setCornerView: nil];
 	[tv setHeaderView: nil];
 	
@@ -53,8 +51,8 @@
 - (void) testInitWithNibLayoutView
 {
 	COObjectGraphContext *context = [ETUIObject defaultTransientObjectGraphContext];
-	ETTableLayout *layout = AUTORELEASE([[ETTableLayout alloc]
-		initWithLayoutView: nil objectGraphContext: context]);
+	ETTableLayout *layout = [[ETTableLayout alloc]
+		initWithLayoutView: nil objectGraphContext: context];
 
 	UKNotNil([layout layoutView]);
 	UKObjectKindOf([layout tableView], ETTableView);
@@ -64,8 +62,8 @@
 {
 	NSScrollView *layoutView = [self scrollingTableView];
 	COObjectGraphContext *context = [ETUIObject defaultTransientObjectGraphContext];
-	ETTableLayout *layout = AUTORELEASE([[ETTableLayout alloc]
-		initWithLayoutView: layoutView objectGraphContext: context]);
+	ETTableLayout *layout = [[ETTableLayout alloc]
+		initWithLayoutView: layoutView objectGraphContext: context];
 
 	UKObjectsEqual(layoutView, [layout layoutView]);
 	UKObjectKindOf([layout tableView], ETTableView);

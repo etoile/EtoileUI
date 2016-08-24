@@ -42,16 +42,14 @@
 	return [self initWithOwner: nil fragmentMargin: 0 maxWidth: FLT_MAX maxHeight: FLT_MAX isFlipped: YES];
 }
 
-DEALLOC(DESTROY(_fragments))
-
 /** Returns a new autoreleased horizontal layout line filled with the given 
 fragments. */
 + (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
                     itemMargin: (CGFloat)aMargin 
                       maxWidth: (CGFloat)aWidth
 {
-	return AUTORELEASE([[[self class] alloc] initWithOwner: anOwner
-		fragmentMargin: aMargin maxWidth: aWidth maxHeight: FLT_MAX isFlipped: YES]);
+	return [[[self class] alloc] initWithOwner: anOwner
+		fragmentMargin: aMargin maxWidth: aWidth maxHeight: FLT_MAX isFlipped: YES];
 }
 
 /** Returns a new autoreleased vertical layout line filled with the given 
@@ -61,8 +59,8 @@ fragments. */
                    maxHeight: (CGFloat)aHeight
                    isFlipped: (BOOL)isFlipped
 {
-	return AUTORELEASE([[ETVerticalLineFragment alloc] initWithOwner: anOwner
-		fragmentMargin: aMargin maxWidth: FLT_MAX maxHeight: aHeight isFlipped: isFlipped]);
+	return [[ETVerticalLineFragment alloc] initWithOwner: anOwner
+		fragmentMargin: aMargin maxWidth: FLT_MAX maxHeight: aHeight isFlipped: isFlipped];
 }
 
 - (NSString *) description

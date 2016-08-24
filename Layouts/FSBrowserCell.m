@@ -68,16 +68,8 @@
 }
 #endif
 
-- (void)dealloc 
-{
-    [iconImage release];
-    iconImage = nil;
-    [super dealloc];
-}
-
 - (void) setIconImage: (NSImage *)image 
 {
-    [iconImage autorelease];
     iconImage = [image copy];
     
     // Make sure the image is going to display at the size we want.

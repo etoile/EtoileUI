@@ -68,7 +68,7 @@
 
 + (id) speechWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [[[ETSpeechBubbleStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
+	return [[ETSpeechBubbleStyle alloc] initWithStyle: style objectGraphContext: aContext];
 }
 
 - (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
@@ -77,7 +77,7 @@
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_content, style);
+	_content = style;
 	return self;
 }
 
@@ -124,8 +124,7 @@
 	[shadow set];
 	[[NSColor whiteColor] setFill];
 	[bubble fill];
-	
-	[shadow release];
+
 	[NSGraphicsContext restoreGraphicsState];
 
 	// Draw gradient fill
@@ -134,7 +133,6 @@
 	NSGradient *gradient = [[NSGradient alloc]initWithStartingColor: [NSColor whiteColor]
 														endingColor: endColor];
 	[gradient drawInBezierPath: bubble angle: 90];
-	[gradient release];
 
 #else
 

@@ -15,12 +15,6 @@
 
 @synthesize delegate = _delegate, name = _name;
 
-- (void) dealloc
-{
-	DESTROY(_name);
-	[super dealloc];
-}
-
 - (NSString *) stringForObjectValue: (id)aValue
 {
 	/* If a text field presents an entity object, no empty strings must be 
@@ -45,7 +39,7 @@ returns NO to indicate the user must continue the editing (hitting the return ke
 doesn't abort the editing). */
 - (BOOL) getObjectValue: (id *)anObject forString: (NSString *)aString errorDescription: (NSString **)error
 {
-	NSString *string = AUTORELEASE([aString copy]);
+	NSString *string = [aString copy];
 
 	if (string == nil)
 		return NO;

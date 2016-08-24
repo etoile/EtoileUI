@@ -20,9 +20,9 @@
 	[super didLoadObjectGraph];
 
 	ETActionHandler *actionHandler =
-		AUTORELEASE([[ETActionHandler alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+		[[ETActionHandler alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 
-	ASSIGN(_actionHandlerPrototype, actionHandler);
+	_actionHandlerPrototype = actionHandler;
 }
 
 @end

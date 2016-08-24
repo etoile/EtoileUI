@@ -25,14 +25,8 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(itemGroup, [itemFactory itemGroup]);
+	itemGroup = [itemFactory itemGroup];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(itemGroup);
-	[super dealloc];
 }
 
 - (void) testAutoboxingWithCommonObjectValues
@@ -56,7 +50,7 @@
 	 
 - (void) testAutoboxingWithRepresentedObject
 {
-	id randomObject = [[NSObject new] autorelease];
+	id randomObject = [NSObject new];
 	id randomCollection = [NSArray array];
 
 	[itemGroup addObject: randomObject];

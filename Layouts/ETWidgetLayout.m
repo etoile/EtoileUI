@@ -14,6 +14,7 @@
 #import "ETBrowserLayout.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Scrollable.h"
+#import "ETLayoutItemGroup.h"
 #import "ETNibOwner.h"
 #import "ETTableLayout.h"
 #import "ETOutlineLayout.h"
@@ -73,9 +74,7 @@ For the view classes listed below, the substitute classes are:
 	ETNibOwner *nibOwner = [[ETNibOwner alloc] initWithNibName: nibName
 		                                                bundle: bundle
 	                                        objectGraphContext: aContext];
-	BOOL nibLoaded = [nibOwner loadNibWithOwner: self];
-	RELEASE(nibOwner);
-	return nibLoaded;
+	return [nibOwner loadNibWithOwner: self];
 }
 
 - (id) subclassInstanceWithLayoutView: (NSView *)aView
@@ -90,8 +89,8 @@ For the view classes listed below, the substitute classes are:
 	if ([self isMemberOfClass: layoutClass])
 		return self;
 	
-	return [[layoutClass allocWithZone: [self zone]] initWithLayoutView: aView
-	                                                 objectGraphContext: aContext];
+	return [[layoutClass alloc] initWithLayoutView: aView
+	                            objectGraphContext: aContext];
 }
 
 /** <init /> 
@@ -110,7 +109,7 @@ a class cluster. */
 
 	if (newInstance != oldInstance)
 	{
-		DESTROY(oldInstance);
+		oldInstance = nil;
 		return newInstance;
 	}
 
@@ -127,7 +126,7 @@ a class cluster. */
 
 	if (usesLayoutViewInNib && [self loadNibNamed: [self nibName] inObjectGraphContext: aContext] == NO)
 	{
-		DESTROY(self);
+		return nil;
 	}
 	
 	return self;
@@ -136,12 +135,6 @@ a class cluster. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithLayoutView: nil objectGraphContext: aContext];
-}
-
-- (void) dealloc
-{
-	DESTROY(layoutView);
-	[super dealloc];
 }
 
 - (void) setUp: (BOOL)isDeserialization
@@ -211,7 +204,7 @@ Returns nil by default. */
 - (void) setLayoutView: (NSView *)aView
 {
 	[self willChangeValueForProperty: @"layoutView"];
-	ASSIGN(layoutView, aView);
+	layoutView = aView;
 	[layoutView removeFromSuperview];
 	[self didChangeValueForProperty: @"layoutView"];
 }

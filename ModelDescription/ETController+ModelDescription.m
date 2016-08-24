@@ -205,7 +205,7 @@
 		[editableTemplates setObject: itemTemplate
 		                      forKey: [ETUTI typeWithString: UTIString]];
 	}];
-	return AUTORELEASE([editableTemplates copy]);
+	return [editableTemplates copy];
 }
 
 - (void) setTemplates: (NSDictionary *)editedTemplates
@@ -232,7 +232,7 @@
 		[editableDropTypes setObject: UTIs
 		                      forKey: [ETUTI typeWithString: targetUTIString]];
 	}];
-	return AUTORELEASE([editableDropTypes copy]);
+	return [editableDropTypes copy];
 }
 
 - (void) setAllowedDropTypes: (NSDictionary *)editedDropTypes

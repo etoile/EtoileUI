@@ -38,12 +38,12 @@
 - (id) initWithSupervisorView: (ETView *)aSupervisorView
            objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])
+	self = [super initWithSupervisorView: [[ETView alloc] init]
 	                  objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
 
-	_titleBarView = AUTORELEASE([[ETTitleBarView alloc] init]);
+	_titleBarView = [[ETTitleBarView alloc] init];
 	[self prepareTransientState];
 	
 	return self;

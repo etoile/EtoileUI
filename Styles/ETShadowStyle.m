@@ -15,7 +15,7 @@
 
 + (id) shadowWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [[[ETShadowStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
+	return [[ETShadowStyle alloc] initWithStyle: style objectGraphContext: aContext];
 }
 
 - (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
@@ -24,7 +24,7 @@
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_content, style);
+	_content = style;
 	// FIXME: implement on GNUstep
 #ifndef GNUSTEP
 	_shadow = [[NSShadow alloc] init];

@@ -35,7 +35,7 @@
 -(NSImage*) scaledImageToFitSize: (NSSize)fitIn withInterpolation: (NSImageInterpolation)inter andBox: (BOOL)doBox
 {
 	NSSize		size = [self scaledSizeToFitSize: fitIn];
-	NSImage*	img = [[[NSImage alloc] initWithSize: fitIn] autorelease];
+	NSImage*	img = [[NSImage alloc] initWithSize: fitIn];
 	NSRect		srcBox = { { 0, 0 }, { 0, 0 } },
 				dstBox = { { 0, 0 }, { 0, 0 } };
 	
@@ -87,7 +87,7 @@
 						andBox: (BOOL)doBox align: (NSImageAlignment)align
 {
 	NSSize		size = [self scaledSizeToCoverSize: fitIn];
-	NSImage*	img = [[[NSImage alloc] initWithSize: fitIn] autorelease];
+	NSImage*	img = [[NSImage alloc] initWithSize: fitIn];
 	NSRect		srcBox = { { 0, 0 }, { 0, 0 } },
 				dstBox = { { 0, 0 }, { 0, 0 } },
 				clipBox = { { 0, 0 }, { 0, 0 } };

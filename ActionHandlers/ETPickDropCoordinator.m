@@ -97,7 +97,7 @@ event. */
 {
 	SUPERINIT
 	[self reset];
-	ASSIGN(_event, anEvent);
+	_event = anEvent;
 	return self;
 }
 
@@ -122,12 +122,6 @@ When this modifier is pressed, drag an drop is enabled everywhere in the UI. */
 	_pickDropEnabledForAllItems = enabled;
 }
 
-- (void) dealloc
-{
-	[self reset];
-	[super dealloc];
-}
-
 /* Discards all drag session related data currently cached or maintained by the 
 receiver. 
 
@@ -135,11 +129,11 @@ This method must be called when a drag session ends, otherwise the next one
 would be messed up. */
 - (void) reset
 {
-	DESTROY(_event);
-	DESTROY(_dragSource);
-	DESTROY(_dragInfo);
-	DESTROY(_previousDropTarget);
-	DESTROY(_previousHoveredItem);
+	_event = nil;
+	_dragSource = nil;
+	_dragInfo = nil;
+	_previousDropTarget = nil;
+	_previousHoveredItem = nil;
 	_currentDropIndex = ETUndeterminedIndex;
 	_insertionShift = ETUndeterminedIndex;
 }
@@ -170,7 +164,7 @@ See also -hasBuiltInDragAndDropSupport. */
 	ETAssert(_dragSource == nil);
 
 	// TODO: Might be better to use the base item or the parent item...
-	ASSIGN(_dragSource, (ETLayoutItem *)[aLayout layoutContext]);
+	_dragSource = (ETLayoutItem *)[aLayout layoutContext];
 	ETAssert(_dragSource != nil);
 
 	if ([[aLayout ifResponds] hasBuiltInDragAndDropSupport])
@@ -564,10 +558,10 @@ returned nil. */
 	if (isValidDrop)
 	{
 		ETAssert(indicator != nil);
-		[indicator initWithLocation: locRelativeToDropTarget
-		                hoveredItem: hoveredItem
-		               isDropTarget: dropOn
-		         objectGraphContext: [dropTarget objectGraphContext]];
+		indicator = [indicator initWithLocation: locRelativeToDropTarget
+		                            hoveredItem: hoveredItem
+		                           isDropTarget: dropOn
+		                     objectGraphContext: [dropTarget objectGraphContext]];
 
 		[self insertDropIndicator: indicator forDropTarget: dropTarget];
 		[self redisplayDropIndicatorIfNeeded: indicator 
@@ -576,7 +570,7 @@ returned nil. */
 	}
 
 	/* For the next time */
-	ASSIGN(_previousDropTarget, dropTarget);
+	_previousDropTarget = dropTarget;
 }
 
 - (ETLayoutItem *) hitTest: (id <NSDraggingInfo>)dragInfo
@@ -636,7 +630,7 @@ manages the drop validation in
 
 	/* Otherwise it is a drag move */
 
-	ASSIGN(_dragInfo, (id)drag);
+	_dragInfo = (id)drag;
 	/* item can be nil, -itemAtLocation: doesn't return the receiver itself */
 	id item = [self dropTargetForDrag: drag];
 	
@@ -716,7 +710,7 @@ processes the drop in
 
 	NSParameterAssert(droppedObject != nil);
 
-	ASSIGN(_dragInfo, (id)dragInfo); // May be... ASSIGN(_dropEvent, [ETApp current
+	_dragInfo = (id)dragInfo; // May be... _dropEvent = [ETApp current
 	BOOL dropSuccess = [[dropTarget actionHandler] handleDropCollection: droppedObject
 	                                                           metadata: metadata
 	                                                            atIndex: _currentDropIndex
@@ -893,7 +887,7 @@ Both methods called -handleDragEnd:forItem: on the drop target item. */
 	{
 		// TODO: Should we just let -copy raises its exception abruptly if 
 		// the object cannot be copied...
-		object = AUTORELEASE([droppedObject copy]);
+		object = [droppedObject copy];
 
 		if (*aHint != nil)
 		{

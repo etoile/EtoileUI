@@ -24,16 +24,9 @@ as stroke color and brown as fill color. */
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_strokeColor, [NSColor orangeColor]);
-	ASSIGN(_fillColor, [NSColor brownColor]);
+	_strokeColor = [NSColor orangeColor];
+	_fillColor = [NSColor brownColor];
 	return self;
-}
-
-- (void) dealloc
-{
-    DESTROY(_fillColor);
-    DESTROY(_strokeColor);
-    [super dealloc];
 }
 
 #pragma mark Interaction Settings -
@@ -41,28 +34,28 @@ as stroke color and brown as fill color. */
 /** Returns the fill color associated with the receiver. */
 - (NSColor *) fillColor
 {
-    return AUTORELEASE([_fillColor copy]); 
+    return [_fillColor copy]; 
 }
 
 /** Sets the fill color associated with the receiver. */
 - (void) setFillColor: (NSColor *)color
 {
 	[self willChangeValueForProperty: @"fillColor"];
-	ASSIGNCOPY(_fillColor, color);
+	_fillColor = [color copy];
 	[self didChangeValueForProperty: @"fillColor"];
 }
 
 /** Returns the stroke color associated with the receiver. */
 - (NSColor *) strokeColor
 {
-    return AUTORELEASE([_strokeColor copy]); 
+    return [_strokeColor copy]; 
 }
 
 /** Sets the stroke color associated with the receiver. */
 - (void) setStrokeColor: (NSColor *)color
 {
 	[self willChangeValueForProperty: @"strokeColor"];
-	ASSIGNCOPY(_strokeColor, color);
+	_strokeColor = [color copy];
 	[self didChangeValueForProperty: @"strokeColor"];
 }
 
@@ -105,8 +98,8 @@ be reactivated when we exit our owner layout. */
 
 - (NSMenu *) menuRepresentation
 {
-	NSMenu *menu = AUTORELEASE([[NSMenu alloc] initWithTitle: _(@"Bucket Tool Options")]);
-	NSMenu *modeSubmenu = AUTORELEASE([[NSMenu alloc] initWithTitle: _(@"Bucket Tool Paint Mode")]);
+	NSMenu *menu = [[NSMenu alloc] initWithTitle: _(@"Bucket Tool Options")];
+	NSMenu *modeSubmenu = [[NSMenu alloc] initWithTitle: _(@"Bucket Tool Paint Mode")];
 
 	[menu addItemWithSubmenu: modeSubmenu];
 

@@ -42,7 +42,7 @@ into a window. */
 + (ETWindowItem *) itemWithWindow: (NSWindow *)window
                objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithWindow: window objectGraphContext: aContext]);
+	return [[self alloc] initWithWindow: window objectGraphContext: aContext];
 }
 
 /** Returns a new window item to which a panel gets bound.
@@ -53,7 +53,7 @@ For the AppKit, the panel cannot become the main item (the behavior might vary i
 The concrete window class used is [NSPanel]. */
 + (ETWindowItem *) panelItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	NSPanel *panel = AUTORELEASE([[NSPanel alloc] init]);
+	NSPanel *panel = [[NSPanel alloc] init];
 	return [self itemWithWindow: panel objectGraphContext: aContext];
 }
 
@@ -65,7 +65,7 @@ full screen.
 The concrete window class used is [ETFullScreenWindow]. */
 + (ETWindowItem *) fullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETWindowItem *window = [self itemWithWindow: AUTORELEASE([[ETFullScreenWindow alloc] init])
+	ETWindowItem *window = [self itemWithWindow: [[ETFullScreenWindow alloc] init]
 	                         objectGraphContext: aContext];
 	[window setShouldKeepWindowFrame: YES];
 	return window;
@@ -80,7 +80,7 @@ full screen.
 The concrete window class used is [ETFullScreenWindow]. */
 + (ETWindowItem *) transparentFullScreenItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	NSWindow *window = AUTORELEASE([[ETFullScreenWindow alloc] init]);
+	NSWindow *window = [[ETFullScreenWindow alloc] init];
 	[window setOpaque: NO];
 	[window setBackgroundColor: [NSColor clearColor]];
 	ETWindowItem *windowItem = [self itemWithWindow: window objectGraphContext: aContext];
@@ -130,7 +130,7 @@ If window is nil, the receiver creates a standard widget backend window. */
 
 	if (window != nil)
 	{
-		ASSIGN(_itemWindow, window);
+		_itemWindow = window;
 	}
 	else
 	{
@@ -148,31 +148,16 @@ If window is nil, the receiver creates a standard widget backend window. */
 	return [self initWithWindow: nil objectGraphContext: aContext];
 }
 
+/* We are usually in the middle of a window close handling and -dealloc has been 
+called as a side-effect of removing the decorated item from the window layer in 
+-windowWillClose: notification. */
 - (void) dealloc
 {
 	ETDebugLog(@"Dealloc item %@ with window %@ %@ at %@", self, [_itemWindow title],
 		_itemWindow, NSStringFromRect([_itemWindow frame]));
 
 	[self removeActiveFieldEditorItem]; /* For _editedItem and _activeFieldEditorItem */
-
 	[_itemWindow unbind: NSTitleBinding];
-	/* Retain the window to be sure we can send it -isReleasedWhenClosed. We 
-	   must defer the deallocation in case -close releases it and drops the
-	   retain count to zero. */
-	RETAIN(_itemWindow);
-	[_itemWindow close];
-	/* Don't release a window which is in charge of releasing itself.
-	   We are usually in the middle of a window close handling and -dealloc has
-	   been called as a side-effect of removing the decorated item from the 
-	   window layer in -windowWillClose: notification. */
-	if ([_itemWindow isReleasedWhenClosed] == NO)
-	{
-		RELEASE(_itemWindow);
-	}
-	DESTROY(_itemWindow);  /* Balance first retain call */
-	DESTROY(_oldFocusedItem);
-
-	[super dealloc];
 }
 
 /* Main Accessors */
@@ -365,7 +350,7 @@ and make the necessary adjustments. */
 		[_itemWindow setTitle: @""];
 	}
 	[self removeActiveFieldEditorItem];
-	DESTROY(_oldFocusedItem);
+	_oldFocusedItem = nil;
 }
 
 - (void) didDecorateItem: (ETUIItem *)item
@@ -733,7 +718,7 @@ See -firstResponder. */
 
 	ETDebugLog(@"Changing focused item from %@ to %@", _oldFocusedItem, newFocusedItem);
 
-	ASSIGN(_oldFocusedItem, newFocusedItem);
+	_oldFocusedItem = newFocusedItem;
 
 	ETAssert(_oldFocusedItem != nil);
 }
@@ -763,8 +748,8 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 	NILARG_EXCEPTION_TEST(editedItem);
 	[self removeActiveFieldEditorItem];
 
-	ASSIGN(_activeFieldEditorItem, editorItem);
-	ASSIGN(_editedItem, editedItem);
+	_activeFieldEditorItem = editorItem;
+	_editedItem = editedItem;
 
 	if (editorItem == nil)
 		return;
@@ -795,7 +780,7 @@ An NSInvalidArgumentException is raised when any given item is nil. */
 Does nothing when there is no active field editor item in the window. */
 - (void) removeActiveFieldEditorItem
 {
-	DESTROY(_editedItem);
+	_editedItem = nil;
 
 	if (nil == _activeFieldEditorItem)
 		return;
@@ -806,7 +791,7 @@ Does nothing when there is no active field editor item in the window. */
 	ETAssert(nil != contentItem);
 
 	[[_activeFieldEditorItem supervisorView] removeFromSuperview];
-	DESTROY(_activeFieldEditorItem);
+	_activeFieldEditorItem = nil;
 
 	/* Redraws recursively the item tree portion which was covered by the editor */
 	[contentItem setNeedsDisplayInRect: editorFrame];

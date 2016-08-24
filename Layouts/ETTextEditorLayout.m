@@ -30,8 +30,7 @@
 		
 	[editorView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[self setLayoutView: editorView];
-	RELEASE(editorView);
-	
+
 	return self;
 }
 

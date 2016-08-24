@@ -255,13 +255,6 @@
 	return movie;
 }
 
-- (void) dealloc
-{
-	DESTROY(title);
-	DESTROY(releaseDate);
-	[super dealloc];
-}
-
 @end
 
 
@@ -296,13 +289,6 @@
 	[collection setName: @"Random American Movies"];
 	[collection setMovies: A([Movie randomMovie], [Movie randomMovie])];
 	return collection;
-}
-
-- (void) dealloc
-{
-	DESTROY(name);
-	DESTROY(movies);
-	[super dealloc];
 }
 
 @end

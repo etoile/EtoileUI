@@ -29,12 +29,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(supervisorView);
-	[super dealloc];
-}
-
 #if 0
 - (void) testRelease
 {
@@ -142,7 +136,7 @@
 		+ GSDebugAllocationCount([ETLayoutItemGroup class])
 		+ GSDebugAllocationCount([ETView class]);
 	id view1 = [[ETView alloc] init];
-	id view2 = AUTORELEASE([[ETView alloc] init]);
+	id view2 = [[ETView alloc] init];
 	item = [[ETLayoutItem alloc] init];
 	[item setSupervisorView: view2];
 	CREATE_AUTORELEASE_POOL(layoutPool3); /* See layoutPool2 comment */
@@ -195,7 +189,7 @@
 
 - (NSView *) dummyView
 {
-	NSView *view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)]);
+	NSView *view = [[NSView alloc] initWithFrame: NSMakeRect(-20, 30, 100, 25)];
 	[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	return view;
 }

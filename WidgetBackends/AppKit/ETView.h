@@ -41,7 +41,7 @@ next EtoileUI release. */
 @interface ETView : NSView
 {
 	@private
-	IBOutlet ETUIItem *item;
+	IBOutlet ETUIItem * __weak item;
 	// NOTE: May be remove the view ivars to make the class more lightweight
 	NSView *_wrappedView;
 	/* _temporaryView is a weak reference (we retain it indirectly as a subview 
@@ -50,7 +50,7 @@ next EtoileUI release. */
 	   retains the layout view. Each time the layout is switched on -layoutItem, 
 	   we must update _temporaryView with -setLayoutView: otherwise the ivar
 	   might reference a freed object. See -[ETLayoutItem setLayout:]. */
-	NSView *_temporaryView;
+	NSView * __weak _temporaryView;
 #ifndef USE_NSVIEW_RFLAGS
 	BOOL _flipped;
 #endif

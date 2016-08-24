@@ -31,23 +31,23 @@
 @implementation ETController (Test)
 - (id) makeObject
 {
-	return AUTORELEASE([[[self templateForType: kETTemplateObjectType] objectClass] new]);
+	return [[[self templateForType: kETTemplateObjectType] objectClass] new];
 }
 - (id) makeGroup
 {
-	return AUTORELEASE([[[self templateForType: kETTemplateGroupType] objectClass] new]);
+	return [[[self templateForType: kETTemplateGroupType] objectClass] new];
 }
 - (id) makeItem
 {
-	return AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateObjectType options: nil]);
+	return [self newItemWithURL: nil ofType: kETTemplateObjectType options: nil];
 }
 - (id) makeItemGroup
 {
-	return AUTORELEASE([self newItemWithURL: nil ofType: kETTemplateGroupType options: nil]);
+	return [self newItemWithURL: nil ofType: kETTemplateGroupType options: nil];
 }
 - (void) setObjectClass: (Class)aClass
 {
-	id oldTemplate = [self templateForType: kETTemplateObjectType];
+	ETItemTemplate *oldTemplate = [self templateForType: kETTemplateObjectType];
 	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item]
 	                                      objectClass: aClass
 	                               objectGraphContext: [self objectGraphContext]];
@@ -55,26 +55,26 @@
 }
 - (void) setGroupClass: (Class)aClass
 {
-	id oldTemplate = [self templateForType: kETTemplateGroupType];
-	id newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item]
-	                                      objectClass: aClass
-	                               objectGraphContext: [self objectGraphContext]];
+	ETItemTemplate *oldTemplate = [self templateForType: kETTemplateGroupType];
+	ETItemTemplate *newTemplate = [ETItemTemplate templateWithItem: [oldTemplate item]
+	                                                   objectClass: aClass
+	                                            objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateGroupType];
 }
 - (void) setTemplateItem: (ETLayoutItem *)anItem
 {
-	id oldTemplate = [self templateForType: kETTemplateObjectType];
-	id newTemplate = [ETItemTemplate templateWithItem: anItem
-	                                      objectClass: [oldTemplate objectClass]
-	                               objectGraphContext: [self objectGraphContext]];
+	ETItemTemplate *oldTemplate = [self templateForType: kETTemplateObjectType];
+	ETItemTemplate *newTemplate = [ETItemTemplate templateWithItem: anItem
+	                                                   objectClass: [oldTemplate objectClass]
+	                                            objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateObjectType];
 }
 - (void) setTemplateItemGroup: (ETLayoutItemGroup *)anItem
 {
-	id oldTemplate = [self templateForType: kETTemplateGroupType];
-	id newTemplate = [ETItemTemplate templateWithItem: anItem
-	                                      objectClass: [oldTemplate objectClass]
-	                               objectGraphContext: [self objectGraphContext]];
+	ETItemTemplate *oldTemplate = [self templateForType: kETTemplateGroupType];
+	ETItemTemplate *newTemplate = [ETItemTemplate templateWithItem: anItem
+	                                                   objectClass: [oldTemplate objectClass]
+	                                            objectGraphContext: [self objectGraphContext]];
 	[self setTemplate: newTemplate forType: kETTemplateGroupType];
 }
 @end
@@ -110,17 +110,10 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(content, [itemFactory itemGroup]);
+	content = [itemFactory itemGroup];
 	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	[content setController: controller];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(content);
-	DESTROY(controller);
-	[super dealloc];
 }
 
 - (NSArray *) contentArray
@@ -135,8 +128,8 @@
 
 - (void) testOverridenCurrentObjectOrGroupTypeReturningNil
 {
-	ETController *subclassedController = AUTORELEASE([[ETController alloc]
-		initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]]);
+	ETController *subclassedController = [[ETController alloc]
+		initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
 		
 	UKNotNil([subclassedController templateForType: kETTemplateObjectType]);
 	UKNotNil([subclassedController templateForType: kETTemplateGroupType]);
@@ -157,7 +150,7 @@
 
 	/* Test item template */
 
-	id view = AUTORELEASE([DummyView new]);
+	id view = [DummyView new];
 	id templateItem = [itemFactory itemWithView: view];
 	[controller setTemplateItem: templateItem];
 	id newItem = [controller makeItem]; 
@@ -207,9 +200,9 @@
 
 	/* Test item template */
 
-	id view = AUTORELEASE([DummyView new]);
-	id templateItem = AUTORELEASE([[ETLayoutItemGroup alloc]
-		initWithView: view coverStyle: nil actionHandler: nil objectGraphContext: [controller objectGraphContext]]);
+	id view = [DummyView new];
+	id templateItem = [[ETLayoutItemGroup alloc]
+		initWithView: view coverStyle: nil actionHandler: nil objectGraphContext: [controller objectGraphContext]];
 	[controller setTemplateItemGroup: templateItem];
 	id newItemGroup = [controller makeItemGroup];
 	id newItemGroup2 = [controller makeItemGroup];
@@ -337,7 +330,7 @@
 
 - (NSSortDescriptor *) descriptorWithKey: (NSString *)aKey
 {
-	return AUTORELEASE([[NSSortDescriptor alloc] initWithKey: aKey ascending: YES]);
+	return [[NSSortDescriptor alloc] initWithKey: aKey ascending: YES];
 }
 
 - (void) testBasicSort

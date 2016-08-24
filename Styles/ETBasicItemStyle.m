@@ -34,7 +34,7 @@ small system font size. */
 a label underneath. */
 + (ETBasicItemStyle *) iconAndLabelBarElementStyleWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETBasicItemStyle *style = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
+	ETBasicItemStyle *style = [[self alloc] initWithObjectGraphContext: aContext];
 	[style setLabelPosition: ETLabelPositionInsideBottom];
 	[style setMaxImageSize: NSMakeSize(32, 32)];
 	[style setEdgeInset: 7];
@@ -45,7 +45,7 @@ a label underneath. */
 + (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule
                            objectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETBasicItemStyle *style = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
+	ETBasicItemStyle *style = [[self alloc] initWithObjectGraphContext: aContext];
 	[style setLabelPosition: aPositionRule];
 	return style;
 }
@@ -53,7 +53,7 @@ a label underneath. */
 // TODO: Remove once labelAttributes and _selectedLabelAttributes are made persistent
 - (void)prepareTransientState
 {
-	ASSIGN(_labelAttributes, [[self class] standardLabelAttributes]);
+	_labelAttributes = [[self class] standardLabelAttributes];
 	_selectedLabelAttributes = [NSDictionary new];
 }
 
@@ -74,8 +74,6 @@ no max image and label size and no edge inset. */
 	_edgeInset = 0;
 	return self;
 }
-
-DEALLOC(DESTROY(_labelAttributes); DESTROY(_selectedLabelAttributes));
 
 - (NSImage *) icon
 {
@@ -385,7 +383,7 @@ See also -labelAttributesForDrawingItem:. */
 - (void) setLabelAttributes: (NSDictionary *)stringAttributes
 {
 	[self willChangeValueForProperty: @"labelAttributes"];
-	ASSIGN(_labelAttributes, stringAttributes);
+	_labelAttributes = stringAttributes;
 	[self didChangeValueForProperty: @"labelAttributes"];
 }
 
@@ -395,7 +393,7 @@ See also -labelAttributesForDrawingItem:. */
 - (void) setSelectedLabelAttributes: (NSDictionary *)stringAttributes
 {
 	[self willChangeValueForProperty: @"selectedLabelAttributes"];
-	ASSIGN(_selectedLabelAttributes, stringAttributes);
+	_selectedLabelAttributes = stringAttributes;
 	[self didChangeValueForProperty: @"selectedLabelAttributes"];
 }
 

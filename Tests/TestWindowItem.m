@@ -48,17 +48,24 @@
 {
 	[ETLayoutItem disablesAutolayout];
 	
-	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+	ETUUID *itemUUID;
+	ETUUID *decoratorUUID;
 	
-	CREATE_AUTORELEASE_POOL(pool);
-	[item setDecoratorItem: decorator];
-	[item setDecoratorItem: nil];
-	[[itemFactory objectGraphContext] discardAllChanges];
-	DESTROY(pool);
+	@autoreleasepool
+	{
+		ETLayoutItem *item = [itemFactory item];
+		id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+		
+		itemUUID = [item UUID];
+		decoratorUUID = [decorator UUID];
+
+		[item setDecoratorItem: decorator];
+		[item setDecoratorItem: nil];
+		[[itemFactory objectGraphContext] discardAllChanges];
+	}
 	
-	UKIntsEqual(1, [decorator retainCount]);
-	UKIntsEqual(1, [item retainCount]);
+	UKTrue([ETUIObject isObjectDeallocatedForUUID: decoratorUUID]);
+	UKTrue([ETUIObject isObjectDeallocatedForUUID: itemUUID]);
 
 	[ETLayoutItem enablesAutolayout];
 }
@@ -67,22 +74,21 @@
 {
 	/* Release as many objects as possible to catch binding teardown issues */
 	[ETLayoutItem disablesAutolayout];
-	CREATE_AUTORELEASE_POOL(pool);
+	@autoreleasepool
+	{
+		ETLayoutItem *item = [itemFactory item];
+		id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
 
-	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+		[item setName: @"Jupiter"];
+		[item setDecoratorItem: decorator];
 
-	[item setName: @"Jupiter"];
-	[item setDecoratorItem: decorator];
+		UKStringsEqual(@"Jupiter", [[decorator window] title]);
+		
+		[item setDecoratorItem: nil];
 
-	UKStringsEqual(@"Jupiter", [[decorator window] title]);
-	
-	[item setDecoratorItem: nil];
-
-	UKStringsNotEqual(@"Jupiter", [[decorator window] title]);
-	UKNil([[[decorator window] infoForBinding: NSTitleBinding] objectForKey: NSObservedObjectKey]);
-
-	DESTROY(pool);
+		UKStringsNotEqual(@"Jupiter", [[decorator window] title]);
+		UKNil([[[decorator window] infoForBinding: NSTitleBinding] objectForKey: NSObservedObjectKey]);
+	}
 	[ETLayoutItem enablesAutolayout];
 }
 
@@ -90,24 +96,23 @@
 {
 	/* Release as many objects as possible to catch binding teardown issues */
 	[ETLayoutItem disablesAutolayout];
-	CREATE_AUTORELEASE_POOL(pool);
-	
-	ETLayoutItem *item = [itemFactory item];
-	id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
-	id innerDecorator = [ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
-	
-	[item setName: @"Jupiter"];
-	[innerDecorator setDecoratorItem: decorator];
-	[item setDecoratorItem: innerDecorator];
-	
-	UKStringsEqual(@"Jupiter", [[decorator window] title]);
-	
-	[item setDecoratorItem: nil];
-	
-	UKStringsNotEqual(@"Jupiter", [[decorator window] title]);
-	UKNil([[[decorator window] infoForBinding: NSTitleBinding] objectForKey: NSObservedObjectKey]);
-	
-	DESTROY(pool);
+	@autoreleasepool
+	{
+		ETLayoutItem *item = [itemFactory item];
+		id decorator = [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+		id innerDecorator = [ETScrollableAreaItem itemWithObjectGraphContext: [itemFactory objectGraphContext]];
+		
+		[item setName: @"Jupiter"];
+		[innerDecorator setDecoratorItem: decorator];
+		[item setDecoratorItem: innerDecorator];
+		
+		UKStringsEqual(@"Jupiter", [[decorator window] title]);
+		
+		[item setDecoratorItem: nil];
+		
+		UKStringsNotEqual(@"Jupiter", [[decorator window] title]);
+		UKNil([[[decorator window] infoForBinding: NSTitleBinding] objectForKey: NSObservedObjectKey]);
+	}
 	[ETLayoutItem enablesAutolayout];
 }
 

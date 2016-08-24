@@ -39,49 +39,51 @@
 
 - (void) testRetainCountForItemCreation
 {
+	ETUUID *itemUUID;
+	ETUUID *itemGroupUUID;
+
     /* Force the layout executor to release the item (the item was scheduled due
 	   to geometry initialization) */
-	CREATE_AUTORELEASE_POOL(pool);
+	@autoreleasepool
+	{
+		id item = [itemFactory item];
+		id itemGroup = [itemFactory itemGroup];
 
-	id item = [itemFactory item];
-	id itemGroup = [itemFactory itemGroup];
-    ETUUID *itemUUID = RETAIN([item UUID]);
-    ETUUID *itemGroupUUID = RETAIN([itemGroup UUID]);
+		itemUUID = [item UUID];
+		itemGroupUUID = [itemGroup UUID];
 
-	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
-	[[itemFactory objectGraphContext] discardAllChanges];
-	DESTROY(pool);
+		[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
+		[[itemFactory objectGraphContext] discardAllChanges];
+	}
 
     UKTrue([ETUIObject isObjectDeallocatedForUUID: itemUUID]);
 	UKTrue([ETUIObject isObjectDeallocatedForUUID: itemGroupUUID]);
-
-    RELEASE(itemUUID);
-    RELEASE(itemGroupUUID);
 }
 
 - (void) testRetainCountForItemMutation
 {
+	ETUUID *itemUUID;
+	ETUUID *itemGroupUUID;
+
     /* Relationship cache may cause autoreleased references (see
        -testRetainCountForItemCreation too) */
-	CREATE_AUTORELEASE_POOL(pool);
+	@autoreleasepool
+	{
+		id item = [itemFactory item];
+		id itemGroup = [itemFactory itemGroup];
 
-	id item = [itemFactory item];
-	id itemGroup = [itemFactory itemGroup];
-    ETUUID *itemUUID = RETAIN([item UUID]);
-    ETUUID *itemGroupUUID = RETAIN([itemGroup UUID]);
+		itemUUID = [item UUID];
+		itemGroupUUID = [itemGroup UUID];
 
-    [itemGroup addItem: item];
-	[itemGroup removeItem: item];
+		[itemGroup addItem: item];
+		[itemGroup removeItem: item];
 
-	[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
-	[[itemFactory objectGraphContext] discardAllChanges];
-	DESTROY(pool);
+		[[ETLayoutExecutor sharedInstance] removeItems: S(item, itemGroup)];
+		[[itemFactory objectGraphContext] discardAllChanges];
+	}
 
     UKTrue([ETUIObject isObjectDeallocatedForUUID: itemUUID]);
     UKTrue([ETUIObject isObjectDeallocatedForUUID: itemGroupUUID]);
-    
-    RELEASE(itemUUID);
-    RELEASE(itemGroupUUID);
 }
 
 - (void) testRootItem
@@ -106,7 +108,7 @@
 	ETLayoutItem* item = [itemFactory item];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
-	[parentItem setSupervisorView: AUTORELEASE([[ETView alloc] init])];
+	[parentItem setSupervisorView: [[ETView alloc] init]];
 	[parentItem handleAttachViewOfItem: item];
 	[parentItem handleDetachViewOfItem: item];
 	UKPass();
@@ -136,7 +138,7 @@
 - (void) testAddAndRemoveItemWithView
 {
 	// TODO: Test when the item has a parent item already
-	ETLayoutItem* item = [itemFactory itemWithView: AUTORELEASE([[NSView alloc] init])];
+	ETLayoutItem* item = [itemFactory itemWithView: [[NSView alloc] init]];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
 	[parentItem addItem: item];
@@ -152,7 +154,7 @@
 
 - (void) testAddItemWithViewIntoOpaqueLayout
 {
-	ETLayoutItem* item = [itemFactory itemWithView: AUTORELEASE([[NSView alloc] init])];
+	ETLayoutItem* item = [itemFactory itemWithView: [[NSView alloc] init]];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
 	[parentItem setLayout: [ETTableLayout layoutWithObjectGraphContext: [parentItem objectGraphContext]]];
@@ -175,22 +177,20 @@
 /* Verify that a parent item nullifies the weak references to itself on -dealloc. */
 - (void) testDeallocatedParentItem
 {
-    CREATE_AUTORELEASE_POOL(pool);
+    @autoreleasepool {
+		id item = [[ETLayoutItemGroup alloc]
+			initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
+		id item0 = [[ETLayoutItemGroup alloc]
+			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+		id item1 = [[ETLayoutItem alloc]
+			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 
-	id item = [[ETLayoutItemGroup alloc]
-		initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
-	id item0 = [[ETLayoutItemGroup alloc]
-		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
-	id item1 = [[ETLayoutItem alloc]
-		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
+		[item addItems: A(item0, item1)];
 
-	[item addItems: A(item0, item1)];
-
-	/* Required to get RELEASE(item) deallocates the item */
-	[[ETLayoutExecutor sharedInstance] removeItem: item];
-	[[item objectGraphContext] discardAllChanges];
-	RELEASE(item);
-    DESTROY(pool);
+		/* Required to get the item deallocated */
+		[[ETLayoutExecutor sharedInstance] removeItem: item];
+		[[item objectGraphContext] discardAllChanges];
+   }
 
 	/* The next tests ensure the parent item was correctly reset to nil, 
 	   otherwise -parentItem crashes. */
@@ -199,9 +199,6 @@
     // the source object is nil.
 	//UKNil([item0 parentItem]);
 	//UKNil([item1 parentItem]);
-
-	RELEASE(item0);
-	RELEASE(item1);
 }
 
 - (void) testIndexOfMissingItem
@@ -350,8 +347,8 @@
 - (void) testSupervisorView
 {
 	id item = [itemFactory item];
-	id view1 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id view2 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(-50, 0, 100, 200)]);
+	id view1 = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id view2 = [[ETView alloc] initWithFrame: NSMakeRect(-50, 0, 100, 200)];
 
 	UKNil([item supervisorView]);
 	
@@ -374,8 +371,8 @@
 
 	UKNil([item supervisorView]);
 	
-	ETWindowItem *windowItem = AUTORELEASE([[ETWindowItem alloc]
-		initWithObjectGraphContext: [item objectGraphContext]]);
+	ETWindowItem *windowItem = [[ETWindowItem alloc]
+		initWithObjectGraphContext: [item objectGraphContext]];
 	[item setDecoratorItem: windowItem];
 	
 	UKNotNil([item supervisorView]);
@@ -385,10 +382,10 @@
 - (void) testHandleDecorateItemInView
 {
 	id item = [itemFactory item];
-	id parentView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id parentView = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
 	ETLayoutItemGroup *parent = [itemFactory itemGroup];
-	id mySupervisorView = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id supervisorView1 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id mySupervisorView = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id supervisorView1 = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
 	id decorator1 = [ETDecoratorItem itemWithDummySupervisorView]; //[itemFactory itemWithView: supervisorView1];
 
 	[parent setSupervisorView: parentView];
@@ -416,14 +413,8 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(item, [itemFactory itemGroup]);
+	item = [itemFactory itemGroup];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(item);
-	[super dealloc];
 }
 
 - (void) testSetSource

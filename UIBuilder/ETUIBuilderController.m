@@ -10,13 +10,16 @@
 #import <EtoileFoundation/ETViewpoint.h>
 #import <EtoileFoundation/NSObject+HOM.h>
 #import <EtoileFoundation/Macros.h>
+#import <CoreObject/COCommitDescriptor.h>
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObjectGraphContext.h>
+#import <CoreObject/COPersistentRoot.h>
 #import <IconKit/IKIcon.h>
 #import "ETUIBuilderController.h"
 #import "ETApplication.h"
 #import "ETArrowTool.h"
 #import "ETAspectRepository.h"
+#import "EtoileUIProperties.h"
 #import "ETItemValueTransformer.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItemGroup.h"
@@ -48,21 +51,6 @@
 	_imageValueTransformer = [self newImageValueTransformer];
 	_typeValueTransformer = [self newTypeValueTransformer];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_itemFactory);
-	DESTROY(_documentContentItem);
-	DESTROY(_browserItem);
-	DESTROY(_aspectInspectorItem);
-	DESTROY(_viewPopUpItem);
-	DESTROY(_aspectPopUpItem);
-	DESTROY(_aspectRepository);
-	DESTROY(_relationshipValueTransformer);
-	DESTROY(_imageValueTransformer);
-	DESTROY(_typeValueTransformer);
-	[super dealloc];
 }
 
 - (void) didChangeContent: (ETLayoutItemGroup *)oldContent
@@ -159,7 +147,7 @@
 		[self stopObserveObject: _documentContentItem
 		    forNotificationName: ETItemGroupSelectionDidChangeNotification];		
 	}
-	ASSIGN(_documentContentItem, anItem);
+	_documentContentItem = anItem;
 	[self preparePersistentItemForDocumentContentItem: anItem];
 
 	if (anItem != nil)
@@ -408,7 +396,7 @@
 		(id)[ETItemValueTransformer valueTransformerForName: @"UIBuilderType"];
 
 	if (transformer != nil)
-		return RETAIN(transformer);
+		return transformer;
 
 	transformer = [[ETItemValueTransformer alloc] initWithName: @"UIBuilderType"];
 
@@ -437,8 +425,8 @@
 		   example the cover style of [ETItemTemplate item]) */
 		if (aspect == nil)
 		{
-			aspect = AUTORELEASE([[NSClassFromString(value) alloc]
-				initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]]);
+			aspect = [[NSClassFromString(value) alloc]
+				initWithObjectGraphContext: [COObjectGraphContext objectGraphContext]];
 		}
 		
 		return aspect;
@@ -453,7 +441,7 @@
 		(id)[ETItemValueTransformer valueTransformerForName: @"UIBuilderRelationship"];
 
 	if (transformer != nil)
-		return RETAIN(transformer);
+		return transformer;
 
 	transformer = [[ETItemValueTransformer alloc] initWithName: @"UIBuilderRelationship"];
 
@@ -503,7 +491,7 @@
 		(id)[ETItemValueTransformer valueTransformerForName: @"UIBuilderImage"];
 
 	if (transformer != nil)
-		return RETAIN(transformer);
+		return transformer;
 
 	transformer = [[ETItemValueTransformer alloc] initWithName: @"UIBuilderImage"];
 
@@ -522,7 +510,7 @@
 		
 		if (image == nil)
 		{
-			image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: value]);
+			image = [[NSImage alloc] initWithContentsOfFile: value];
 		}
 		return image;
 	}];
@@ -532,7 +520,7 @@
 
 - (ETObjectValueFormatter *) typeValueFormatter
 {
-	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	ETObjectValueFormatter *formatter = [ETObjectValueFormatter new];
 	[formatter setName: @"type"];
 	[formatter setDelegate: self];
 	return formatter;
@@ -540,7 +528,7 @@
 
 - (ETObjectValueFormatter *) relationshipValueFormatter
 {
-	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	ETObjectValueFormatter *formatter = [ETObjectValueFormatter new];
 	[formatter setName: @"relationship"];
 	[formatter setDelegate: self];
 	return formatter;
@@ -548,7 +536,7 @@
 
 - (ETObjectValueFormatter *) imageValueFormatter
 {
-	ETObjectValueFormatter *formatter = AUTORELEASE([ETObjectValueFormatter new]);
+	ETObjectValueFormatter *formatter = [ETObjectValueFormatter new];
 	[formatter setName: @"image"];
 	[formatter setDelegate: self];
 	return formatter;
@@ -609,10 +597,14 @@
 	if ([editedObject isPersistent] == NO)
 		return;
 
-	NSString *description = [NSString stringWithFormat: @"Edited property %@", aKey];
+	NSDictionary *metadata = @{ kCOCommitMetadataTypeDescription: @"Property Change",
+	                           kCOCommitMetadataShortDescription: @"Edited property %@",
+	                  kCOCommitMetadataShortDescriptionArguments: aKey };
+	COError *error = nil;
 
-	[[[self persistentObjectContext] editingContext] commitWithType: @"Property Change"
-	                                               shortDescription: description];
+	[[[self persistentObjectContext] editingContext]
+		commitWithIdentifier: kETCommitEditProperty metadata: metadata undoTrack: nil error: &error];
+	ETAssert(error = nil);
 }
 
 - (void) didBecomeFocusedItem: (ETLayoutItem *)anItem

@@ -7,6 +7,7 @@
  */
 
 #import "ETCompatibility.h"
+#import <CoreObject/COBranch.h>
 #import <CoreObject/COEditingContext.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import <CoreObject/COPersistentRoot.h>
@@ -67,7 +68,7 @@ COBranch *editedBranch(id aPersistentContext)
 
     if (persistentRoot != nil)
     {
-        ASSIGN(_persistentObjectContext, [persistentRoot objectGraphContext]);
+        _persistentObjectContext = [persistentRoot objectGraphContext];
         return;
     }
 
@@ -78,7 +79,7 @@ COBranch *editedBranch(id aPersistentContext)
 
     COBranch *branch = [persistentRoot branchForUUID: _persistentObjectContextUUID];
 
-    ASSIGN(_persistentObjectContext, [branch objectGraphContext]);
+    _persistentObjectContext = [branch objectGraphContext];
 	
 	[self didChangeValueForProperty: @"persistentObjectContext"];
 }

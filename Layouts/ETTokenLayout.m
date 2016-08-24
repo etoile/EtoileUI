@@ -8,6 +8,7 @@
 
 #import <EtoileFoundation/Macros.h>
 #import <EtoileFoundation/NSObject+HOM.h>
+#import <AppKit/NSTextView.h>
 #import "ETTokenLayout.h"
 #import "ETBasicItemStyle.h"
 #import "ETComputedLayout.h"
@@ -42,7 +43,7 @@ Initializes and returns a new token layout. */
 	[[self attachedTool] setIgnoresBackgroundClick: NO];
 
 	ETLayoutItem *templateItem = [[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];
-	ETTokenStyle *tokenStyle = AUTORELEASE([[ETTokenStyle alloc] initWithObjectGraphContext: aContext]);
+	ETTokenStyle *tokenStyle = [[ETTokenStyle alloc] initWithObjectGraphContext: aContext];
 
 	[self setTemplateItem: templateItem];
 	[templateItem setCoverStyle: tokenStyle];
@@ -62,19 +63,12 @@ Initializes and returns a new token layout. */
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_editedProperty);
-	DESTROY(_itemLabelFont);
-	[super dealloc];
-}
-
 - (void) setUp: (BOOL)isDeserialization
 {
 	[super setUp: isDeserialization];
 
 	// FIXME: Should use a new ETLayout API that memorizes the context state
-	[(id)[self layoutContext] setActionHandler: AUTORELEASE([[ETTokenBackgroundActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]])];
+	[(id)[self layoutContext] setActionHandler: [[ETTokenBackgroundActionHandler alloc] initWithObjectGraphContext: [self objectGraphContext]]];
 }
 
 - (void) tearDown
@@ -211,9 +205,9 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 + (NSDictionary *) defaultSelectedLabelAttributes
 {
-	NSMutableDictionary *newAttributes = [[[self standardLabelAttributes] mutableCopy] autorelease];
+	NSMutableDictionary *newAttributes = [[self standardLabelAttributes] mutableCopy];
 	[newAttributes setObject: [NSColor whiteColor] forKey: NSForegroundColorAttributeName];
-	return [[newAttributes copy] autorelease];
+	return [newAttributes copy];
 }
 
 + (NSColor *) defaultTintColor
@@ -227,7 +221,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	if (self == nil)
 		return self;
 
-	ASSIGN(_tintColor, [[self class] defaultTintColor]);
+	_tintColor = [[self class] defaultTintColor];
 	[self setSelectedLabelAttributes: [[self class] defaultSelectedLabelAttributes]];
 
 	NSSize maxLabelSize = [self maxLabelSize];
@@ -239,12 +233,6 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	[self setEdgeInset: 7];
 
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_tintColor);
-	[super dealloc];
 }
 
 - (NSImage *) icon
@@ -333,14 +321,8 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(_editedProperty, kETValueProperty);
+	_editedProperty = kETValueProperty;
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_editedProperty);
-	[super dealloc];
 }
 
 - (NSFont *) defaultFieldEditorFont
@@ -426,7 +408,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 		[[editedItem firstResponderSharingArea] activeFieldEditorItem];
 	ETAssert(fieldEditorItem != nil);
 
-	id value = AUTORELEASE([[[fieldEditorItem  view] string] copy]);
+	id value = [[[fieldEditorItem  view] string] copy];
 	BOOL isValidValue = (value != nil && [value isEqual: @""] == NO);
 
 	if (isValidValue)

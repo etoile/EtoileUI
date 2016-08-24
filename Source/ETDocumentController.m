@@ -30,12 +30,6 @@
 
 @implementation ETDocumentController
 
-- (void) dealloc
-{
-	DESTROY(_error);
-	[super dealloc];
-}
-
 /** Returns the items that match the given UTI in the receiver content.
 
 Each item subtype must conform to the given type to be matched.
@@ -43,7 +37,7 @@ Each item subtype must conform to the given type to be matched.
 See -[ETLayoutItem subtype] and -[ETUTI conformsToType:]. */
 - (NSArray *) itemsForType: (ETUTI *)aUTI
 {
- 	NSMutableArray *items = AUTORELEASE([[self content] mutableCopy]); 
+ 	NSMutableArray *items = [[self content] mutableCopy]; 
 	[[(ETLayoutItem *)[items filter] subtype] conformsToType: aUTI];
 	return items;
 }
@@ -57,7 +51,7 @@ The returned array usually contains a single item, unless the application allows
 to open multiple instances of the same document (e.g. a web browser). */
 - (NSArray *) itemsForURL: (NSURL *)aURL
 {
-	NSMutableArray *items = AUTORELEASE([[[self content] items] mutableCopy]); 
+	NSMutableArray *items = [[[self content] items] mutableCopy]; 
 	[[[items filter] valueForProperty: @"URL"] isEqual: aURL];
 	return items;
 }
@@ -88,12 +82,12 @@ to open multiple instances of the same document (e.g. a web browser). */
 
 - (NSDictionary *)defaultOptions
 {
-	NSMutableDictionary *options = AUTORELEASE([[super defaultOptions] mutableCopy]);
+	NSMutableDictionary *options = [[super defaultOptions] mutableCopy];
 
 	[options setObject: [NSNumber numberWithInteger: [self numberOfUntitledDocuments]]
 	            forKey: kETTemplateOptionNumberOfUntitledDocuments];
 
-	return AUTORELEASE([options copy]);
+	return [options copy];
 }
 
 /** Returns a retained ETLayoutItem or ETLayoutItemGroup object that presents the 
@@ -121,7 +115,7 @@ Raises a NSInvalidArgumentException if the given URL is nil. */
 	 && NO == [[self itemsForURL: aURL] isEmpty])
 	{
 			ETAssert(1 == [[self itemsForURL: aURL] count]);
-			return RETAIN([[self itemsForURL: aURL] firstObject]);
+			return [[self itemsForURL: aURL] firstObject];
 	}
 
 	ETUTI *type = [[self class] typeForURL: aURL];
@@ -244,9 +238,9 @@ Will call -newInstanceWithURL:ofType:options: to create the new document.
 See also -currentObjectType. */
 - (IBAction) newDocument: (id)sender
 {
-	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil 
-	                                               ofType: [self currentObjectType] 
-	                                              options: [self defaultOptions]]);
+	ETLayoutItem *item = [self newItemWithURL: nil
+	                                   ofType: [self currentObjectType]
+	                                  options: [self defaultOptions]];
 	[self insertItem: item atIndex: ETUndeterminedIndex];
 	_numberOfUntitledDocuments++;
 	[self didCreateDocumentItem: item];
@@ -271,7 +265,7 @@ See also [ETDocumentCreation] protocol. */
 	/* Open each URL content */
 	FOREACH(urls, url, NSURL *)
 	{
-		openedItem = AUTORELEASE([self openItemWithURL: url options: options]);
+		openedItem = [self openItemWithURL: url options: options];
 
 		if (openedItem == nil)
 		{

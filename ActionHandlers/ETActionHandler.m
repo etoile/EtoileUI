@@ -63,8 +63,6 @@ Returns Nil by default. */
 	{
 		[self endEditingItem: _editedItem];
 	}
-	DESTROY(_fieldEditorItem);
-	[super dealloc];
 }
 
 static NSResponder *sharedFallbackResponder = nil;
@@ -189,7 +187,7 @@ an action. See -beginEditingItem:property:inRect:. */
 	   with +sharedInstance */
 	if (nil == _fieldEditorItem)
 	{
-		NSTextView *fieldEditor = AUTORELEASE([[NSTextView alloc] initWithFrame: [ETLayoutItem defaultItemRect]]);
+		NSTextView *fieldEditor = [[NSTextView alloc] initWithFrame: [ETLayoutItem defaultItemRect]];
 		
 		[fieldEditor setFocusRingType: NSFocusRingTypeExterior];
 		[fieldEditor setFont: [self defaultFieldEditorFont]];
@@ -202,7 +200,7 @@ an action. See -beginEditingItem:property:inRect:. */
 		[fieldEditor setUsesFontPanel: NO];
 		[fieldEditor setAllowsUndo: YES];
 
-		ASSIGN(_fieldEditorItem, [[ETLayoutItemFactory factory] itemWithView: fieldEditor]);
+		_fieldEditorItem = [[ETLayoutItemFactory factory] itemWithView: fieldEditor];
 		[_fieldEditorItem setCoverStyle:
 			[ETFieldEditorItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
 	}
@@ -215,7 +213,7 @@ an action. See -beginEditingItem:property:inRect:. */
 See also -fieldEditorItem. */
 - (void) setFieldEditorItem: (ETLayoutItem *)anItem
 {
-	ASSIGN(_fieldEditorItem, anItem);
+	_fieldEditorItem = anItem;
 }
 
 - (NSFont *) fontForEditingItem: (ETLayoutItem *)anItem
@@ -271,7 +269,7 @@ value directly from the field editor item:
 	ETLayoutItem *fieldEditorItem =
  		[[editedItem firstResponderSharingArea] activeFieldEditorItem];
 
-	[someObject setDate: [[[[fieldEditorItem view] string] copy] autorelease]];
+	[someObject setDate: [[[fieldEditorItem view] string] copy]];
 
  	[super endEditingItem: editedItem];
 }
@@ -314,8 +312,8 @@ For a nil item, raises a NSInvalidArgumentException. */
 	[responderArea setActiveFieldEditorItem: fieldEditorItem
 	                             editedItem: item];
 
-	ASSIGN(_editedItem, item);
-	ASSIGN(_editedItemProperty, property);
+	_editedItem = item;
+	_editedItemProperty = property;
 }
 
 /** Ends the text editing started with -beginEditingItem:property:inRect:, 
@@ -338,7 +336,7 @@ To retrieve the field editor item string content, just call -value on it. */
 
 	id <ETFirstResponderSharingArea> responderArea = [_editedItem firstResponderSharingArea];
 	/* -[NSText string] returns a mutable string */
-	id value = AUTORELEASE([[(NSText *)[[responderArea activeFieldEditorItem] view] string] copy]);
+	id value = [[(NSText *)[[responderArea activeFieldEditorItem] view] string] copy];
 
 	if (_editedItemProperty != nil)
 	{
@@ -354,8 +352,8 @@ To retrieve the field editor item string content, just call -value on it. */
 
 	[responderArea removeActiveFieldEditorItem];
 
-	DESTROY(_editedItem);
-	DESTROY(_editedItemProperty);
+	_editedItem = nil;
+	_editedItemProperty = nil;
 }
 
 /** When -beginEditingItem:property:inRect: was called, this method is invoked 
@@ -585,7 +583,7 @@ By default, returns YES. */
 {
 	//ETLog(@"Select %@", item);
 	ETLayoutItemGroup *parent = [item parentItem];
-	NSMutableIndexSet *indexes = AUTORELEASE([[parent selectionIndexes] mutableCopy]);
+	NSMutableIndexSet *indexes = [[parent selectionIndexes] mutableCopy];
 	
 	[indexes addIndex: [parent indexOfItem: item]];
 	[parent setSelectionIndexes: indexes];
@@ -607,7 +605,7 @@ TODO: Problably remove, since it should be of any use and just adds complexity. 
 {
 	//ETLog(@"Deselect %@", item);
 	ETLayoutItemGroup *parent = [item parentItem];
-	NSMutableIndexSet *indexes = AUTORELEASE([[parent selectionIndexes] mutableCopy]);
+	NSMutableIndexSet *indexes = [[parent selectionIndexes] mutableCopy];
 
 	[indexes removeIndex: [parent indexOfItem: item]];
 	[parent setSelectionIndexes: indexes];
@@ -674,10 +672,8 @@ status, when others request it. */
 
 	int currentIndex = [parent indexOfItem: item];
 
-	RETAIN(item);
 	[item removeFromParent];
 	[parent insertItem: item atIndex: currentIndex - 1];
-	RELEASE(item);
 
 	[item commitWithIdentifier: kETCommitItemSendBackward];
 }
@@ -689,10 +685,8 @@ status, when others request it. */
 	if ([item isEqual: [parent firstItem]])
 		return;
 
-	RETAIN(item);
 	[item removeFromParent];
 	[parent insertItem: item atIndex: 0];
-	RELEASE(item);
 
 	[item commitWithIdentifier: kETCommitItemSendToBack];
 }
@@ -706,10 +700,8 @@ status, when others request it. */
 
 	int currentIndex = [parent indexOfItem: item];
 
-	RETAIN(item);
 	[item removeFromParent];
 	[parent insertItem: item atIndex: currentIndex + 1];
-	RELEASE(item);
 
 	[item commitWithIdentifier: kETCommitItemBringForward];
 }
@@ -721,10 +713,8 @@ status, when others request it. */
 	if ([item isEqual: [parent lastItem]])
 		return;
 
-	RETAIN(item);
 	[item removeFromParent];
 	[parent addItem: item];
-	RELEASE(item);
 
 	[item commitWithIdentifier: kETCommitItemBringToFront];
 }

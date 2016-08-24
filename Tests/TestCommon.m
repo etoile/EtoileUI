@@ -30,18 +30,10 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(_name, @"John");
-	ASSIGN(_emails, D(@"john@etoile.com", @"Work", @"john@nowhere.org", @"Home"));
-	ASSIGN(_groupNames, A(@"Somebody", @"Nobody"));
+	_name = @"John";
+	_emails = D(@"john@etoile.com", @"Work", @"john@nowhere.org", @"Home");
+	_groupNames = A(@"Somebody", @"Nobody");
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_name);
-	DESTROY(_emails);
-	DESTROY(_groupNames);
-	[super dealloc];
 }
 
 - (NSArray *) propertyNames
@@ -86,7 +78,7 @@ than the subclass instance we might want. */
 
     /* Delete existing db file in case -dealloc didn't run */
     [self deleteStore];
-    ASSIGN(editingContext, [COEditingContext contextWithURL: [self storeURL]]);
+    editingContext = [COEditingContext contextWithURL: [self storeURL]];
 
 	// NOTE: For now, ETApp registers aspects in the aspect repository with
 	// the +defaultTransientObjectGraphContext rather than creating an object
@@ -96,7 +88,7 @@ than the subclass instance we might want. */
 	[ETTool resetTools];
     [ETUIObject clearRecordedDeallocations];
 
-	ASSIGN(itemFactory, [ETLayoutItemFactory factory]);
+	itemFactory = [ETLayoutItemFactory factory];
 	ETAssert([[itemFactory objectGraphContext] hasChanges] == NO);
 
 	return self;
@@ -109,12 +101,10 @@ than the subclass instance we might want. */
 	[ETTool resetTools];
     [ETUIObject clearRecordedDeallocations];
 
-	DESTROY(itemFactory);
+	itemFactory = nil;
 
     [self deleteStore];
-    DESTROY(editingContext);
-
-	[super dealloc];
+    editingContext = nil;
 }
 
 - (NSURL *)storeURL
@@ -237,10 +227,10 @@ coordinates or not to set the event location in the window. */
 {
 	SUPERINIT
 
-	ASSIGN(mainItem, [itemFactory itemGroup]);
+	mainItem = [itemFactory itemGroup];
 	[mainItem setFrame: NSMakeRect(0, 0, WIN_WIDTH, WIN_HEIGHT)];
 	[[itemFactory windowGroup] addItem: mainItem];
-	ASSIGN(tool, [ETTool tool]);
+	tool = [ETTool tool];
 
 	return self;
 }
@@ -248,9 +238,6 @@ coordinates or not to set the event location in the window. */
 - (void) dealloc
 {
 	[[itemFactory windowGroup] removeItem: mainItem];
-	DESTROY(mainItem); 
-	DESTROY(tool);
-	[super dealloc];
 }
 
 - (NSWindow *) window
@@ -363,9 +350,9 @@ This method is equivalent to [[self rootItem] indexPathForItem: self]. */
 /* For test, patch the framework implementation. */
 + (ETDecoratorItem *) itemWithDummySupervisorView
 {
-	ETView *view = AUTORELEASE([[ETView alloc] init]);
-	return AUTORELEASE([[ETDecoratorItem alloc]
-		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+	ETView *view = [[ETView alloc] init];
+	return [[ETDecoratorItem alloc]
+		initWithSupervisorView: view objectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
 
 @end

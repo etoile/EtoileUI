@@ -41,15 +41,8 @@
 {
 	SUPERINIT;
 	[self prepareMainItemAsForm];
-	ASSIGN(placeName, @"Kyoto");
+	placeName = @"Kyoto";
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(textItem);
-	DESTROY(placeName);
-	[super dealloc];
 }
 
 - (NSString *) placeName
@@ -59,7 +52,7 @@
 
 - (void) setPlaceName: (NSString *)aPlaceName
 {
-	ASSIGN(placeName, aPlaceName);
+	placeName = aPlaceName;
 }
 
 - (NSArray *) propertyNames
@@ -69,7 +62,7 @@
 
 - (void) prepareMainItemAsForm
 {
-	ASSIGN(textItem, [itemFactory textField]);
+	textItem = [itemFactory textField];
 	
 	/* We must set a name, otherwise the lengthy -description is used and can  
 	   result in a 1000px label width. This puts us in trouble because of the 

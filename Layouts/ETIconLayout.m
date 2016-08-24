@@ -13,6 +13,7 @@
 #import "ETComputedLayout.h"
 #import "ETEvent.h"
 #import "ETLayoutItem.h"
+#import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "EtoileUIProperties.h"
 // FIXME: Add -sizeWithAttributes: or similar to the AppKit graphics backend
@@ -39,7 +40,7 @@ Initializes and returns a new icon layout. */
 	ETLayoutItem *templateItem =
 		[[ETLayoutItemFactory factoryWithObjectGraphContext: aContext] item];
 	ETIconAndLabelStyle *iconStyle =
-		AUTORELEASE([[ETIconAndLabelStyle alloc] initWithObjectGraphContext: aContext]);
+		[[ETIconAndLabelStyle alloc] initWithObjectGraphContext: aContext];
 
 	[self setTemplateItem: templateItem];
 	[templateItem setCoverStyle: iconStyle];
@@ -56,8 +57,6 @@ Initializes and returns a new icon layout. */
 
 	return self;
 }
-
-DEALLOC(DESTROY(_itemLabelFont))
 
 - (NSImage *) icon
 {
@@ -101,7 +100,7 @@ DEALLOC(DESTROY(_itemLabelFont))
 
 - (void) setItemTitleFont: (NSFont *)font
 {
-	ASSIGN(_itemLabelFont, font);
+	_itemLabelFont = font;
 	[self renderAndInvalidateDisplay];
 }
 

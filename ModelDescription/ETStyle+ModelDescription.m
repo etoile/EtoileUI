@@ -94,7 +94,7 @@
 
 	// TODO: Add labelAttributes and selectedLabelAttributes
 	ETPropertyDescription *labelPosition = [ETPropertyDescription descriptionWithName: @"labelPosition" type: (id)@"NSUInteger"];
-	[labelPosition setRole: AUTORELEASE([ETMultiOptionsRole new])];
+	[labelPosition setRole: [ETMultiOptionsRole new]];
 	[[labelPosition role] setAllowedOptions:
 	 	[D(@(ETLabelPositionNone), _(@"None"),
 		   @(ETLabelPositionContentAspect), _(@"Based on Item Content Aspect"),

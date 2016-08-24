@@ -26,8 +26,8 @@
 - (id) init
 {
 	SUPERINIT;
-    ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
-        [COObjectGraphContext objectGraphContext]]);
+    itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext:
+        [COObjectGraphContext objectGraphContext]];
 	return self;
 }
 
@@ -74,8 +74,8 @@
 
 - (void) testBasicItemStyle
 {
-	ETBasicItemStyle *style = AUTORELEASE([[ETBasicItemStyle alloc]
-		initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+	ETBasicItemStyle *style = [[ETBasicItemStyle alloc]
+		initWithObjectGraphContext: [itemFactory objectGraphContext]];
 	
 	[style setLabelPosition: ETLabelPositionInsideTop];
 	[style setLabelMargin: 5];

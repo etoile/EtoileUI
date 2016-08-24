@@ -29,7 +29,7 @@
 		return nil;
 
 	_dropLocation = dropLocation;
-	ASSIGN(_hoveredItem, hoveredItem);
+	_hoveredItem = hoveredItem;
 	_dropOn = dropOn;
 
 	return self;

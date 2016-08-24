@@ -729,7 +729,6 @@ step is skipped when loading an item not present in memory. */
 - (void) setSerializedItems: (NSArray *)items
 {
 	[self willChangeValueForProperty: @"items"];
-	DESTROY(_items);
 	_items = [items mutableCopy];
 	/* Update the relationship cache */
 	[self didChangeValueForProperty: @"items"];

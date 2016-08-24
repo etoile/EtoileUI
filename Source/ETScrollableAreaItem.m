@@ -67,7 +67,7 @@ into a scrollable area. */
 + (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
                            objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithScrollView: scrollView objectGraphContext: aContext]);
+	return [[self alloc] initWithScrollView: scrollView objectGraphContext: aContext];
 }
 
 - (NSScrollView *) scrollView
@@ -92,7 +92,7 @@ into a scrollable area. */
 - (id) initWithScrollView: (NSScrollView *)aScrollView
        objectGraphContext: (COObjectGraphContext *)aContext
 {
-	self = [super initWithSupervisorView: AUTORELEASE([[ETView alloc] init])
+	self = [super initWithSupervisorView: [[ETView alloc] init]
 	                  objectGraphContext: aContext];
 	if (nil == self)
 		return nil;
@@ -103,7 +103,7 @@ into a scrollable area. */
 	
 	if (nil == scrollView)
 	{
-		scrollView = AUTORELEASE([[NSScrollView alloc] init]);
+		scrollView = [[NSScrollView alloc] init];
 	}
 
 	int sizableMask = NSViewWidthSizable | NSViewHeightSizable;
@@ -126,7 +126,6 @@ into a scrollable area. */
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	[super dealloc];
 }
 
 /** Ensures the content fills the clip view area when the latter is resized, 
@@ -172,11 +171,7 @@ usually through its enclosing scroll view getting resized. */
              supervisorView: (ETView *)decoratedView 
                      inView: (ETView *)parentView 
 {
-	/* Retain the view in case it must be removed from a superview and nobody
-	   else retains it */
-	RETAIN(decoratedView);
 	[[self scrollView] setDocumentView: decoratedView];
-	RELEASE(decoratedView);
 	[super handleDecorateItem: item supervisorView: nil inView: parentView];
 }
 

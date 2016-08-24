@@ -24,7 +24,7 @@
 - (void) didBecomeInactive
 {
 	[super didBecomeInactive];
-	DESTROY(_firstTouchedItem);
+	_firstTouchedItem = nil;
 	_isTrackingTouch = NO;
 }
 
@@ -50,7 +50,7 @@
 	                                                   onItem: item];
 	if (_isTrackingTouch)
 	{
-		ASSIGN(_firstTouchedItem, item);
+		_firstTouchedItem = item;
 	}
 	[anEvent markAsDelivered];
 }
@@ -87,7 +87,7 @@ pointer. */
 	}
 
 	_isTrackingTouch = NO;
-	DESTROY(_firstTouchedItem);
+	_firstTouchedItem = nil;
 }
 
 - (BOOL) isPickDropForcedWithEvent: (ETEvent *)anEvent

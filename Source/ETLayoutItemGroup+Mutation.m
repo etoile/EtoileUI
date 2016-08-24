@@ -58,8 +58,8 @@ the UI won't reflect the latest receiver content. */
 	if (_hasNewContent)
 	{
 		/* When -items has changed, we invalidate our sort/filter caches */
-		DESTROY(_sortedItems);
-		DESTROY(_arrangedItems);
+		_sortedItems = nil;
+		_arrangedItems = nil;
 		_filtered = NO;
 		_sorted = NO;
 		// TODO: Move -willChangeForProperty: just before the mutation
@@ -161,7 +161,6 @@ To do so, -canReload checks -isMutating. */
 		return;
 	}
 
-	RETAIN(item);
     [self willChangeValueForProperty: @"items"
                            atIndexes: [self insertionIndexesForIndex: index]
                          withObjects: A(item)
@@ -188,7 +187,6 @@ To do so, -canReload checks -isMutating. */
                         withObjects: A(item)
                        mutationKind: ETCollectionMutationKindInsertion];
 	[self didAttachItem: item];
-	RELEASE(item);
 }
 
 - (void) mutateRepresentedObjectForInsertedItem: (ETLayoutItem *)item 
@@ -255,7 +253,6 @@ To do so, -canReload checks -isMutating. */
     // snapshot the item collection.
     NSIndexSet *indexes = [self removalIndexesForItem: item atIndex: index];
 
-	RETAIN(item);
     [self willChangeValueForProperty: @"items"
                            atIndexes: indexes
                          withObjects: A(item)
@@ -284,7 +281,6 @@ To do so, -canReload checks -isMutating. */
                         withObjects: A(item)
                        mutationKind: ETCollectionMutationKindRemoval];
 	[self didDetachItem: item];
-	RELEASE(item);
 }
 
 - (void) mutateRepresentedObjectForRemovedItem: (ETLayoutItem *)item
@@ -574,7 +570,7 @@ The returned object is autoreleased. */
 
 	ETLayoutItem *item = [template newItemWithRepresentedObject: object options: nil];
 	ETAssert(item != nil);
-	return AUTORELEASE(item);
+	return item;
 }
 
 @end

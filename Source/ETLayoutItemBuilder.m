@@ -31,7 +31,7 @@
 /** Returns a new autoreleased builder. */
 + (id) builderWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[[self class] alloc] initWithObjectGraphContext: aContext]);
+	return [[[self class] alloc] initWithObjectGraphContext: aContext];
 }
 
 /** <init />
@@ -39,11 +39,9 @@ Initializes and returns the receiver builder. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	SUPERINIT
-	ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext: aContext]);
+	itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: aContext];
 	return self;
 }
-
-DEALLOC(DESTROY(itemFactory))
 
 - (NSString *) doubleDispatchPrefix
 {
@@ -250,9 +248,7 @@ of their view hierachy (-subviews returns an empty arrary). */
 	}
 	else
 	{
-		RETAIN(view);
 		item = [itemFactory itemWithView: view];
-		RELEASE(view);
 	}
 
 	NSParameterAssert([item isLayoutItem]);
@@ -272,8 +268,8 @@ returned. */
 	NSUInteger initialAutoresizing = (NSUInteger)[aView autoresizingMask];
 	NSRect initialFrame = [aView frame];
 	ETWidgetLayout *layout =
-		AUTORELEASE([[ETWidgetLayout alloc] initWithLayoutView: aView
-	                                        objectGraphContext: [itemFactory objectGraphContext]]);
+		[[ETWidgetLayout alloc] initWithLayoutView: aView
+	                            objectGraphContext: [itemFactory objectGraphContext]];
 	if (nil == layout)
 		return nil;
 

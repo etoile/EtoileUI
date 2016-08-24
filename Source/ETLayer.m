@@ -30,9 +30,9 @@
 when a layout other than ETWindowLayout is set on the receiver. */
 - (ETWindowItem *) createRootWindowItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETFullScreenWindow *fullScreenWindow = AUTORELEASE([[ETFullScreenWindow alloc] init]);
+	ETFullScreenWindow *fullScreenWindow = [[ETFullScreenWindow alloc] init];
 	[fullScreenWindow setLevel: NSNormalWindowLevel]; 
-	return AUTORELEASE([[ETWindowItem alloc] initWithWindow: fullScreenWindow objectGraphContext: aContext]);
+	return [[ETWindowItem alloc] initWithWindow: fullScreenWindow objectGraphContext: aContext];
 }
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
@@ -44,18 +44,11 @@ when a layout other than ETWindowLayout is set on the receiver. */
     [self setName: _(@"Windows")];
 	[self setFrame: [[NSScreen mainScreen] visibleFrame]];
 
-	ASSIGN(_rootWindowItem, [self createRootWindowItemWithObjectGraphContext: aContext]);
+	_rootWindowItem = [self createRootWindowItemWithObjectGraphContext: aContext];
 	_hiddenWindows = [[NSMutableArray alloc] init];
 	[self setLayout: [ETWindowLayout layoutWithObjectGraphContext: aContext]];
 
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_rootWindowItem); 
-	DESTROY(_hiddenWindows);
-	[super dealloc];
 }
 
 - (void) markAsRemovedFromContext

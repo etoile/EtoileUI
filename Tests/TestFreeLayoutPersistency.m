@@ -28,14 +28,14 @@
 - (id) init
 {
 	SUPERINIT;
-    ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
-        [COObjectGraphContext objectGraphContext]]);
+    itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext:
+        [COObjectGraphContext objectGraphContext]];
 
 	layout = [[ETFreeLayout alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
-    ASSIGN(item, [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)]);
-    ASSIGN(buttonItem, [itemFactory button]);
-	ASSIGN(itemGroup, [itemFactory itemGroupWithItems: A(item, buttonItem)]);
+    item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
+    buttonItem = [itemFactory button];
+	itemGroup = [itemFactory itemGroupWithItems: A(item, buttonItem)];
 
     [itemGroup setShouldMutateRepresentedObject: YES];
     [itemGroup setLayout: layout];
@@ -44,15 +44,6 @@
     ETAssert([itemGroup objectGraphContext] != [ETUIObject defaultTransientObjectGraphContext]);
     ETAssert([[itemGroup objectGraphContext] rootItemUUID] == nil);
 	return self;
-}
-
-- (void) dealloc
-{
-    DESTROY(itemGroup);
-    DESTROY(item);
-    DESTROY(buttonItem);
-	DESTROY(layout);
-	[super dealloc];
 }
 
 - (void) testContextRelationship

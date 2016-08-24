@@ -29,18 +29,10 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(item, [itemFactory item]);
-	ASSIGN(itemGroup, [itemFactory itemGroup]);
+	item = [itemFactory item];
+	itemGroup = [itemFactory itemGroup];
 	person = [Person new];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(item);
-	DESTROY(itemGroup);
-	DESTROY(person);
-	[super dealloc];
 }
 
 - (void) testNoValue
@@ -86,7 +78,7 @@
 
 - (void) testItemWidgetValue
 {
-	ASSIGN(item, [itemFactory textField]);
+	item = [itemFactory textField];
 
 	UKObjectsEqual(@"", [[item widget] objectValue]);
 	UKNil([item value]);
@@ -94,7 +86,7 @@
 
 - (void) testItemValueSynchronizationWithTextFiedWidget
 {
-	ASSIGN(item, [itemFactory textField]);
+	item = [itemFactory textField];
 
 	/* Setting an item value allows the item to react to widget object value changes */
 	[item setValue: @"Bird"];
@@ -110,7 +102,7 @@
 
 - (void) testItemValueSynchronizationWithSliderWidget
 {
-	ASSIGN(item, [itemFactory horizontalSlider]);
+	item = [itemFactory horizontalSlider];
 
 	UKObjectKindOf([[item widget] objectValue], NSNumber);
 	UKNil([item value]);
@@ -129,7 +121,7 @@
 
 - (void) testItemValueNotSynchronizedFromWidget
 {
-	ASSIGN(item, [itemFactory textField]);
+	item = [itemFactory textField];
 
 	[[item widget] setObjectValue: @"Wi"];
 	
@@ -140,7 +132,7 @@
 
 - (void) testButtonTitleForItemValue
 {
-	ASSIGN(item, [itemFactory buttonWithTitle: @"Bop" target: nil action: NULL]);
+	item = [itemFactory buttonWithTitle: @"Bop" target: nil action: NULL];
 	
 	UKObjectsEqual(@"Bop", [(NSButton *)[item view] title]);
 	UKNil([item value]);
@@ -203,8 +195,8 @@
 	
 	NSUInteger pairIndex = [[someItem valueForProperty: @"index"] unsignedIntegerValue];
 	NSString *pairValue = [someItem valueForProperty: @"value"];
-	ETIndexValuePair *pair = AUTORELEASE([[ETIndexValuePair alloc]
-		initWithIndex: pairIndex value: pairValue representedObject: [person groupNames]]);
+	ETIndexValuePair *pair = [[ETIndexValuePair alloc]
+		initWithIndex: pairIndex value: pairValue representedObject: [person groupNames]];
 
 	UKTrue([[person groupNames] containsObject: pairValue]);
 	UKObjectsEqual(pairValue, [[person groupNames] objectAtIndex: pairIndex]);
@@ -218,18 +210,18 @@
 	[itemGroup setSource: itemGroup];
 	
 	NSUInteger count = [itemGroup count];
-	ETIndexValuePair *pair = AUTORELEASE([[ETIndexValuePair alloc]
-		initWithIndex: ETUndeterminedIndex value: @"Nowhere" representedObject: [itemGroup representedObject]]);
+	ETIndexValuePair *pair = [[ETIndexValuePair alloc]
+		initWithIndex: ETUndeterminedIndex value: @"Nowhere" representedObject: [itemGroup representedObject]];
 
 	/* No need to create a pair, because -mutateRepresentedForItem:atIndex:hint: 
 	   would unbox it so -insertObject:atIndex:hint: is always called on 
 	   ETCollectionViewPoint with @"Nowhere" as the inserted object. */
-	// FIXME: ASSIGN(item, [itemFactory itemWithRepresentedObject: @"Nowhere"]);
+	// FIXME: item = [itemFactory itemWithRepresentedObject: @"Nowhere"];
 	// This works but doesn't update the created item to use an index value pair
 	// as its represented object. The solution is to provide a template provider
 	// that creates ETIndexValuePair and ETKeyValuePair objects (if no controller
 	// exists).
-	ASSIGN(item, [itemFactory itemWithRepresentedObject: pair]);
+	item = [itemFactory itemWithRepresentedObject: pair];
 
 	[itemGroup insertItem: item atIndex: 1];
 
@@ -299,7 +291,7 @@
 	NSUInteger count = [itemGroup count];
 	ETKeyValuePair *pair = [ETKeyValuePair pairWithKey: @"Cave" value: @"john@timetravel.com"];
 
-	ASSIGN(item, [itemFactory itemWithRepresentedObject: pair]);
+	item = [itemFactory itemWithRepresentedObject: pair];
 
 	[itemGroup insertItem: item atIndex: 1];
 

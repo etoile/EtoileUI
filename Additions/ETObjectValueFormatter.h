@@ -38,11 +38,11 @@ widget proxy). */
 {
 	@private
 	NSString *_name;
-	id _delegate;
+	id __weak _delegate;
 }
 
-@property (retain, nonatomic) NSString *name;
-@property (assign, nonatomic) id <ETObjectValueFormatterDelegate> delegate;
+@property (strong, nonatomic) NSString *name;
+@property (weak, nonatomic) id <ETObjectValueFormatterDelegate> delegate;
 
 @end
 

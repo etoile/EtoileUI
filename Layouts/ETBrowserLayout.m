@@ -77,7 +77,7 @@
 	NSBrowser *browser = [self browser];
 	
 	[browser setCellClass: [FSBrowserCell class]];
-	[browser setCellPrototype: AUTORELEASE([[FSBrowserCell alloc] init])];
+	[browser setCellPrototype: [[FSBrowserCell alloc] init]];
 	[browser setAction: @selector(click:)];
 	[browser setDoubleAction: @selector(doubleClick:)];
 	[browser setTarget: self];

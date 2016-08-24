@@ -288,9 +288,8 @@ conveniency. */
 	[archiver setOutputFormat: NSPropertyListXMLFormat_v1_0];
 	[archiver encodeObject: self];
 	[archiver finishEncoding];
-	RELEASE(archiver);
 
-	return AUTORELEASE([[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding]);
+	return [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 }
 
 

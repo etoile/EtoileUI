@@ -81,11 +81,11 @@
 - (id) init
 {
 	SUPERINIT;
-    ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
-        [COObjectGraphContext objectGraphContext]]);
+    itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext:
+        [COObjectGraphContext objectGraphContext]];
 
-    ASSIGN(item, [itemFactory item]);
-    ASSIGN(itemGroup, [itemFactory itemGroupWithItems: A(item)]);
+    item = [itemFactory item];
+    itemGroup = [itemFactory itemGroupWithItems: A(item)];
 
     //[itemGroup setFrame: NSMakeRect(50, 20, 400, 300)];
     [itemGroup setShouldMutateRepresentedObject: YES];
@@ -95,13 +95,6 @@
     ETAssert([itemGroup objectGraphContext] != [ETUIObject defaultTransientObjectGraphContext]);
     ETAssert([[itemGroup objectGraphContext] rootItemUUID] == nil);
 	return self;
-}
-
-- (void)dealloc
-{
-    DESTROY(item);
-    DESTROY(itemGroup);
-	[super dealloc];
 }
 
 - (NSBezierPath *) resizedPathWithRect: (NSRect)rect
@@ -177,8 +170,8 @@
 
 - (void) testBasicItemGroupPersistency
 {
-    ETController *controller = AUTORELEASE([[ETController alloc]
-         initWithObjectGraphContext: [itemFactory objectGraphContext]]);
+    ETController *controller = [[ETController alloc]
+         initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
     [itemGroup setController: controller];
     
@@ -250,7 +243,7 @@
    See -testWidgetItemPersistency. */
 - (void) testItemActionWithViewAsTarget
 {
-	NSView *view = AUTORELEASE([NSView new]);
+	NSView *view = [NSView new];
 
 	[item setView: view];
 	[itemGroup setTarget: view];

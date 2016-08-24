@@ -47,8 +47,6 @@
 	return self;
 }
 
-DEALLOC(DESTROY(_actionHandlerPrototype); DESTROY(_selectionAreaItem));
-
 #pragma mark Selection Settings -
 
 /** Returns whether the tool can be used to select several items among the 
@@ -95,7 +93,7 @@ You can set a customized ETSelectionAreaItem object if you don't want to use
 the default selection rectangle. */
 - (void) setSelectionAreaItem: (ETSelectionAreaItem *)anItem
 {
-	ASSIGN(_selectionAreaItem, anItem);
+	_selectionAreaItem = anItem;
 }
 
 #pragma mark Pick and Drop Settings -
@@ -700,7 +698,7 @@ item will be selected. */
 selected items. */
 - (void) setActionHandlerPrototype: (id)aHandler
 {
-	ASSIGN(_actionHandlerPrototype, aHandler);
+	_actionHandlerPrototype = aHandler;
 }
 
 /** Returns the action handler used to check the actions that can sent to 

@@ -358,11 +358,10 @@
 	ETEvent *dragEvent = ETEVENT(backendEvent, nil, ETDragPickingMask);
 	NSPoint point = NSZeroPoint;
 
-	DESTROY(_dragImage);
-	ASSIGN(_dragImage, [outlineView dragImageForRowsWithIndexes: [outlineView rowIndexesForItems: items]
-	                                               tableColumns: [outlineView visibleTableColumns]
-	                                                      event: backendEvent
-	                                                     offset: &point]);
+	_dragImage = [outlineView dragImageForRowsWithIndexes: [outlineView rowIndexesForItems: items]
+	                                         tableColumns: [outlineView visibleTableColumns]
+	                                                event: backendEvent
+	                                               offset: &point];
 
 	NSAssert3([items containsObject: draggedItem], @"Dragged items %@ must "
 		@"contain clicked item %@ in %@", items, draggedItem, self);

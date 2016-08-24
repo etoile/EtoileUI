@@ -9,6 +9,7 @@
 #import <EtoileFoundation/Macros.h>
 #import "ETUIBuilderBrowserController.h"
 #import "ETLayoutItemGroup.h"
+#import "ETUIBuilderController.h"
 
 @implementation ETUIBuilderBrowserController
 

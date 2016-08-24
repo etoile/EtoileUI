@@ -46,12 +46,6 @@ Initializes and returns a new layout executor. */
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_scheduledItems);
-	[super dealloc];
-}
-
 /** Schedules the given item to have its layout updated when the control returns 
 to the run loop (in other words when the current event has been handled). */
 - (void) addItem: (ETLayoutItemGroup *)anItem
@@ -108,7 +102,6 @@ A flexible item is a item which returns YES to -isFlexibleItem:. */
 - (void) insertItem: (ETLayoutItemGroup *)anItem 
 inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 {
-	RETAIN(anItem);
 	[flexibleItemQueue removeObject: anItem];
 
 	int nbOfQueuedItems = [flexibleItemQueue count];
@@ -136,8 +129,6 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 	{
 		[flexibleItemQueue addObject: anItem];
 	}
-
-	RELEASE(anItem);
 }
 
 /** Schedules a parent item to have its layout updated.
@@ -250,8 +241,6 @@ On return, no scheduled items remain. */
 
 		[_scheduledItems removeAllObjects];
 		[self executeWithDirtyItems: dirtyItems];
-
-		RELEASE(dirtyItems);
 	}
 }
 

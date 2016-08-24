@@ -8,6 +8,7 @@
  
 #import "PhotoViewController.h"
 #import <EtoileUI/ETUIItemIntegration.h>
+#import <EtoileUI/ETView.h>
 
 #define USE_IMG_VIEW
 
@@ -21,15 +22,6 @@
 
 	images = [[NSMutableArray alloc] init];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(photoView);
-	DESTROY(itemMarginSlider);
-	DESTROY(images);
-	
-	[super dealloc];
 }
 
 /* Invoked when the application is going to finish to launch because 

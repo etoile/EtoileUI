@@ -93,3 +93,5 @@ NSString * const kETCommitItemSendBackward = @"org.etoile-project.EtoileUI.item-
 NSString * const kETCommitItemBringForward = @"org.etoile-project.EtoileUI.item-bring-forward";
 
 NSString * const kETCommitObjectDrop = @"org.etoile-project.EtoileUI.object-drop";
+
+NSString * const kETCommitEditProperty = @"org.etoile-project.EtoileUI.edit-property";

@@ -74,16 +74,9 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(itemGroup, [itemFactory itemGroup]);
-	ASSIGN(item, [itemFactory item]);
+	itemGroup = [itemFactory itemGroup];
+	item = [itemFactory item];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(itemGroup);
-	DESTROY(item);
-	[super dealloc];
 }
 
 - (void) testUpsizedItemForContentSizeLayout
@@ -112,7 +105,7 @@
 
 - (void) testDownsizedItemForContentSizeLayout
 {
-	ASSIGN(itemGroup, [itemFactory itemGroupWithSize: NSMakeSize(10000, 10000)]);
+	itemGroup = [itemFactory itemGroupWithSize: NSMakeSize(10000, 10000)];
 	[self testUpsizedItemForContentSizeLayout];
 }
 

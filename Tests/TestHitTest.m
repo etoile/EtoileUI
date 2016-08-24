@@ -20,6 +20,7 @@
 #import "ETLayoutExecutor.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLineLayout.h"
+#import "ETScrollableAreaItem.h"
 #import "ETWindowItem.h"
 #import "ETCompatibility.h"
 #define _ISOC99_SOURCE 

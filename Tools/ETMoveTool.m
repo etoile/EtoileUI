@@ -23,8 +23,6 @@
 
 @implementation ETMoveTool
 
-DEALLOC(DESTROY(_draggedItem))
-
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
@@ -163,7 +161,7 @@ coordinate space. */
 - (void) beginTranslateItem: (ETLayoutItem *)item atPoint: (NSPoint)aPoint
 {
 	ETAssert(_shouldProduceTranslateActions);
-	ASSIGN(_draggedItem, item);
+	_draggedItem = item;
 	_dragStartLoc = aPoint;
 	_lastDragLoc = _dragStartLoc;
 
@@ -201,7 +199,7 @@ This method can be overriden to alter the broadcast. */
 
 - (void) clearMoveState
 {
-	DESTROY(_draggedItem);
+	_draggedItem = nil;
 	_dragStartLoc = NSZeroPoint;
 	_lastDragLoc = NSZeroPoint;
 }

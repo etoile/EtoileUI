@@ -63,7 +63,7 @@ For a nil context, raises an NSInvalidArgumentException. */
 
 	if (factorySharedInstances == nil)
 	{
-		ASSIGN(factorySharedInstances, [NSMapTable mapTableWithStrongToStrongObjects]);
+		factorySharedInstances = [NSMapTable mapTableWithStrongToStrongObjects];
 	}
 
 	id key = S(self, aContext);
@@ -71,7 +71,7 @@ For a nil context, raises an NSInvalidArgumentException. */
 	
 	if (factory == nil)
 	{
-		factory = AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
+		factory = [[self alloc] initWithObjectGraphContext: aContext];
 		[factorySharedInstances setObject: factory forKey: key];
 	}
 
@@ -88,7 +88,7 @@ For a nil context, raises an NSInvalidArgumentException. */
 	NILARG_EXCEPTION_TEST(aContext);
 	INVALIDARG_EXCEPTION_TEST(aContext, [aContext isKindOfClass: [COObjectGraphContext class]]);
 	SUPERINIT;
-	ASSIGN(_objectGraphContext, aContext);
+	_objectGraphContext = aContext;
 	[self setCurrentBarElementHeight: [self defaultIconAndLabelBarHeight]];
 	return self;
 }
@@ -96,13 +96,6 @@ For a nil context, raises an NSInvalidArgumentException. */
 - (id) init
 {
 	return [self initWithObjectGraphContext: nil];
-}
-
-- (void) dealloc
-{
-	DESTROY(_objectGraphContext);
-	DESTROY(_currentBarElementStyle);
-	[super dealloc];
 }
 
 - (COObjectGraphContext *)objectGraphContext
@@ -136,8 +129,8 @@ Never returns nil. */
 	// NOTE: We create the bar element style lazily to avoid saving it in all persistent object graph contexts
 	if (_currentBarElementStyle == nil)
 	{
-		ASSIGN(_currentBarElementStyle, [ETBasicItemStyle
-			iconAndLabelBarElementStyleWithObjectGraphContext: [self objectGraphContext]]);
+		_currentBarElementStyle = [ETBasicItemStyle
+			iconAndLabelBarElementStyleWithObjectGraphContext: [self objectGraphContext]];
 	}
 	return _currentBarElementStyle;
 }
@@ -147,7 +140,7 @@ Never returns nil. */
 If set to nil, -currentBarElementStyle is reset to its initial style. */
 - (void) setCurrentBarElementStyle: (ETStyle *)aStyle
 {
-	ASSIGN(_currentBarElementStyle, aStyle);
+	_currentBarElementStyle = aStyle;
 }
 
 /** Returns the height applied to all the bar elements to be built. */
@@ -185,10 +178,10 @@ This height is also identical to the standard toolbar height in Aqua. */
 /** Returns a new layout item to which the given view gets bound. */
 - (ETLayoutItem *) itemWithView: (NSView *)view
 {
-	ETLayoutItem *item = AUTORELEASE([[ETLayoutItem alloc] initWithView: view
-                                                             coverStyle: [self currentCoverStyle]
-	                                                      actionHandler: [self currentActionHandler]
-	                                                 objectGraphContext: [self objectGraphContext]]);
+	ETLayoutItem *item = [[ETLayoutItem alloc] initWithView: view
+                                                 coverStyle: [self currentCoverStyle]
+	                                          actionHandler: [self currentActionHandler]
+	                                     objectGraphContext: [self objectGraphContext]];
 	[item setIcon: [NSImage imageNamed: @"leaf"]];
 	return item;
 }
@@ -274,10 +267,11 @@ shared style returned by -currentBarElementStyle.  */
 /** Returns a new blank layout item group. */
 - (ETLayoutItemGroup *) itemGroup
 {
-	ETLayoutItemGroup *item = AUTORELEASE([[ETLayoutItemGroup alloc] initWithView: nil 
-	                                                                   coverStyle: [self currentCoverStyle]
-	                                                                actionHandler: [self currentActionHandler]
-	                                                           objectGraphContext: [self objectGraphContext]]);
+	ETLayoutItemGroup *item =
+		[[ETLayoutItemGroup alloc] initWithView: nil
+		                             coverStyle: [self currentCoverStyle]
+		                          actionHandler: [self currentActionHandler]
+		                     objectGraphContext: [self objectGraphContext]];
 	[item setIcon: [NSImage imageNamed: @"leaf-plant"]];
 	return item;
 }
@@ -339,7 +333,7 @@ when you request the grouping of several items. */
 - (ETLayoutItemGroup *) graphicsGroup
 {
 	ETLayoutItemGroup *itemGroup = [self itemGroup];
-	[itemGroup setCoverStyle: AUTORELEASE([[ETGraphicsGroupStyle alloc] initWithObjectGraphContext: [self objectGraphContext]])];
+	[itemGroup setCoverStyle: [[ETGraphicsGroupStyle alloc] initWithObjectGraphContext: [self objectGraphContext]]];
 	[itemGroup setLayout: [ETFreeLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[itemGroup layout] setAttachedTool: nil];
 	[itemGroup setName: _(@"Group")];
@@ -574,7 +568,7 @@ although it is not one (it is more akin a bevel button without a label). */
 
 - (id) makeItemWithViewClass: (Class)class height: (CGFloat)aHeight
 {
-	id view = AUTORELEASE([[class alloc] initWithFrame: [self defaultWidgetFrameWithHeight: aHeight]]);
+	id view = [[class alloc] initWithFrame: [self defaultWidgetFrameWithHeight: aHeight]];
 
 	return [self itemWithView: view];
 }
@@ -593,7 +587,7 @@ initializes this button with the given image, target and action.
 See also -buttonWithIconNamed:target:action:.  */
 - (id) buttonWithImage: (NSImage *)anImage target: (id)aTarget action: (SEL)aSelector
 {
-	NSButton *buttonView = AUTORELEASE([[NSButton alloc] initWithFrame: [self defaultImageButtonFrame]]);
+	NSButton *buttonView = [[NSButton alloc] initWithFrame: [self defaultImageButtonFrame]];
 
 	[buttonView setImage: anImage];
 	[buttonView setTarget: aTarget];
@@ -754,7 +748,7 @@ initializes this search field with the given target and action.  */
 - (id) searchFieldWithTarget: (id)aTarget action: (SEL)aSelector
 {
 	NSRect frame = [self defaultWidgetFrameWithHeight: [self defaultTextFieldHeight]];
-	NSSearchField *searchField = AUTORELEASE([[NSSearchField alloc] initWithFrame: frame]);
+	NSSearchField *searchField = [[NSSearchField alloc] initWithFrame: frame];
 	[searchField setTarget: aTarget];
 	[searchField setAction: aSelector];
 	return [self itemWithView: searchField];
@@ -765,8 +759,7 @@ initializes this search field with the given target and action.  */
 WARNING: presently returns a scrollview if you call -view on the returned item. */
 - (id) textView
 {
-	NSScrollView *scrollview = AUTORELEASE([[NSScrollView alloc]
-            initWithFrame: [ETLayoutItem defaultItemRect]]);
+	NSScrollView *scrollview = [[NSScrollView alloc] initWithFrame: [ETLayoutItem defaultItemRect]];
 	NSSize contentSize = [scrollview contentSize];
 	NSTextView *textView = [[NSTextView alloc] initWithFrame: ETMakeRect(NSZeroPoint, contentSize)];
 	
@@ -781,7 +774,6 @@ WARNING: presently returns a scrollview if you call -view on the returned item. 
 
 	// TODO: We should use a scrollview decorator. This is a quick hack.
 	[scrollview setDocumentView: textView];
-	RELEASE(textView);
 	[scrollview setHasVerticalScroller: YES];
 	/* Finally reinsert the text view as a scroll view */
 	ETLayoutItem *textViewItem = [self itemWithView: scrollview];
@@ -806,7 +798,7 @@ as its view. */
 	NSRect frame = [self defaultWidgetFrame];
 	frame.size.height = frame.size.width;
 	frame.size.width = [self defaultSliderThickness];
-	NSSlider *sliderView = AUTORELEASE([[NSSlider alloc] initWithFrame: frame]);
+	NSSlider *sliderView = [[NSSlider alloc] initWithFrame: frame];
 
 	ETLayoutItem *item = [self itemWithView: sliderView];
 	[item setIcon: [NSImage imageNamed: @"ui-slider-vertical-050"]];
@@ -909,8 +901,8 @@ and a stepper on the right side. */
                                  ofModel: (id)anObject
 {
 	NSRect frame = [self defaultWidgetFrameWithHeight: [self defaultStepperHeight]];
-	ETNumberPicker *picker = AUTORELEASE([[ETNumberPicker alloc]
-		initWithFrame: frame textFieldHeight: [self defaultTextFieldHeight]]);
+	ETNumberPicker *picker = [[ETNumberPicker alloc]
+		initWithFrame: frame textFieldHeight: [self defaultTextFieldHeight]];
 	ETLayoutItem *item = [self itemWithView: picker];
 	
 	[picker setMinValue: min];
@@ -954,7 +946,7 @@ and a stepper on the right side. */
 		minValue: 0 maxValue: CGFLOAT_MAX initialValue: 0
 		forProperty: aSecondKey ofModel: anObject];
 	ETBasicItemStyle *coverStyle =
-		AUTORELEASE([[ETBasicItemStyle alloc] initWithObjectGraphContext: _objectGraphContext]);
+		[[ETBasicItemStyle alloc] initWithObjectGraphContext: _objectGraphContext];
 
 	// FIXME: If no name is set, the number pickers are not visible
 	[firstPicker setName: _(@"1")];
@@ -1035,7 +1027,7 @@ to set no represented object on a menu entry. */
                         action: (SEL)aSelector
 {
 	NSRect frame = [self defaultWidgetFrameWithHeight: [self defaultPopUpMenuHeight]];
-	NSPopUpButton *popUpView = AUTORELEASE([[NSPopUpButton alloc] initWithFrame: frame]);
+	NSPopUpButton *popUpView = [[NSPopUpButton alloc] initWithFrame: frame];
 
 	[popUpView addItemsWithTitles: entryTitles];
 
@@ -1152,7 +1144,7 @@ The separator identifier is kETLineSeparatorItemIdentifier.
 See separator related methods in [ETComputedLayout] and subclasses. */
 - (ETLayoutItem *) lineSeparator
 {
-	NSBox *separatorView = AUTORELEASE([[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 50, kETLineSeparatorMinimumSize)]);
+	NSBox *separatorView = [[NSBox alloc] initWithFrame: NSMakeRect(0, 0, 50, kETLineSeparatorMinimumSize)];
 	[separatorView setBoxType: NSBoxSeparator];
 	ETLayoutItem *item = [self itemWithView: separatorView];
 	[item setIdentifier: kETLineSeparatorItemIdentifier];
@@ -1197,8 +1189,8 @@ See separator related methods in [ETComputedLayout] and subclasses.*/
 
 	if (category == nil)
 	{
-		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Items")
-		                                           objectGraphContext: [repo objectGraphContext]]);
+		category = [[ETAspectCategory alloc] initWithName: _(@"Items")
+		                               objectGraphContext: [repo objectGraphContext]];
 		[category setIcon: [NSImage imageNamed: @"leaf-yellow"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}

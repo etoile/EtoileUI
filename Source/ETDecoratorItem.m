@@ -27,7 +27,7 @@
 {
 	NSAssert([self isEqual: [ETDecoratorItem class]] == NO, @"ETDecoratorItem "
 		"is an abstract class which cannot be instantiated.");
-	return AUTORELEASE([[self alloc] initWithSupervisorView: nil objectGraphContext: aContext]);
+	return [[self alloc] initWithSupervisorView: nil objectGraphContext: aContext];
 }
 
 /** Returns 'Item'.
@@ -351,7 +351,6 @@ implementation returns the same. */
 	{
 		ETView *wrapperView = [ETView new];
 		[self setSupervisorView: wrapperView];
-		RELEASE(wrapperView);
 	}
 	[[self supervisorView] setWrappedView: newView];
 }

@@ -60,12 +60,6 @@ By default, returns NO. */
 	return NO;
 }
 
-- (void) dealloc
-{
-	DESTROY(supervisorView);
-	[super dealloc];
-}
-
 - (void) willDiscard
 {
     if (_decoratorItem != nil)
@@ -75,32 +69,6 @@ By default, returns NO. */
     }
     [super willDiscard];
 }
-
-// NOTE: Mac OS X doesn't always update the ref count returned by 
-// NSExtraRefCount if the memory management methods aren't overriden to use
-// the extra ref count functions.
-#ifndef GNUSTEP
-- (id) retain
-{
-	NSIncrementExtraRefCount(self);
-	//NSLog(@"Retain %@ %i", [self primitiveDescription], [self retainCount]);
-	return self;
-}
-
-- (NSUInteger) retainCount
-{
-	return NSExtraRefCount(self) + 1;
-}
-
-- (oneway void) release
-{
-	if (NSDecrementExtraRefCountWasZero(self))
-	{
-		//NSLog(@"Release %@ %i", [self primitiveDescription], [self retainCount]);
-		[self dealloc];
-	}
-}
-#endif
 
 /* <override-dummy /> 
 Returns whether the receiver uses flipped coordinates.
@@ -147,7 +115,7 @@ See also -supervisorView:. */
 					
 {
 	[aSupervisorView setItemWithoutInsertingView: self];
-	ASSIGN(supervisorView, aSupervisorView);
+	supervisorView = aSupervisorView;
 	[self syncSupervisorViewGeometry: syncDirection];
 
 	if ([[self objectGraphContext] isLoading])
@@ -283,11 +251,8 @@ model graph and remains semantic. */
 
 	[[self displayView] removeFromSuperview];
 
-	RETAIN(existingDecorator);
-	RETAIN(decorator);
-
 	/* Dismantle existing decorator */
-	ASSIGN(_decoratorItem, nil);
+	_decoratorItem = nil;
 	if ([existingDecorator lastDecoratorItem] != nil)
 	{
 		proposedFrame = [[existingDecorator lastDecoratorItem] frameForUndecoratedItemFrame: existingFrame];
@@ -317,7 +282,7 @@ model graph and remains semantic. */
 	{
 		proposedFrame = [[decorator lastDecoratorItem] frameForDecoratedItemFrame: proposedFrame];
 	}
-	ASSIGN(_decoratorItem, decorator);
+	_decoratorItem = decorator;
 	[self didAddDecoratorItem: decorator];
 
 	/* When a decorator view has been resized, moved or removed, we must reflect
@@ -326,9 +291,6 @@ model graph and remains semantic. */
 	   document view within a scroll view and this scroll view frame is modified. 
 	   Switching to a layout view reveals the issue even more clearly. */
 	[[self firstDecoratedItem]  setFirstDecoratedItemFrame: proposedFrame];
-
-	RELEASE(existingDecorator);
-	RELEASE(decorator);
 }
 
 /** Traverses the decorator chain to remove the given decorator item.

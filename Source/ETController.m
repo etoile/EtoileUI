@@ -81,7 +81,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 	_observations = [[COUnsafeRetainedMutableSet alloc] init];
 	// FIXME: Should be COUnsafeRetainedMutableDictionary
 	_templates = [[COMutableDictionary alloc] init];
-	ASSIGN(_currentObjectType, kETTemplateObjectType);
+	_currentObjectType = kETTemplateObjectType;
 	_sortDescriptors = [[COMutableArray alloc] init];
 	_allowedPickTypes = [[COMutableArray alloc] init];
 	// FIXME: Should be COUnsafeRetainedMutableDictionary
@@ -130,25 +130,6 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 {
     [self stopObservation];
 	[super willDiscard];
-}
-
-- (void) dealloc
-{
-	DESTROY(_observations);
-	DESTROY(nibMainContent);
-	DESTROY(_templates);
-	DESTROY(_currentObjectType);
-	DESTROY(_persistentObjectContext);
-	DESTROY(_persistentObjectContextUUID);
-	DESTROY(_initialFocusedItem);
-	DESTROY(_sortDescriptors);
-	DESTROY(_filterPredicate);
-	DESTROY(_allowedPickTypes);
-	DESTROY(_allowedDropTypes);
-	DESTROY(_editedItems);
-	DESTROY(_editableProperties);
-	
-	[super dealloc];
 }
 
 - (BOOL) respondsToSelector: (SEL)aSelector
@@ -207,7 +188,7 @@ You usally don't use this method but set the related outlet in IB/Gorm. */
 	{
 		NSParameterAssert([anObject isGroup]);
 	}
-	ASSIGN(nibMainContent, anObject);
+	nibMainContent = anObject;
 }
 
 /** <override-dummy />
@@ -269,10 +250,10 @@ Also raises an exception when the new controller content cannot be determined,
 	ETAssert([[self content] isLayoutItem] && [[self content] isGroup]);
 
 	/* Give the ownership back to the content (see also -rebuiltObjectForObject:builder:) */
-	RETAIN([self content]);
+	[self content];
 	[[self topLevelObjects] removeObject: [self content]];
 
-	return AUTORELEASE([self content]);
+	return [self content];
 }
 
 /** Returns the content object which is either a layout item group or nil.
@@ -353,8 +334,8 @@ The observed object must not be nil, the selector must not be NULL either. */
 	NILARG_EXCEPTION_TEST(anObject);
     INVALIDARG_EXCEPTION_TEST(aSelector, aSelector != NULL);
 
-    ETObservation *observation = AUTORELEASE([[ETObservation alloc]
-        initWithObjectGraphContext: [self objectGraphContext]]);
+    ETObservation *observation = [[ETObservation alloc]
+        initWithObjectGraphContext: [self objectGraphContext]];
 
 	[self willChangeValueForProperty: @"observations"
 	                       atIndexes: [NSIndexSet indexSet]
@@ -431,7 +412,7 @@ See also -setTemplate:forType:. */
 - (void) setCurrentObjectType: (ETUTI *)aUTI
 {
 	[self willChangeValueForProperty: @"currentObjectType"];
-	ASSIGN(_currentObjectType, aUTI);
+	_currentObjectType = aUTI;
 	[self didChangeValueForProperty: @"currentObjectType"];
 }
 
@@ -546,8 +527,8 @@ See -persistentObjectContext for more details. */
     }
     [self willChangeValueForProperty: @"persistentObjectContext"];
     [self willChangeValueForProperty: @"persistentObjectContextUUID"];
-	ASSIGN(_persistentObjectContext, aContext);
-	ASSIGN(_persistentObjectContextUUID, [self UUIDFromPersistentObjectContext: aContext]);
+	_persistentObjectContext = aContext;
+	_persistentObjectContextUUID = [self UUIDFromPersistentObjectContext: aContext];
     [self didChangeValueForProperty: @"persistentObjectContextUUID"];
     [self didChangeValueForProperty: @"persistentObjectContext"];
 }
@@ -555,18 +536,18 @@ See -persistentObjectContext for more details. */
 /** Creates a new object by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) add: (id)sender
 {
-	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
-	                                               ofType: [self  currentObjectType]
-	                                              options: [self defaultOptions]]);
+	ETLayoutItem *item = [self newItemWithURL: nil
+	                                   ofType: [self  currentObjectType]
+	                                  options: [self defaultOptions]];
 	[self insertItem: item atIndexPath: [self additionIndexPath]];
 }
 
 /** Creates a new object group by calling -newItemWithURL:ofType:options: and adds it to the content. */
 - (void) addNewGroup: (id)sender
 {
-	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
-	                                               ofType: kETTemplateGroupType
-	                                              options: [self defaultOptions]]);
+	ETLayoutItem *item = [self newItemWithURL: nil
+	                                   ofType: kETTemplateGroupType
+	                                  options: [self defaultOptions]];
 	[self insertItem: item atIndexPath: [self additionIndexPath]];
 }
 
@@ -574,9 +555,9 @@ See -persistentObjectContext for more details. */
 -insertionIndex. */
 - (void) insert: (id)sender
 {
-	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
-	                                               ofType: [self  currentObjectType]
-	                                              options: [self defaultOptions]]);
+	ETLayoutItem *item = [self newItemWithURL: nil
+	                                   ofType: [self  currentObjectType]
+	                                  options: [self defaultOptions]];
 	[self insertItem: item atIndexPath: [self insertionIndexPath]];
 }
 
@@ -584,9 +565,9 @@ See -persistentObjectContext for more details. */
 content at -insertionIndex. */
 - (void) insertNewGroup: (id)sender
 {
-	ETLayoutItem *item = AUTORELEASE([self newItemWithURL: nil
-	                                               ofType: kETTemplateGroupType
-	                                              options: [self defaultOptions]]);
+	ETLayoutItem *item = [self newItemWithURL: nil
+	                                   ofType: kETTemplateGroupType
+	                                  options: [self defaultOptions]];
 	[self insertItem: item atIndexPath: [self insertionIndexPath]];
 }
 
@@ -652,7 +633,7 @@ See -initialFocusedItem. */
 	// -initialFocusedItem, to let the user call -setInitialFocusedItem: without
 	// a content. Item factories use a top-down recursive UI construction, so 
 	// the content is not set until all the descendant items are built.
-	ASSIGN(_initialFocusedItem, anItem);
+	_initialFocusedItem = anItem;
 }
 
 /* Insertion */
@@ -745,7 +726,7 @@ Extra options can be added to the returned dictionary. */
 		[options setObject: representedObject forKey: kETTemplateOptionParentRepresentedObject];
 	}
 
-	return AUTORELEASE([options copy]);
+	return [options copy];
 }
 
 /** Returns whether remove, add and insert actions are possible.
@@ -1077,7 +1058,7 @@ receiver. */
 - (void) setFilterPredicate: (NSPredicate *)searchPredicate
 {
 	[self willChangeValueForProperty: @"filterPredicate"];
-	ASSIGN(_filterPredicate, searchPredicate);
+	_filterPredicate = searchPredicate;
 	_hasNewFilterPredicate = YES;
 	if ([self automaticallyRearrangesObjects])
 		[self rearrangeObjects];
@@ -1338,7 +1319,7 @@ don't have a controller bound to them.
 Edited items are not the same editor items, see the explanations in -editedItem. */
 - (NSArray *) allEditedItems
 {
-	return AUTORELEASE([_editedItems copy]);
+	return [_editedItems copy];
 }
 
 /** <override-never />
@@ -1349,7 +1330,7 @@ The explanations concerning the number of returned objects for -allEditedItems
 apply to -allEditedProperties in the same way. */
 - (NSArray *) allEditedProperties
 {
-	return AUTORELEASE([_editableProperties copy]);
+	return [_editableProperties copy];
 }
 
 /** <overidde-dummy />

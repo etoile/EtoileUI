@@ -26,11 +26,11 @@
 @interface ETUIStateRestoration : NSObject
 {
 	@private
-	id <ETUIStateRestorationDelegate> _delegate;
+	id <ETUIStateRestorationDelegate> __weak _delegate;
 	NSMutableDictionary *_UICreationInvocations;
 }
 
-@property (nonatomic, assign) id <ETUIStateRestorationDelegate> delegate;
+@property (weak, nonatomic) id <ETUIStateRestorationDelegate> delegate;
 
 /** @taskunit Marking UI Items as Persistent */
 

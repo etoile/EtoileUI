@@ -58,7 +58,7 @@
 {
 	SUPERINIT;
 
-	ASSIGN(previousAppClass, [ETApp class]);
+	previousAppClass = [ETApp class];
 	object_setClass([ETApplication sharedApplication], [ETTestResponderApplication class]);
 
 	ETAssert([ETApp isMemberOfClass: [ETTestResponderApplication class]]);
@@ -71,11 +71,9 @@
 - (void) dealloc
 {
 	object_setClass(ETApp, previousAppClass);
-	DESTROY(previousAppClass);
+	previousAppClass = nil;
 
 	[[itemFactory windowGroup] removeItem: mainItem];
-
-	[super dealloc];
 }
 
 // TODO: Write a subclass testing mainItem as -[ETApp mainItem]

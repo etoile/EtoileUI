@@ -15,14 +15,14 @@
 
 + (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color objectGraphContext: (COObjectGraphContext *)aContext
 {
-	ETTintStyle *tint = [[[ETTintStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
+	ETTintStyle *tint = [[ETTintStyle alloc] initWithStyle: style objectGraphContext: aContext];
 	[tint setColor: color];
 	return tint;
 }
 
 + (id) tintWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [[[ETTintStyle alloc] initWithStyle: style objectGraphContext: aContext] autorelease];
+	return [[ETTintStyle alloc] initWithStyle: style objectGraphContext: aContext];
 }
 
 - (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
@@ -31,8 +31,8 @@
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_content, style);
-	_color = [[NSColor colorWithDeviceRed:0.005 green:0.0 blue:0.01 alpha:0.7] retain];
+	_content = style;
+	_color = [NSColor colorWithDeviceRed:0.005 green:0.0 blue:0.01 alpha:0.7];
 	return self;
 }
 
@@ -43,7 +43,7 @@
 
 - (void) setColor: (NSColor *)color
 {
-	ASSIGN(_color, color);
+	_color = color;
 }
 
 - (NSColor *) color

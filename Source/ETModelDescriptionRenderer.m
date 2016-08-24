@@ -30,6 +30,7 @@
 #import "ETModelBuilderUI.h" // FIXME: Remove
 #import "ETObjectValueFormatter.h"
 #import "EtoileUIProperties.h"
+#import "ETScrollableAreaItem.h"
 #import "ETTitleBarItem.h"
 #import "ETOutlineLayout.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category)
@@ -51,19 +52,19 @@
 
 + (id) renderer
 {
-	return AUTORELEASE([[self alloc] init]);
+	return [[self alloc] init];
 }
 
 - (id) init
 {
-	SUPERINIT
+	SUPERINIT;
 	_templateItems = [NSMutableDictionary new];
 	_additionalTemplateIdentifiers = [NSMutableDictionary new];
 	_formattersByType = [NSMutableDictionary new];
 	_valueTransformersByType = [NSMutableDictionary new];
-	ASSIGN(_repository, [ETModelDescriptionRepository mainRepository]);
-	ASSIGN(_itemFactory, [ETLayoutItemFactory factory]);
-	ASSIGN(_entityLayout, [self defaultFormLayout]);
+	_repository = [ETModelDescriptionRepository mainRepository];
+	_itemFactory = [ETLayoutItemFactory factory];
+	_entityLayout = [self defaultFormLayout];
 	/* See -setRendererPropertyNames: */
 	_renderedPropertyNames = nil;
 	_itemSize = [self defaultItemSize];
@@ -73,19 +74,6 @@
 	[self registerDefaultFormatters];
 
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_templateItems);
-	DESTROY(_repository);
-	DESTROY(_itemFactory);
-	DESTROY(_formattersByType);
-	DESTROY(_valueTransformersByType);
-	DESTROY(_entityLayout);
-	DESTROY(_renderedPropertyNames);
-	DESTROY(_groupingKeyPath);
-	[super dealloc];
 }
 
 - (ETModelDescriptionRepository *) repository
@@ -145,8 +133,8 @@ time. For example:
 
 - (ETLayoutItemGroup *) collectionEditorTemplateItem
 {
-	ETPropertyCollectionController *controller = AUTORELEASE([[ETPropertyCollectionController alloc]
-		initWithObjectGraphContext: [_itemFactory objectGraphContext]]);
+	ETPropertyCollectionController *controller = [[ETPropertyCollectionController alloc]
+		initWithObjectGraphContext: [_itemFactory objectGraphContext]];
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
 							                         representedObject: [NSArray array]
 									                        controller: controller];
@@ -230,19 +218,19 @@ time. For example:
 	NSArray *numberTypeNames = A(@"NSNumber", @"NSInteger", @"NSUInteger",
 		@"CGFloat", @"double", @"BOOL", @"Boolean", @"Number");
 
-	[self setFormatter: AUTORELEASE([ETObjectValueFormatter new])
+	[self setFormatter: [ETObjectValueFormatter new]
 	           forType: [_repository descriptionForName: @"Object"]];
 
 	for (NSString *typeName in numberTypeNames)
 	{
-		[self setFormatter: AUTORELEASE([NSNumberFormatter new])
+		[self setFormatter: [NSNumberFormatter new]
 		           forType: [_repository descriptionForName: typeName]];
 	}
 }
 
 - (void) setEntityLayout: (ETLayout *)aLayout
 {
-	ASSIGN(_entityLayout, aLayout);
+	_entityLayout = aLayout;
 }
 
 - (ETLayout *) entityLayout
@@ -320,10 +308,10 @@ time. For example:
 	ETLayoutItemGroup *item = [[ETLayoutItemFactory factory] itemGroupWithFrame: itemFrame];
 	ETAssert(NSEqualRects([item frame], itemFrame));
 
-	[item setLayout: [self prepareEntityLayout: [[[self entityLayout] copy] autorelease]]];
+	[item setLayout: [self prepareEntityLayout: [[self entityLayout] copy]]];
 	[item setIdentifier: @"entity"];
 	[item setRepresentedObject: anObject];
-	//[item setController: [[ETEntityInspectorController new] autorelease]];
+	//[item setController: [ETEntityInspectorController new]];
 	//[item setShouldMutateRepresentedObject: NO];
 
 	return item;
@@ -335,7 +323,7 @@ passed to -renderObject: and related methods.
 See also -renderedPropertyNames. */
 - (void) setRenderedPropertyNames: (NSArray *)propertyNames
 {
-	ASSIGNCOPY(_renderedPropertyNames, propertyNames);
+	_renderedPropertyNames = [propertyNames copy];
 }
 
 /** Returns the names of the property descriptions to render for an object 
@@ -356,7 +344,7 @@ See also -setRenderedPropertyNames:. */
 
 - (void) setGroupingKeyPath: (NSString *)aKeyPath
 {
-	ASSIGN(_groupingKeyPath, aKeyPath);
+	_groupingKeyPath = aKeyPath;
 }
 
 - (NSString *) groupingKeyPath
@@ -367,11 +355,11 @@ See also -setRenderedPropertyNames:. */
 - (ETLayoutItemGroup *)newItemGroupForGroupingName: (NSString *)aName width: (CGFloat)aWidth
 {
 	NSParameterAssert(aName != nil);
-	ETLayoutItemGroup *itemGroup = [[_itemFactory itemGroupWithSize: NSMakeSize(aWidth, 1000)] retain];
+	ETLayoutItemGroup *itemGroup = [_itemFactory itemGroupWithSize: NSMakeSize(aWidth, 1000)];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[itemGroup setName: aName];
 	[itemGroup setIdentifier: [[aName lowercaseString] stringByAppendingString: @" (grouping)"]];
-	[itemGroup setLayout: [self prepareEntityLayout: [[[self entityLayout] copy] autorelease]]];
+	[itemGroup setLayout: [self prepareEntityLayout: [[self entityLayout] copy]]];
 	[itemGroup setDecoratorItem: [ETTitleBarItem itemWithObjectGraphContext: [_itemFactory objectGraphContext]]];
 	return itemGroup;
 }
@@ -410,7 +398,7 @@ See also -setRenderedPropertyNames:. */
 
 		if (itemGroup == nil)
 		{
-			itemGroup = [[self newItemGroupForGroupingName: name width: anItemWidth] autorelease];
+			itemGroup = [self newItemGroupForGroupingName: name width: anItemWidth];
 
 			[itemGroupsByName setObject: itemGroup forKey: name];
 			[groupNames addObject: name];
@@ -596,7 +584,7 @@ See also -setRenderedPropertyNames:. */
 	}
 	[item setName: [self labelForPropertyDescription: aPropertyDesc]];
 
-	return AUTORELEASE(item);
+	return item;
 }
 
 - (id) renderPropertyDescription: (ETPropertyDescription *)aDescription
@@ -640,7 +628,7 @@ See also -setRenderedPropertyNames:. */
 	// TODO: Use -copy if possible. But this wouldn't work well for
 	// -newValueTransformerRender that alters the entity item layout and the
 	// collection editor size.
-	ETModelDescriptionRenderer *renderer = AUTORELEASE([ETModelDescriptionRenderer new]);
+	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer new];
 
 	renderer->_formattersByType = [_formattersByType mutableCopy];
 	[renderer setEntityItemFrame: NSMakeRect(0, 0, aSize.width, aSize.height)];
@@ -661,7 +649,7 @@ See also -setRenderedPropertyNames:. */
 - (ETLayoutItemGroup *) editorForRelationshipDescription: (ETPropertyDescription *)aRelationshipDesc
                                                 ofObject: (id)anObject
 {
-	ETLayoutItemGroup *editor = AUTORELEASE([[self templateItemForIdentifier: @"collectionEditor"] copy]);
+	ETLayoutItemGroup *editor = [[self templateItemForIdentifier: @"collectionEditor"] copy];
 	ETLayoutItemGroup *browser = (id)[editor itemForIdentifier: @"browser"];
 	ETAssert(browser != nil);
 	
@@ -790,7 +778,7 @@ See also -setRenderedPropertyNames:. */
 		if ([self rendersRelationshipAsAttributeForPropertyDescription: aPropertyDesc])
 		{
 			id repObject = [self representedObjectForToOneRelationshipDescription: aPropertyDesc ofObject: anObject];
-			item = AUTORELEASE([templateItem copy]);
+			item = [templateItem copy];
 			[item setRepresentedObject: repObject];
 			ETAssert([[item valueKey] isEqual: [aPropertyDesc name]]);
 			[self prepareViewOfNewItem: item forAttributeDescription: aPropertyDesc];
@@ -811,7 +799,7 @@ See also -setRenderedPropertyNames:. */
 		}
 	}
 
-	return RETAIN(item);
+	return item;
 }
 
 - (NSString *) templateIdentifierForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
@@ -1060,22 +1048,16 @@ See also -setRenderedPropertyNames:. */
 
 @synthesize modelDescriptionRepository = _modelDescriptionRepository;
 
-- (void) dealloc
-{
-	DESTROY(_modelDescriptionRepository);
-	[super dealloc];
-}
-
 - (NSDictionary *)defaultOptions
 {
-	NSMutableDictionary *options = AUTORELEASE([[super defaultOptions] mutableCopy]);
+	NSMutableDictionary *options = [[super defaultOptions] mutableCopy];
 
 	ETAssert([self modelDescriptionRepository] != nil);
 	
 	[options setObject: [self modelDescriptionRepository]
 				forKey: kETTemplateOptionModelDescriptionRepository];
 
-	return AUTORELEASE([options copy]);
+	return [options copy];
 }
 
 - (IBAction) edit: (id)sender

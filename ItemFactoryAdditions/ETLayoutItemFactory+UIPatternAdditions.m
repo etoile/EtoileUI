@@ -9,6 +9,7 @@
 #import "ETLayoutItemFactory+UIPatternAdditions.h"
 #import "ETAspectRepository.h"
 #import "ETController.h"
+#import "ETItemTemplate.h"
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
@@ -38,7 +39,7 @@
 {
 	ETLayoutItemGroup *picker = [self itemGroupWithRepresentedObject: [ETAspectRepository mainRepository]];
 	ETController *controller =
-		AUTORELEASE([[ETObjectPickerController alloc] initWithObjectGraphContext: [self objectGraphContext]]);
+		[[ETObjectPickerController alloc] initWithObjectGraphContext: [self objectGraphContext]];
 	ETItemTemplate *template = [controller templateForType: [controller currentObjectType]];
 
 	[[template item] setActionHandler:

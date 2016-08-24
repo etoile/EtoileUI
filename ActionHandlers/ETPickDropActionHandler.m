@@ -142,7 +142,7 @@ selection, we don't put the selected items on the pickboard. */
 		
 		if (pickingMask & ETCopyPickingMask)
 		{
-			pickedObject  = AUTORELEASE([pickedObject copy]);
+			pickedObject  = [pickedObject copy];
 		}
 
 		[pickedObjects addObject: pickedObject];
@@ -274,8 +274,9 @@ item groups and reacts to that appropriately. */
 	NSEnumerator *e = [[aPickCollection contentArray] reverseObjectEnumerator];
 	BOOL result = NO;
 
-	FOREACHE(nil, object, id, e)
+	FOREACHE(nil, element, id, e)
 	{
+		id object = element;
 		id hint = [aPickCoordinator hintFromObject: &object];
 
 		result |= [self handleDropObject: object 
@@ -655,7 +656,7 @@ choosing 'Copy' in the 'Edit' menu. */
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCopyPickingMask);
 
-	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] copy])
+	[self handlePickItem: [[self pickedItemForTargetItem: item] copy]
 	       forceItemPick: [[[ETTool activeTool] ifResponds] forcesItemPick]
 	shouldRemoveItemsNow: NO
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];
@@ -673,7 +674,7 @@ choosing 'Paste' in the 'Edit' menu. */
 	ETLog(@"Paste receives in %@", self);
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETPastePickingMask);
-	id pastedObject = AUTORELEASE([[[ETPickboard localPickboard] firstObject] copy]);
+	id pastedObject = [[[ETPickboard localPickboard] firstObject] copy];
 
 	[self handleDropCollection: pastedObject
 	                  metadata: [[ETPickboard localPickboard] firstObjectMetadata]
@@ -697,7 +698,7 @@ choosing 'Cut' in the 'Edit' menu. */
 
 	ETEvent *event = ETEVENT([NSApp currentEvent], nil, ETCutPickingMask);
 		
-	[self handlePickItem: AUTORELEASE([[self pickedItemForTargetItem: item] copy])
+	[self handlePickItem: [[self pickedItemForTargetItem: item] copy]
 	       forceItemPick: [[[ETTool activeTool] ifResponds] forcesItemPick]
 	shouldRemoveItemsNow: YES
 	         coordinator: [ETPickDropCoordinator sharedInstanceWithEvent: event]];

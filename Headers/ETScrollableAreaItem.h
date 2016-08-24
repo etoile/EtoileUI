@@ -52,4 +52,8 @@ decorated item returns NO to -isFlipped. */
 // TODO: May be nicer to override -contentRect in ETScrollableAreaItem so that 
 // the content rect origin reflects the current scroll position.
 
+/**  @taskunit Framework Private */
+
+- (NSScrollView *) scrollView;
+
 @end

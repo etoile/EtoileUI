@@ -17,6 +17,8 @@
 #import "ETLineLayout.h"
 #import "ETColumnLayout.h"
 #import "ETUIItem.h"
+#import "ETView.h"
+
 #include <objc/runtime.h>
 
 @interface TestAutoresizing : TestCommon <UKTest>
@@ -50,7 +52,7 @@
 	[self exchangeDefaultItemRectImplementations];
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]));
 
-	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)]);
+	itemGroup = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 500, 400)];
 
 	ETAssert([[itemGroup layout] isKindOfClass: [ETFixedLayout class]]);
 	ETAssert([[itemGroup supervisorView] autoresizesSubviews] == NO);
@@ -61,14 +63,11 @@
 {
 	[self exchangeDefaultItemRectImplementations];
 	ETAssert(NSEqualRects(NSMakeRect(0, 0, 50, 50), [ETLayoutItem defaultItemRect]) == NO);
-
-	DESTROY(itemGroup);
-	[super dealloc];
 }
 
 - (void) testItemAutoresizingMaskFromView
 {
-	NSView *view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(20, 40, 100, 200)]);
+	NSView *view = [[NSView alloc] initWithFrame: NSMakeRect(20, 40, 100, 200)];
 	[view setAutoresizingMask: NSViewMinYMargin | NSViewHeightSizable];
 	ETLayoutItem *item = [itemFactory itemWithView: view];
 
@@ -77,7 +76,7 @@
 
 - (void) testLayoutSizeForItemGroupWithFrame
 {
-	ASSIGN(itemGroup, [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 100, 200)]);
+	itemGroup = [itemFactory itemGroupWithFrame: NSMakeRect(0, 0, 100, 200)];
 
 	UKSizesEqual(NSMakeSize(100, 200), [[itemGroup layout] layoutSize]);
 }
@@ -352,7 +351,7 @@
 	
 	[itemGroup setWidth: [itemGroup width] + 100];
 
-	ETLayoutItemGroup *newItemGroup = AUTORELEASE([itemGroup copy]);
+	ETLayoutItemGroup *newItemGroup = [itemGroup copy];
 	ETLayoutItem *newItem = [newItemGroup firstItem];
 
 	UKTrue([newItemGroup needsLayoutUpdate]);

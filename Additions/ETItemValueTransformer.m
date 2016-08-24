@@ -13,6 +13,7 @@
 #import <EtoileFoundation/ETPropertyDescription.h>
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETItemValueTransformer.h"
+#import "ETLayoutItem.h"
 
 @implementation ETItemValueTransformer
 
@@ -53,9 +54,9 @@
 	// For ETBooleanFromMaskTransformer, the client must copy it or we
 	// must override -valueTransformerForName: to return copy
 	// value transformers that support/require copy.
-	[self setValueTransformer: AUTORELEASE([ETBooleanFromMaskTransformer new])
+	[self setValueTransformer: [ETBooleanFromMaskTransformer new]
 	                  forName: kETBooleanFromMaskTransformerName];
-	[self setValueTransformer: AUTORELEASE([ETNegateBooleanTransformer new])
+	[self setValueTransformer: [ETNegateBooleanTransformer new]
 	                  forName: kETNegateBooleanTransformerName];
 }
 
@@ -70,16 +71,6 @@
 - (id) init
 {
 	return [self initWithName: nil];
-}
-
-- (void) dealloc
-{
-	DESTROY(_name);
-	DESTROY(_transformBlock);
-	DESTROY(_reverseTransformBlock);
-	DESTROY(_transformCode);
-	DESTROY(_reverseTransformCode);
-	[super dealloc];
 }
 
 - (void) setName: (NSString *)aName
@@ -112,7 +103,7 @@
 		[ETItemValueTransformer setValueTransformer: nil forName: _name];
 	}
 
-	ASSIGN(_name, aName);
+	_name = aName;
 	[ETItemValueTransformer setValueTransformer: self forName: aName];
 }
 

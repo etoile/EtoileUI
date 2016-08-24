@@ -36,17 +36,9 @@
 	/* -[ETLayoutItemGroup windowGroup] instantiates the window group as below but just once. 
 	   To ignore state changes due to previous tests, we allocate a new ETWindowLayer directly. */
 	windowGroup = [[ETWindowLayer alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
-	ASSIGN(itemGroup, [itemFactory itemGroup]);
-	ASSIGN(item, [itemFactory item]);
+	itemGroup = [itemFactory itemGroup];
+	item = [itemFactory item];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(windowGroup);
-	DESTROY(itemGroup);
-	DESTROY(item);
-	[super dealloc];
 }
 
 - (void) testFrame

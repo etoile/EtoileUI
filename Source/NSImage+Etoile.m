@@ -39,8 +39,6 @@ moved to a window to be snapshotted (not yet working). */
 
 	NSView *originalSuperview = nil;
 
-	RETAIN(view);
-
 	if (nil == [view window])
 	{
 		if (nil == snapshotWindow)
@@ -63,8 +61,6 @@ moved to a window to be snapshotted (not yet working). */
 		[snapshotWindow setContentView: nil];
 		[originalSuperview addSubview: view];
 	}
-
-	RELEASE(view);
 	
 	return self;
 }
@@ -88,7 +84,6 @@ moved to a window to be snapshotted (not yet working). */
 	[view unlockFocus];
 
 	[self addRepresentation: rep];
-	RELEASE(rep);
 }
 
 #else 

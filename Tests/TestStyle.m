@@ -25,12 +25,10 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(item, [itemFactory item]);
+	item = [itemFactory item];
 	[item setFrame: NSMakeRect(100, 50, 300, 200)];
 	return self;
 }
-
-DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testSharedInstance
 {
@@ -43,7 +41,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 	[item setContentAspect: ETContentAspectNone]; /* Disable any autoresizing */
 	[[item coverStyle] setLabelPosition: ETLabelPositionInsideBottom];
-	[item setView: AUTORELEASE([[NSSlider alloc] initWithFrame: sliderFrame])];
+	[item setView: [[NSSlider alloc] initWithFrame: sliderFrame]];
 
 	/* Preconditions */
 	UKRectsEqual(sliderFrame, [[item view] frame]);

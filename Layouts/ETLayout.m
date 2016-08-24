@@ -54,7 +54,7 @@ You should never need to call this method.
 See also NSObject(ETAspectRegistration). */
 + (void) registerAspects
 {
-	ASSIGN(layoutPrototypes, [NSMutableSet set]);
+	layoutPrototypes = [NSMutableSet set];
 
 	NSArray *skippedClasses = A(NSClassFromString(@"ETWidgetLayout"),  
 		NSClassFromString(@"ETWindowLayout"), 
@@ -66,10 +66,11 @@ See also NSObject(ETAspectRegistration). */
 
 	for (Class subclass in subclasses)
 	{
-		CREATE_AUTORELEASE_POOL(pool);
-		[self registerLayout: AUTORELEASE([[subclass alloc]
-			initWithObjectGraphContext: [self defaultTransientObjectGraphContext]])];
-		DESTROY(pool);
+		@autoreleasepool
+		{
+    		[self registerLayout: [[subclass alloc]
+				initWithObjectGraphContext: [self defaultTransientObjectGraphContext]]];
+		}
 	}
 }
 
@@ -101,8 +102,8 @@ Raises an invalid argument exception if aLayout class isn't a subclass of ETLayo
 
 	if (category == nil)
 	{
-		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Layout")
-									               objectGraphContext: [repo objectGraphContext]]);
+		category = [[ETAspectCategory alloc] initWithName: _(@"Layout")
+		                               objectGraphContext: [repo objectGraphContext]];
 		[category setIcon: [NSImage imageNamed: @"layout-design"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}
@@ -113,7 +114,7 @@ Raises an invalid argument exception if aLayout class isn't a subclass of ETLayo
 that allow to transform the UI at runtime. */
 + (NSSet *) registeredLayouts
 {
-	return AUTORELEASE([layoutPrototypes copy]);
+	return [layoutPrototypes copy];
 }
 
 /** Returns all the layout classes directly available for EtoileUI facilities 
@@ -131,7 +132,7 @@ several prototypes might share the same class. */
 /** Returns a new autoreleased instance. */
 + (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[[self class] alloc] initWithObjectGraphContext: aContext]);
+	return [[[self class] alloc] initWithObjectGraphContext: aContext];
 }
 
 /** <init /> 
@@ -143,7 +144,7 @@ Returns a new ETLayout instance. */
 		return nil;
 
 	_attachedTool = nil;
-	ASSIGN(_dropIndicator, [ETDropIndicator sharedInstanceForObjectGraphContext: aContext]);
+	_dropIndicator = [ETDropIndicator sharedInstanceForObjectGraphContext: aContext];
 	_isRendering = NO;
 	_layoutSize = ETNullSize;
 	_oldProposedLayoutSize = ETNullSize;
@@ -168,12 +169,6 @@ Returns a new ETLayout instance. */
         // NOTE: At this point, the attached tool is unloaded.
         ETAssert([[_attachedTool UUID] isEqual: [ETTool activeToolUUID]] == NO);
     }
-
-	DESTROY(_attachedTool);
-	DESTROY(_layerItem);
-	DESTROY(_dropIndicator);
-
-	[super dealloc];
 }
 
 - (BOOL) isLayout
@@ -227,13 +222,13 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 	if (_attachedTool == newTool)
 		return;
 
-	ETTool *oldTool = RETAIN(_attachedTool);
+	ETTool *oldTool = _attachedTool;
 
 	[newTool validateLayoutOwner: self];
 	[self willChangeValueForProperty: @"attachedTool"];
 	/* Reset target item previously set for another layout */
 	[newTool setTargetItem: nil];
-	ASSIGN(_attachedTool, newTool);
+	_attachedTool = newTool;
 	/* Will update ETTool.layoutOwner inverse relationship */
 	[self didChangeValueForProperty: @"attachedTool"];
 
@@ -246,9 +241,7 @@ Also invokes -didChangeAttachedTool:toTool:.  */
 	{
 		[ETTool setActiveTool: [self proposedActiveToolForNewTool: newTool]];
 	}
-	[self didChangeAttachedTool: oldTool  toTool: newTool];
-
-	RELEASE(oldTool);
+	[self didChangeAttachedTool: oldTool toTool: newTool];
 }
 
 /** <override-dummy />
@@ -1000,7 +993,7 @@ items which are valid drop targets. */
 - (void) setDropIndicator: (ETDropIndicator *)aStyle
 {
 	[self willChangeValueForProperty: @"dropIndicator"];
-	ASSIGN(_dropIndicator, aStyle);
+	_dropIndicator = aStyle;
 	[self didChangeValueForProperty: @"dropIndicator"];
 }
 

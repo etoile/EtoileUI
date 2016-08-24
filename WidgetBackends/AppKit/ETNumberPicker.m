@@ -40,7 +40,7 @@ be smaller or equal to the frame height. */
 	[textField setY: (frameRect.size.height - aFieldHeight) / 2];
 	[stepper setX: [textField width] + margin];
 
-	NSNumberFormatter *formatter = AUTORELEASE([NSNumberFormatter new]);
+	NSNumberFormatter *formatter = [NSNumberFormatter new];
 
 	[formatter setNumberStyle: NSNumberFormatterDecimalStyle];
 	//[formatter setMinimumIntegerDigits: 1];

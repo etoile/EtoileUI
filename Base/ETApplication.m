@@ -71,13 +71,6 @@ See +[NSObject typePrefix]. */
 	return self;
 }
 
-- (void) dealloc
-{
-	DESTROY(_nibOwner);
-	DESTROY(_UIStateRestoration);
-	[super dealloc];
-}
-
 - (ETUIStateRestoration *) UIStateRestoration
 {
 	return _UIStateRestoration;
@@ -243,14 +236,15 @@ See also -finishLaunching which is called after -run is invoked. */
 	// NOTE: Local autorelease pools are used to locate memory corruption more
 	// easily. Memory corruption tend to be located in GNUstep unarchiving code.
 	// Various UI aspects involve Gorm/Nib files.
-	CREATE_AUTORELEASE_POOL(pool);
-	[NSView _setUpEtoileUITraits];
-	[self _registerAdditionalImages];
-	[self _registerAllAspects];
-	//RECREATE_AUTORELEASE_POOL(pool);
-	[self _instantiateAppDelegateIfSpecified];
-	[self _loadMainNib];
-	DESTROY(pool);
+	@autoreleasepool
+	{
+		[NSView _setUpEtoileUITraits];
+		[self _registerAdditionalImages];
+		[self _registerAllAspects];
+		//RECREATE_AUTORELEASE_POOL(pool);
+		[self _instantiateAppDelegateIfSpecified];
+		[self _loadMainNib];
+	}
 }
 
 /* The order of the method calls in this method is critical, be very cautious 
@@ -387,7 +381,6 @@ GNUstep, a minimal main menu is always created. */
 
 	[appMenuItem setSubmenu: appMenu];
 	[mainMenu addItem: appMenuItem];
-	RELEASE(appMenuItem);
 
 	// NOTE: -setAppleMenu: must be called before calling -setMainMenu: and is 
 	// a private Cocoa API that registers the menu as the application menu 
@@ -396,7 +389,6 @@ GNUstep, a minimal main menu is always created. */
 	[self setAppleMenu: appMenu];
 	[self setServicesMenu: [[appMenu itemWithTitle: _(@"Services")] submenu]];
 	[self setMainMenu: mainMenu];
-	RELEASE(mainMenu);
 }
 
 /* Might become a public method later. */
@@ -413,7 +405,7 @@ See also -_buildMainMenuIfNeeded. */
 - (NSMenu *) _createApplicationMenu
 {
 	// TODO: Append the app name to aboutTitle, hideTitle and quitTitle
-	NSMenu *appMenu = AUTORELEASE([[NSMenu alloc] initWithTitle: @""]);
+	NSMenu *appMenu = [[NSMenu alloc] initWithTitle: @""];
 	NSString *aboutTitle = _(@"About");
 	NSString *hideTitle = _(@"Hide");
 	NSString *quitTitle = _(@"Quit");
@@ -431,7 +423,7 @@ See also -_buildMainMenuIfNeeded. */
 	                   action: NULL 
 	            keyEquivalent: @""];
 	[[appMenu itemWithTitle: _(@"Services")] 
-		setSubmenu: AUTORELEASE([[NSMenu alloc] initWithTitle: @""])];
+		setSubmenu: [[NSMenu alloc] initWithTitle: @""]];
 
 	[appMenu addItem: [NSMenuItem separatorItem]];
 
@@ -509,7 +501,7 @@ See also -_buildMainMenuIfNeeded. */
 
 - (NSMenu *) layoutMenuWithTitle: (NSString *)aTitle target: (id)aTarget action: (SEL)aSelector
 {
-	NSMenu *menu = AUTORELEASE([[NSMenu alloc] initWithTitle: aTitle]);
+	NSMenu *menu = [[NSMenu alloc] initWithTitle: aTitle];
 
 	FOREACH([ETLayout registeredLayoutClasses], layoutClass, Class)
 	{
@@ -1175,7 +1167,7 @@ utilities related to debugging, introspection etc. */
 
 	if  (nil == controller)
 	{
-		[[self rootItem] setController: AUTORELEASE([[ETController alloc] init])];
+		[[self rootItem] setController: [[ETController alloc] init]];
 		controller = [[self rootItem] controller];
 	}
 
@@ -1235,7 +1227,7 @@ The copied item is put on the active pickboard. */
 	if (nil == item)
 		return;
 
-	[[ETPickboard activePickboard] pushObject: AUTORELEASE([item copy]) metadata: nil];
+	[[ETPickboard activePickboard] pushObject: [item copy] metadata: nil];
 }
 
 /** Paste the current item on the active pickbord into the window group.
@@ -1249,7 +1241,7 @@ See -[ETLayoutItemFactory windowGroup]. */
 	if (nil == item)
 		return;
 
-	[[itemFactory windowGroup] addItem: AUTORELEASE([item copy])];
+	[[itemFactory windowGroup] addItem: [item copy]];
 }
 
 @end
@@ -1266,26 +1258,24 @@ When the principal class is invalid or the nib loading fails, this method
 will respectively raise NSInvalidArgumentException or NSInternalInconsistencyException. */
 int ETApplicationMain(int argc, const char **argv)
 {
-	CREATE_AUTORELEASE_POOL(pool);
-
-	NSDictionary *infos = [[NSBundle mainBundle] infoDictionary];
-	NSString *appClassName = [infos objectForKey: @"NSPrincipalClass"];
-	Class appClass = NSClassFromString(appClassName);
-
-	if (Nil == appClass || NO == [appClass isSubclassOfClass: [ETApplication class]])
+	@autoreleasepool
 	{
-		[NSException raise: NSInvalidArgumentException format: @"Principal "
-			"class must be ETApplication or a subclass unlike %@ identified by " 
-			"'%@' key in the bundle property list", appClass, appClassName];
-    }
+		NSDictionary *infos = [[NSBundle mainBundle] infoDictionary];
+		NSString *appClassName = [infos objectForKey: @"NSPrincipalClass"];
+		Class appClass = NSClassFromString(appClassName);
 
-	id app = [appClass sharedApplication];
- 
-	[app setUp];
-	[app run];
+		if (Nil == appClass || NO == [appClass isSubclassOfClass: [ETApplication class]])
+		{
+			[NSException raise: NSInvalidArgumentException format: @"Principal "
+				"class must be ETApplication or a subclass unlike %@ identified by " 
+				"'%@' key in the bundle property list", appClass, appClassName];
+		}
 
-	DESTROY(pool);
-
+		id app = [appClass sharedApplication];
+	 
+		[app setUp];
+		[app run];
+	}
 	return 0;
 }
 
@@ -1297,13 +1287,12 @@ int ETApplicationMain(int argc, const char **argv)
                                tag: (int)aTag
                             action: (SEL)anAction
 {
-	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: aTitle
-		action: anAction keyEquivalent: @""]);
+	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: aTitle
+		action: anAction keyEquivalent: @""];
 
 	[menuItem setTag: aTag];
 	NSMenu *menu = [[NSMenu alloc] initWithTitle: aTitle];
 	[menuItem setSubmenu: menu];
-	RELEASE(menu);
 
 	return menuItem;
 }
@@ -1325,8 +1314,8 @@ int ETApplicationMain(int argc, const char **argv)
                    action: (SEL)anAction
             keyEquivalent: (NSString *)aKey
 {
-	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: aTitle
-		action: anAction keyEquivalent: @""]);
+	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: aTitle
+		action: anAction keyEquivalent: @""];
 	[menuItem setTarget: aTarget];
 	[menuItem setState: aState];
 	[self addItem: menuItem];
@@ -1350,8 +1339,8 @@ int ETApplicationMain(int argc, const char **argv)
 The submenu title is set as the menu item title. */ 
 - (void) addItemWithSubmenu: (NSMenu *)aMenu
 {
-	NSMenuItem *menuItem = AUTORELEASE([[NSMenuItem alloc] initWithTitle: [aMenu title]
-		action: NULL keyEquivalent: @""]);
+	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: [aMenu title]
+		action: NULL keyEquivalent: @""];
 	[menuItem setSubmenu: aMenu];
 	[self addItem: menuItem];
 }

@@ -96,7 +96,7 @@ static ETPickboard *activePickboard = nil;
    a pick and drop operation in the responder chain. */
 + (void) setActivePickboard: (ETPickboard *)pboard
 {
-	ASSIGN(activePickboard, pboard);
+	activePickboard = pboard;
 }
 
 /* Initialization */
@@ -107,7 +107,7 @@ static ETPickboard *activePickboard = nil;
 	/* Moves the object browser into to the window layer
 	   NOTE: The window item will be released on close. */
 	ETWindowItem *windowItem =
-		AUTORELEASE([[ETWindowItem alloc] initWithObjectGraphContext: [self objectGraphContext]]);
+		[[ETWindowItem alloc] initWithObjectGraphContext: [self objectGraphContext]];
 	[[self lastDecoratorItem] setDecoratorItem: windowItem];
 }
 
@@ -126,12 +126,6 @@ static ETPickboard *activePickboard = nil;
 	[self setUpUI];
 	
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_pickedObjects);
-	[super dealloc];
 }
 
 - (void) checkPickboardValidity
@@ -181,10 +175,8 @@ If boxed is NO, returns nil when the pickboard is empty. */
 		"should have only one pickboard reference %@ for object %@ ", self, 
 		pickedObject, pickRefs);
 
-	RETAIN(pickedObject);
 	[self removeItemAtIndex: 0];
 	[_pickedObjects removeObjectForKey: [pickRefs objectAtIndex: 0]];
-	AUTORELEASE(pickedObject);
 
 	if (boxed && [pickedObject isKindOfClass: [ETPickCollection class]] == NO)
 	{
@@ -385,7 +377,7 @@ If boxed is NO, returns nil when the pickboard is empty. */
 
 + (id) pickCollectionWithCollection: (id <ETCollection>)objects
 {
-	return AUTORELEASE([(ETPickCollection *)[[self class] alloc] initWithCollection: objects]);
+	return [(ETPickCollection *)[[self class] alloc] initWithCollection: objects];
 }
 
 /** <init \> Initializes and returns a picked object set (known as a pick 
@@ -393,17 +385,9 @@ collection) with the objects of the collection passed in parameter. */
 - (id) initWithCollection: (id <ETCollection>)objects
 {
 	SUPERINIT
-	ASSIGN(_pickedObjects, [objects contentArray]);
-	ASSIGN(_type, [ETUTI transientTypeWithSupertypes: [(NSObject *)objects valueForKey: @"UTI"]]);
+	_pickedObjects = [objects contentArray];
+	_type = [ETUTI transientTypeWithSupertypes: [(NSObject *)objects valueForKey: @"UTI"]];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_pickedObjects);
-	DESTROY(_type);
-
-	[super dealloc];
 }
 
 /** Returns a transient union type of the receiver type and all its element 

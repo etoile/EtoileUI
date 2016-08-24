@@ -52,7 +52,7 @@
 
 - (void)setUIBuilderModel: (NSString *)aModel
 {
-	id repObject = [[NSClassFromString(aModel) new] autorelease];
+	id repObject = [NSClassFromString(aModel) new];
 
 	[self setRepresentedObject: repObject];
 	[[self persistentRoot] commit];
@@ -78,7 +78,7 @@
 		NSLog(@"WARNING: Controller %@ must be a ETController subclass", aController);
 		return;
 	}
-	ETController *controller = [[controllerClass new] autorelease];
+	ETController *controller = [controllerClass new];
 	
 	[(ETLayoutItemGroup *)self setController: controller];
 	[[self persistentRoot] commit];

@@ -26,12 +26,6 @@ CGFloat ETAlignmentHintNone = FLT_MIN;
 - (id <ETLayoutingContext>) layoutContext { return [super layoutContext]; }
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location { return [super itemAtLocation: location]; }
 
-- (void) dealloc
-{
-	DESTROY(_separatorTemplateItem);
-	[super dealloc];
-}
-
 /** <override-never /> 
 Returns YES. */
 - (BOOL) isComputedLayout
@@ -548,7 +542,7 @@ rectangle that encloses the items and include border and item margins. */
 - (void) setSeparatorTemplateItem: (ETLayoutItem *)separator
 {
 	[self willChangeValueForProperty: @"separatorTemplateItem"];
-	ASSIGN(_separatorTemplateItem, separator);
+	_separatorTemplateItem = separator;
 	[self renderAndInvalidateDisplay];
 	[self didChangeValueForProperty: @"separatorTemplateItem"];
 }
@@ -613,7 +607,7 @@ next time you call it. */
 		if ([item isEqual: lastItem])
 			break;
 
-		ETLayoutItem *separatorItem = AUTORELEASE([[self separatorTemplateItem] copy]);
+		ETLayoutItem *separatorItem = [[self separatorTemplateItem] copy];
 
 		[self prepareSeparatorItem: separatorItem];
 		[spacedItems addObject: separatorItem];

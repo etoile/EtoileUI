@@ -39,7 +39,7 @@
 	if ([self acceptsDecoratorItem: nil] == NO)
 		return;
 
-	[self setSupervisorView: AUTORELEASE([ETView new])
+	[self setSupervisorView: [ETView new]
 	                   sync: ETSyncSupervisorViewFromItem];
 }
 
@@ -92,13 +92,13 @@
 - (void) setSerializedScrollView: (NSScrollView *)aScrollView
 {
 	ETAssert(_deserializedScrollView == nil);
-	ASSIGN(_deserializedScrollView, aScrollView);
+	_deserializedScrollView = aScrollView;
 }
 
 - (void) restoreScrollViewFromDeserialization
 {
 	[[self supervisorView] setWrappedView: _deserializedScrollView];
-	DESTROY(_deserializedScrollView);
+	_deserializedScrollView = nil;
 }
 
 - (void) awakeFromDeserialization

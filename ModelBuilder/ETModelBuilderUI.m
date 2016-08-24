@@ -33,7 +33,7 @@
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
 	ETPropertyCollectionController *controller =
-		AUTORELEASE([ETModelBuilderRelationshipController new]);
+		[ETModelBuilderRelationshipController new];
 	ETLayoutItemGroup *editor = [itemFactory collectionEditorWithSize: [aRenderer defaultItemSize]
 							                         representedObject: [NSArray array]
 									                        controller: controller];
@@ -55,7 +55,7 @@
 {
 	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer renderer];
 	ETItemValueTransformer *transformer =
-        AUTORELEASE([ETModelBuilderController newRelationshipValueTransformer]);
+        [ETModelBuilderController newRelationshipValueTransformer];
 	ETEntityDescription *metaEntityDesc =
 		[[self repository] entityDescriptionForClass: [ETEntityDescription class]];
 	ETEntityDescription *metaPropertyEntityDesc =
@@ -74,7 +74,7 @@
 
 - (ETLayoutItemGroup *) itemRepresentation
 {
-	ETModelBuilderController *controller = AUTORELEASE([ETModelBuilderController new]);
+	ETModelBuilderController *controller = [ETModelBuilderController new];
 	ETLayoutItemGroup *entityItem = [[self rendererWithController: controller] renderObject: self];
 
 	// FIXME: Keep or remove...
@@ -141,7 +141,7 @@
 
 - (void) instantiate: (id)sender
 {
-	[AUTORELEASE([self newInstance]) view: sender];
+	[[self newInstance] view: sender];
 }
 
 @end

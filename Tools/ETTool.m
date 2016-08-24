@@ -62,9 +62,9 @@ static COObjectGraphContext *activeToolContext = nil;
     if ([mainToolUUID isEqual: initialToolUUID] && [activeToolUUID isEqual: initialToolUUID])
 		return;
 
-	ASSIGN(mainToolUUID, initialToolUUID);
-	ASSIGN(activeToolUUID, initialToolUUID);
-	DESTROY(activeToolContext);
+	mainToolUUID = initialToolUUID;
+	activeToolUUID = initialToolUUID;
+	activeToolContext = nil;
 }
 
 #pragma mark Registering Tools -
@@ -81,11 +81,11 @@ You should never need to call this method.
 See also NSObject(ETAspectRegistration). */
 + (void) registerAspects
 {
-	ASSIGN(toolPrototypes, [NSMutableSet set]);
+	toolPrototypes = [NSMutableSet set];
 
 	FOREACH([self allSubclasses], subclass, Class)
 	{
-		[self registerTool: AUTORELEASE([[subclass alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]])];
+		[self registerTool: [[subclass alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]];
 	}
 }
 
@@ -119,7 +119,7 @@ ETTool. */
 facilities that allow to transform the UI at runtime. */
 + (NSSet *) registeredTools
 {
-	return AUTORELEASE([toolPrototypes copy]);
+	return [toolPrototypes copy];
 }
 
 /** Returns all the tool classes directly available for EtoileUI facilities 
@@ -255,9 +255,9 @@ You should rarely need to override this method. */
     ETEntityDescription *entity =
         [[context modelDescriptionRepository] entityDescriptionForClass: [ETArrowTool class]];
         
-    return AUTORELEASE([[ETArrowTool alloc] initWithEntityDescription: entity
-                                                                 UUID: aToolUUID
-                                                   objectGraphContext: context]);
+    return [[ETArrowTool alloc] initWithEntityDescription: entity
+                                                     UUID: aToolUUID
+                                       objectGraphContext: context];
 }
 
 /** Returns the last active tool UUID, even if the active tool has been unloaded. 
@@ -359,16 +359,14 @@ automatically activates tools in response to the user's click with
 
 	ETDebugLog(@"Update active tool to %@", toolToActivate);
 	
-	RETAIN(toolToDeactivate);
-	ASSIGN(activeToolUUID, [toolToActivate UUID]);
-	ASSIGN(activeToolContext, [toolToActivate objectGraphContext]);
+	activeToolUUID = [toolToActivate UUID];
+	activeToolContext = [toolToActivate objectGraphContext];
 
 	[toolToDeactivate didBecomeInactive];
 	[toolToActivate didBecomeActive];
 	[self notifyOfChangeFromTool: toolToDeactivate 
 	                      toTool: toolToActivate];
 
-	RELEASE(toolToDeactivate);
 	return toolToActivate;
 }
 
@@ -409,7 +407,7 @@ See also -mainTool. */
 	ETAssert([self activeTool] != nil);
 	BOOL wasPreviousMainToolActive = [[self activeTool] isEqual: [self mainTool]];
 
-	ASSIGN(mainToolUUID, [aTool UUID]);
+	mainToolUUID = [aTool UUID];
 
 	if (wasPreviousMainToolActive)
 	{
@@ -422,7 +420,7 @@ See also -mainTool. */
 /** Returns a new autoreleased tool instance. */
 + (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
 {
-	return AUTORELEASE([[self alloc] initWithObjectGraphContext: aContext]);
+	return [[self alloc] initWithObjectGraphContext: aContext];
 }
 
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
@@ -433,13 +431,6 @@ See also -mainTool. */
 
 	[self setCursorName: kETToolCursorNameArrow];
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_targetItem);
-	DESTROY(_cursorName);
-	[super dealloc];
 }
 
 - (BOOL) respondsToSelector: (SEL)aSelector
@@ -550,7 +541,7 @@ See also -targetItem. */
 	if ([anItem isEqual: _targetItem])
 		return;
 
-	ASSIGN(_targetItem, anItem);
+	_targetItem = anItem;
 }
 
 - (void) validateLayoutOwner: (ETLayout *)aLayout
@@ -1016,7 +1007,7 @@ cursor, when the receiver becomes activated. */
 - (void) setCursorName: (NSString *)aName
 {
 	[self willChangeValueForProperty: @"cursorName"];
-	ASSIGN(_cursorName, aName);
+	_cursorName = aName;
 	[self didChangeValueForProperty: @"cursorName"];
 }
 

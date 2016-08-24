@@ -161,8 +161,12 @@
 
 	ETPropertyDescription *fillColor =
 		[ETPropertyDescription descriptionWithName: @"fillColor" type: (id)@"NSColor"];
+	fillColor.persistentTypeName = @"NSString";
+	fillColor.valueTransformerName = @"COColorToHTMLString";
 	ETPropertyDescription *strokeColor =
 		[ETPropertyDescription descriptionWithName: @"strokeColor" type: (id)@"NSColor"];
+	strokeColor.persistentTypeName = @"NSString";
+	strokeColor.valueTransformerName = @"COColorToHTMLString";
 	ETPropertyDescription *paintMode =
 		[ETPropertyDescription descriptionWithName: @"paintMode" type: (id)@"NSUInteger"];
 

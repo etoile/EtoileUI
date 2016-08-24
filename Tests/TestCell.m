@@ -29,15 +29,13 @@
 - (id) init
 {
 	SUPERINIT
-	ASSIGN(item, [itemFactory item]);
+	item = [itemFactory item];
 	return self;
 }
 
-DEALLOC(DESTROY(itemFactory); DESTROY(item))
-
 - (void) testItemAsCellObjectValue
 {
-	NSCell *cell = AUTORELEASE([NSCell new]);
+	NSCell *cell = [NSCell new];
 	[cell setObjectValue: [cell objectValueForObject: item]];
 
 	UKStringsEqual([item stringValue], [cell objectValue]);

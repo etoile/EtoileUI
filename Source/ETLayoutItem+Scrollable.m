@@ -23,7 +23,7 @@ NSString * const kETCachedScrollableAreaDecoratorItem = @"cachedScrollViewDecora
 - (void) unhidesScrollableAreaItem;
 - (void) cacheScrollableAreaItem: (ETScrollableAreaItem *)decorator;
 - (ETScrollableAreaItem *) cachedScrollableAreaItem;
-- (ETScrollableAreaItem *) createScrollableAreaItem;
+- (ETScrollableAreaItem *) createScrollableAreaItem  NS_RETURNS_RETAINED;
 @end
 
 
@@ -134,7 +134,7 @@ You should never need to call this method which is used internally. */
 
 	if (nil == decorator)
 	{
-		decorator = AUTORELEASE([self createScrollableAreaItem]);
+		decorator = [self createScrollableAreaItem];
 		[self cacheScrollableAreaItem: decorator];
 	}
 

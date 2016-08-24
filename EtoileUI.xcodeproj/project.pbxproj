@@ -52,7 +52,7 @@
 		6019779C185F61C600635BE2 /* ETTitleBarView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60197798185F61C600635BE2 /* ETTitleBarView.h */; };
 		6019779E185F61C600635BE2 /* ETTitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197799185F61C600635BE2 /* ETTitleBarView.m */; };
 		6019779F185F61C600635BE2 /* ETTitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 60197799185F61C600635BE2 /* ETTitleBarView.m */; };
-		601977A0185F61C600635BE2 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 6019779A185F61C600635BE2 /* ETView.h */; };
+		601977A0185F61C600635BE2 /* ETView.h in Headers */ = {isa = PBXBuildFile; fileRef = 6019779A185F61C600635BE2 /* ETView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		601977A2185F61C600635BE2 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6019779B185F61C600635BE2 /* ETView.m */; };
 		601977A3185F61C600635BE2 /* ETView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6019779B185F61C600635BE2 /* ETView.m */; };
 		601977A6185F6B4B00635BE2 /* ETUIItemCellIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 601977A4185F6B4A00635BE2 /* ETUIItemCellIntegration.h */; };
@@ -3872,12 +3872,13 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "ETDebugAssertionEnabled=1";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wall";
@@ -3887,8 +3888,9 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wall";
 			};

@@ -63,8 +63,6 @@ also copied, in other words the new object is a deep copy of the receiver. */
 {
 	NSView *superview = [self superview];
 
-
-	RETAIN(self);
 	[self removeFromSuperview];
 
 #ifdef GNUSTEP // FIXME: Implement NSBrowser keyed archiving on GNUstep
@@ -87,9 +85,8 @@ also copied, in other words the new object is a deep copy of the receiver. */
 #endif
 
 	[superview addSubview: self];
-	RELEASE(self);
 
-	return RETAIN(viewCopy);
+	return viewCopy;
 }
 
 #pragma mark Collection Protocol -
@@ -307,7 +304,7 @@ returning the value, otherwise this method is equivalent to -frameOrigin. */
 {
 	NSImage *img = [[NSImage alloc] initWithView: self fromRect: [self bounds]];
 
-	return AUTORELEASE(img); 
+	return img; 
 }
 
 - (NSImage *) icon

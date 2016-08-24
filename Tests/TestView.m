@@ -24,7 +24,7 @@
 		     representedObjects: A([NSNull null], self)
 		                 target: self
 	                     action: @selector(paste:)];
-	NSPopUpButton *popUpCopy = AUTORELEASE([[popUpItem view] copy]);
+	NSPopUpButton *popUpCopy = [[popUpItem view] copy];
 
 	UKNil([[popUpCopy itemAtIndex: 0] representedObject]);
 	UKObjectsSame(self, [[popUpCopy itemAtIndex: 1] representedObject]);

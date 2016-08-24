@@ -64,13 +64,13 @@ name. */
 	allowedAspectTypes = [[NSSet alloc] initWithObjects: [[self class] anyType], nil];
 	if (aName == nil)
 	{
-		ASSIGN(name, [[[self class] anyType] stringValue]);
+		name = [[[self class] anyType] stringValue];
 	}
 	else
 	{
-		ASSIGN(name, aName);
+		name = aName;
 	}
-	ASSIGN(icon, [NSImage imageNamed: @"box"]);
+	icon = [NSImage imageNamed: @"box"];
 	return self;
 }
 
@@ -91,19 +91,10 @@ See -initWithName:dictionary:objectGraphContext:. */
 	return [self initWithName: nil dictionary: nil objectGraphContext: aContext];
 }
 
-- (void) dealloc
-{
-	DESTROY(_aspectEntries);
-	DESTROY(allowedAspectTypes);
-	DESTROY(name);
-	DESTROY(icon);
-	[super dealloc];
-}
-
 - (void) setName: (NSString *)aName
 {
 	NILARG_EXCEPTION_TEST(aName);
-	ASSIGN(name, aName);
+	name = aName;
 }
 
 - (NSString *) displayName
@@ -180,7 +171,6 @@ See also -setAspect:forKey:. */
 		[_aspectEntries insertObject: pair atIndex: anIndex];
 	}
 
-	RELEASE(pair);
 	[self didChangeValueForProperty: @"aspectEntries"];
 }
 

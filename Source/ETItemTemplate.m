@@ -33,10 +33,10 @@ represented object class. */
             objectClass: (Class)aClass
      objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithItem: anItem
-	                                  objectClass: aClass
-	                                   entityName: nil
-	                           objectGraphContext: aContext]);
+	return [[self alloc] initWithItem: anItem
+	                      objectClass: aClass
+	                       entityName: nil
+	               objectGraphContext: aContext];
 }
 
 /** Returns a new autoreleased template based on the given item and 
@@ -45,10 +45,10 @@ entity name for the represented object. */
              entityName: (NSString *)anEntityName
      objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithItem: anItem
-	                                  objectClass: Nil
-	                                   entityName: anEntityName
-	                           objectGraphContext: aContext]);
+	return [[self alloc] initWithItem: anItem
+	                      objectClass: Nil
+	                       entityName: anEntityName
+	               objectGraphContext: aContext];
 }
 
 /** <init />
@@ -81,18 +81,10 @@ Raises an NSInvalidArgumentException if the item is nil. */
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_item, anItem);
-	ASSIGN(_objectClass, aClass);
-	ASSIGN(_entityName, anEntityName);
+	_item = anItem;
+	_objectClass = aClass;
+	_entityName = anEntityName;
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(_item);
-	DESTROY(_objectClass);
-	DESTROY(_entityName);
-	[super dealloc];
 }
 
 /** Returns the represented object template class.
@@ -254,8 +246,8 @@ when -usesRepresentedObjectAsProvider on the controller content returns NO. */
 	{
 		/* The index is set at insertion time in 
 		   -mutateRepresentedObjectForInsertedItem:atIndex:hint: */
-		return AUTORELEASE([[ETIndexValuePair alloc]
-			initWithIndex: ETUndeterminedIndex value: newObject representedObject: aParentCollection]);
+		return [[ETIndexValuePair alloc]
+			initWithIndex: ETUndeterminedIndex value: newObject representedObject: aParentCollection];
 	}
 					
 	/* The mutable object viewpoint mutates the parent collection itself.
@@ -297,7 +289,7 @@ See also -newItemWithRepresentedObject:options:. */
 	{
 		newInstance = [newInstance init];
 	}
-    AUTORELEASE(newInstance);
+
 	id parentObject = [options objectForKey: kETTemplateOptionParentRepresentedObject];
 	id value = [self mutableObjectForRepresentedObject: newInstance
 									   ofParentCollection: parentObject options: options];
@@ -429,7 +421,6 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 	
 	if (context == nil)
 	{
-		DESTROY(self);
 		return nil;
 	}
 

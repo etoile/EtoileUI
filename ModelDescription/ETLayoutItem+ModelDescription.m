@@ -72,7 +72,7 @@
 	//ETPropertyDescription *transform = [ETPropertyDescription descriptionWithName: @"transform" type: (id)@"NSAffineTransform"];
 	ETPropertyDescription *autoresizing = [ETPropertyDescription descriptionWithName: @"autoresizingMask" type: (id)@"NSUInteger"];
 	ETPropertyDescription *contentAspect = [ETPropertyDescription descriptionWithName: @"contentAspect" type: (id)@"NSUInteger"];
-	[contentAspect setRole: AUTORELEASE([ETMultiOptionsRole new])];
+	[contentAspect setRole: [ETMultiOptionsRole new]];
 	[[contentAspect role] setAllowedOptions:
 	 [D(@(ETContentAspectNone), _(@"None"),
 		@(ETContentAspectComputed), _(@"Computed by Cover Style"),

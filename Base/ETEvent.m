@@ -33,11 +33,11 @@ the widget backend event passed as evt. */
                        draggingInfo: (id)drag
                          layoutItem: (ETLayoutItem *)item     
 {
-	ETEvent *event = AUTORELEASE([[self alloc] init]);
+	ETEvent *event = [[self alloc] init];
 
-	ASSIGN(event->_backendEvent, (NSEvent *)evt);
+	event->_backendEvent = (__bridge NSEvent *)evt;
 	[event setLayoutItem: item];
-	ASSIGN(event->_draggingInfo, drag);
+	event->_draggingInfo = drag;
 
 	[event setPickingMask: pickMask];
 	event->_isUIEvent = YES;
@@ -51,7 +51,7 @@ anEvent, event type put aside. */
 {
 	ETEvent *copiedEvent = [anEvent copy];
 	copiedEvent->_type = NSMouseEntered;
-	return AUTORELEASE(copiedEvent);
+	return copiedEvent;
 }
 
 /** Returns an autoreleased EtoileUI mouse exit event which is identical to 
@@ -62,18 +62,16 @@ anEvent, event type and layout item put aside. */
 	ETEvent *copiedEvent = [anEvent copy];
 	copiedEvent->_type = NSMouseExited;
 	[copiedEvent setLayoutItem: exitedItem];
-	return AUTORELEASE(copiedEvent);
+	return copiedEvent;
 }
-
-DEALLOC(DESTROY(_draggingInfo); DESTROY(_layoutItem); DESTROY(_backendEvent))
 
 - (id) copyWithZone: (NSZone *)zone
 {
 	ETEvent *copiedEvent = [[[self class] alloc] init];
 
-	ASSIGN(copiedEvent->_backendEvent, _backendEvent);
+	copiedEvent->_backendEvent = _backendEvent;
 	[copiedEvent setLayoutItem: [self layoutItem]];
-	ASSIGN(copiedEvent->_draggingInfo, (id)_draggingInfo);
+	copiedEvent->_draggingInfo = (id)_draggingInfo;
 
 	copiedEvent->_type = _type;
 	[copiedEvent setPickingMask: [self pickingMask]];
@@ -163,7 +161,7 @@ an ETTool subclass that is available in a framework.
 TODO: Rewrite later if we finally make use of it in a different way. */
 - (void) setLayoutItem: (id)anItem
 {
-	ASSIGN(_layoutItem, anItem);
+	_layoutItem = anItem;
 }
 
 /** Sets the pick an drop mask attached to the EtoileUI event. This mask encodes 
@@ -363,7 +361,7 @@ You should avoid to use this method to simplify the portability of your code to
 other widget backends that might be written in future. */
 - (void *) backendEvent
 {
-	return (void *)_backendEvent;
+	return (__bridge void *)_backendEvent;
 }
 
 /** Returns a window identifier that encodes the window on which the event 

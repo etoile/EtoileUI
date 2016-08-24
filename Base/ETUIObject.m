@@ -14,6 +14,7 @@
 #import <CoreObject/COCopier.h>
 #import <CoreObject/COObjectGraphContext.h>
 #import <CoreObject/COPath.h>
+#import <CoreObject/COPersistentRoot.h>
 #import <CoreObject/COSerialization.h>
 #import "ETUIObject.h"
 #import "ETController.h"
@@ -96,9 +97,9 @@ ETLayoutItemFactory or the dedicated initializers). */
 	ETEntityDescription *entity =
 		[[aContext modelDescriptionRepository] entityDescriptionForClass: self];
 
-	return AUTORELEASE([[self alloc] initWithEntityDescription: entity
-	                                                      UUID: permanentUUID
-	                                        objectGraphContext: aContext]);
+	return [[self alloc] initWithEntityDescription: entity
+	                                          UUID: permanentUUID
+	                            objectGraphContext: aContext];
 }
 /** <override-dummy />
 Does nothing by default, but can be overriden to recreate the transient state
@@ -119,17 +120,16 @@ You must never call the superclass implementation. */
     {
         [self recordDeallocation];
     }
-    [super dealloc];
 }
 
 - (id) copyToObjectGraphContext: (COObjectGraphContext *)aDestination
 {
 	NILARG_EXCEPTION_TEST(aDestination);
-	ETUUID *newItemUUID = [AUTORELEASE([COCopier new]) copyItemWithUUID: [self UUID]
+	ETUUID *newItemUUID = [[COCopier new] copyItemWithUUID: [self UUID]
 	                                                          fromGraph: [self objectGraphContext]
 	                                                            toGraph: aDestination];
 
-	return RETAIN([[self objectGraphContext] loadedObjectForUUID: newItemUUID]);
+	return [[self objectGraphContext] loadedObjectForUUID: newItemUUID];
 }
 
 /** Calls -copyToObjectGraphContext: with the receiver object graph context.

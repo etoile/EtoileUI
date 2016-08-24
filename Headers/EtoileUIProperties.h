@@ -118,3 +118,5 @@ extern NSString * const kETCommitItemSendBackward;
 extern NSString * const kETCommitItemBringForward;
 
 extern NSString * const kETCommitObjectDrop;
+
+extern NSString * const kETCommitEditProperty;

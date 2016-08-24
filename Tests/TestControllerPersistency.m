@@ -53,11 +53,11 @@
 - (id) init
 {
 	SUPERINIT;
-    ASSIGN(itemFactory, [ETLayoutItemFactory factoryWithObjectGraphContext:
-        [COObjectGraphContext objectGraphContext]]);
+    itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext:
+        [COObjectGraphContext objectGraphContext]];
 
 	controller = [[CustomController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
-	ASSIGN(itemGroup, [itemFactory itemGroup]);
+	itemGroup = [itemFactory itemGroup];
 
     [itemGroup setShouldMutateRepresentedObject: YES];
     [itemGroup setController: controller];
@@ -65,13 +65,6 @@
     ETAssert([itemGroup objectGraphContext] != [ETUIObject defaultTransientObjectGraphContext]);
     ETAssert([[itemGroup objectGraphContext] rootItemUUID] == nil);
 	return self;
-}
-
-- (void) dealloc
-{
-	DESTROY(controller);
-	DESTROY(itemGroup);
-	[super dealloc];
 }
 
 - (void) testContentRelationship

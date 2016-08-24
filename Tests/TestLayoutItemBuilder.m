@@ -29,14 +29,14 @@
 
 - (void) testRenderView
 {
-	id view = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview0 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview1 = AUTORELEASE([[CustomView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview00 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview01 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview010 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview02 = AUTORELEASE([[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
-	id subview020 = AUTORELEASE([[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)]);
+	id view = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview0 = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview1 = [[CustomView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview00 = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview01 = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview010 = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview02 = [[ETView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
+	id subview020 = [[NSView alloc] initWithFrame: NSMakeRect(0, 0, 100, 50)];
 	
 	[view addSubview: subview0];
 	[view addSubview: subview1];

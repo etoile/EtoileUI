@@ -37,8 +37,8 @@ The Nib bundle will be to be the main bundle if you pass nil. */
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_nibBundle, aBundle);
-	ASSIGN(_nibName, aNibName);
+	_nibBundle = aBundle;
+	_nibName = aNibName;
 	_topLevelObjects = [[NSMutableArray alloc] init];
 	return self;
 }
@@ -48,14 +48,6 @@ as the nib name to be found in the main bundle. */
 - (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithNibName: nil bundle: nil objectGraphContext: aContext];
-}
-
-- (void) dealloc
-{
-	DESTROY(_nibBundle);
-	DESTROY(_nibName);
-	DESTROY(_topLevelObjects);
-	[super dealloc];
 }
 
 - (BOOL) isNibLoaded
@@ -89,7 +81,10 @@ Raises an exception if the bundle or the Nib itself cannot be found. */
         ETLog(@"NibOwner %@ couldn't load Nib (Gorm) file %@.nib (~.gorm)", self, [self nibName]);
         return NO;
     }
-	[_topLevelObjects makeObjectsPerformSelector: @selector(release)];
+	for (id object in _topLevelObjects)
+	{
+		CFRelease((__bridge CFTypeRef)object);
+	}
 	[self didLoadNib];
 
     return YES;
@@ -149,7 +144,7 @@ Only subclasses should use this method and mutate the array. */
 /** Returns the subset of the top-level objects which are layout items. */
 - (NSArray *) topLevelItems
 {
-	NSMutableArray *topLevelItems = AUTORELEASE([_topLevelObjects mutableCopy]);
+	NSMutableArray *topLevelItems = [_topLevelObjects mutableCopy];
 	[[topLevelItems filter] isLayoutItem];
 	return topLevelItems;
 }

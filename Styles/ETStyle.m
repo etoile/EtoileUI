@@ -58,8 +58,8 @@ See also [NSObject(ETAspectRegistration)]. */
 		if ([subclass isSubclassOfClass: [ETUIItem class]])	
 			continue;
 
-		[self registerStyle: AUTORELEASE([[subclass alloc]
-			initWithObjectGraphContext: [self defaultTransientObjectGraphContext]])];
+		[self registerStyle:[[subclass alloc]
+			initWithObjectGraphContext: [self defaultTransientObjectGraphContext]]];
 	}
 }
 
@@ -91,8 +91,8 @@ Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle
 
 	if (category == nil)
 	{
-		category = AUTORELEASE([[ETAspectCategory alloc] initWithName: _(@"Style")
-		                                           objectGraphContext: [repo objectGraphContext]]);
+		category = [[ETAspectCategory alloc] initWithName: _(@"Style")
+		                               objectGraphContext: [repo objectGraphContext]];
 		[category setIcon: [NSImage imageNamed: @"layer-transparent"]];
 		[[ETAspectRepository mainRepository] addAspectCategory: category];
 	}
@@ -103,7 +103,7 @@ Raises an invalid argument exception if aStyle class isn't a subclass of ETStyle
 that allow to transform the UI at runtime. */
 + (NSSet *) registeredStyles
 {
-	return AUTORELEASE([stylePrototypes copy]);
+	return [stylePrototypes copy];
 }
 
 /** Returns all the style classes directly available for EtoileUI facilities 

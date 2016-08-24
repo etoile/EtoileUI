@@ -143,10 +143,10 @@ Returns YES when the event has been handled by EtoileUI, otherwise returns NO
 when the event has to be handled by the widget backend. */
 - (BOOL) processEvent: (void *)theEvent
 {
-	ETEvent *nativeEvent = ETEVENT((NSEvent *)theEvent, nil, ETNonePickingMask);
+	ETEvent *nativeEvent = ETEVENT((__bridge NSEvent *)theEvent, nil, ETNonePickingMask);
 	BOOL isHandled = NO;
 
-	switch ([(NSEvent *)theEvent type])
+	switch ([(__bridge NSEvent *)theEvent type])
 	{
 		case NSMouseMoved:
 		case NSLeftMouseDown:
@@ -240,18 +240,18 @@ Returns YES when the event has been handled by EtoileUI. */
 		return NO;
 	}
 
-	ETTool *initialActiveTool = RETAIN([ETTool activeTool]);
+	ETTool *initialActiveTool = [ETTool activeTool];
 	ETTool *activeTool = initialActiveTool;
 	/* The window item must be retained to prevent crashes if the first 
 	   decorated item is removed from the item tree or moved to another part.
 	   For example, see -stopEditingKeyWindowUI:. */
-	ETWindowItem *windowItem = RETAIN([anEvent windowItem]);
+	ETWindowItem *windowItem = [anEvent windowItem];
 	ETAssert([windowItem enclosingItem] != nil);
 	BOOL hadActiveFieldEditorItem = (nil != windowItem && nil != [windowItem activeFieldEditorItem]);
 	NSWindow *window = [windowItem window];
 
-	ASSIGN(_initialKeyWindow, [NSApp keyWindow]); /* Used by -wasKeyWindow: */
-	ASSIGN(_initialFirstResponder, [window firstResponder]);
+	_initialKeyWindow = [NSApp keyWindow]; /* Used by -wasKeyWindow: */
+	_initialFirstResponder = [window firstResponder];
 
 	switch ([anEvent type])
 	{
@@ -278,15 +278,11 @@ Returns YES when the event has been handled by EtoileUI. */
 			   not check that, a drag is initiated on the content item. */
 			if ([self isMovingOrResizingWindow])
 			{
-                RELEASE(initialActiveTool);
-                RELEASE(windowItem);
 				return NO;
 			}
 			[activeTool mouseDragged: anEvent];
 			break;
 		default:
-            RELEASE(initialActiveTool);
-            RELEASE(windowItem);
 			return NO;
 	}
 
@@ -303,8 +299,6 @@ Returns YES when the event has been handled by EtoileUI. */
 	}
 
 	ETAssert(initialActiveTool == activeTool || [anEvent type] == NSLeftMouseDown);
-	RELEASE(initialActiveTool);
-	RELEASE(windowItem);
 	return YES;
 }
 
@@ -410,7 +404,7 @@ also ensures the hovered item stack is valid. */
 	if (noEnter)
 		return nil;
 
-	ASSIGN(_lastHoveredItem, hoveredItem);
+	_lastHoveredItem = hoveredItem;
 	
 	ETDebugLog(@"Synthetize mouse enters item %@", hoveredItem);
 
@@ -441,7 +435,7 @@ also ensures the hovered item stack is valid. */
 
 	ETEvent *exitEvent =  [ETEvent exitEventWithEvent: anEvent layoutItem: _lastHoveredItem];
 
-	ASSIGN(_lastHoveredItem, hoveredItem);
+	_lastHoveredItem = hoveredItem;
 
 	return exitEvent;
 }

@@ -38,11 +38,9 @@
 - (id) init
 {
 	SUPERINIT;
-	ASSIGN(item, [itemFactory item]);
+	item = [itemFactory item];
 	return self;
 }
-
-DEALLOC(DESTROY(itemFactory); DESTROY(item))
 
 - (void) testNewSupervisorViewWithItemAndFrame
 {
@@ -53,7 +51,7 @@ DEALLOC(DESTROY(itemFactory); DESTROY(item))
 	NSRect initialItemFrame = [item frame];
 	unsigned int initialAutoresizing = [item autoresizingMask];
 
-	ETView *view = AUTORELEASE([[ETView alloc] init]);
+	ETView *view = [[ETView alloc] init];
 	
 	[item setSupervisorView: view sync: ETSyncSupervisorViewFromItem];
 
@@ -87,7 +85,7 @@ static unsigned int sizableMask = (NSViewWidthSizable | NSViewHeightSizable);
 
 - (NSTextField *) textFieldWithAutoresizingMask: (unsigned int)aMask
 {
-	NSTextField *textField = AUTORELEASE([[NSTextField alloc] init]);
+	NSTextField *textField = [[NSTextField alloc] init];
 	[textField setAutoresizingMask: aMask];
 	return textField;
 }
@@ -119,7 +117,7 @@ and -setAutoresizingMask: can potentially erase each other. */
 {
 	NSTextField *textField = [self textFieldWithAutoresizingMask: weirdMask];
 
-	ASSIGN(item, [itemFactory itemWithView: textField]);
+	item = [itemFactory itemWithView: textField];
 	[self checkViewAutoresizingMask: weirdMask];
 }
 
@@ -517,7 +515,7 @@ on the layout item internal geometry (contentBounds and position). */
 {
 	NSPoint oldPosition = [item position];
 	NSPoint oldOrigin = [item origin];
-	NSView *slider = AUTORELEASE([[NSSlider alloc] init]);
+	NSView *slider = [[NSSlider alloc] init];
 	NSRect sliderFrame = [slider frame];
 
 	UKRectsNotEqual([item frame], sliderFrame); /* Important precondition */
@@ -533,7 +531,7 @@ on the layout item internal geometry (contentBounds and position). */
 layout item internal geometry (contentBounds and position). */
 - (void) testSupervisorViewToItemGeometrySynchronization
 {
-	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: [[NSSlider alloc] init]];
 
 	NSPoint oldPosition = [item position];
 	NSPoint oldOrigin = [item origin];
@@ -554,7 +552,7 @@ layout item internal geometry (contentBounds and position). */
 supervisor view geometry (frame). */
 - (void) testItemToSupervisorViewGeometrySynchronization
 {
-	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: [[NSSlider alloc] init]];
 
 	NSPoint oldPosition = [item position];
 	NSPoint oldOrigin = [item origin];
@@ -575,7 +573,7 @@ supervisor view geometry (frame). */
 supervisor view geometry (frame). */
 - (void) testSupervisorViewToDecoratedItemGeometrySynchronization
 {
-	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: [[NSSlider alloc] init]];
 	[item setDecoratorItem: [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	NSPoint oldPosition = [item position];
@@ -595,7 +593,7 @@ supervisor view geometry (frame). */
 
 - (void) testGeometrySynchronizationForDecoratorRemoval
 {
-	[item setViewAndSync: AUTORELEASE([[NSSlider alloc] init])];
+	[item setViewAndSync: [[NSSlider alloc] init]];
 	[item setDecoratorItem: [ETWindowItem itemWithObjectGraphContext: [itemFactory objectGraphContext]]];
 
 	NSRect newFrame = NSMakeRect(500, 700, 30, 40);
@@ -625,7 +623,7 @@ supervisor view geometry (frame). */
 	NSRect viewFrame = NSMakeRect(30, -20, 200, 50);
 	NSRect rect = [ETLayoutItem defaultItemRect];
 
-	[item setView: AUTORELEASE([[NSTextField alloc] initWithFrame: viewFrame])];
+	[item setView: [[NSTextField alloc] initWithFrame: viewFrame]];
 	[item sizeToFit];
 
 	UKSizesNotEqual(rect.size, [item contentBounds].size);

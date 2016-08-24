@@ -144,8 +144,8 @@
 
 - (NSDateFormatter *) historyBrowserDateFormatter
 {
-	NSDateFormatter *formatter = AUTORELEASE([[NSDateFormatter alloc] 
-		initWithDateFormat: @"%1m %B %Y %H:%M" allowNaturalLanguage: YES]);
+	NSDateFormatter *formatter = [[NSDateFormatter alloc] 
+		initWithDateFormat: @"%1m %B %Y %H:%M" allowNaturalLanguage: YES];
 	[formatter setFormatterBehavior: NSDateFormatterBehavior10_0];
 	return formatter;
 }
@@ -193,7 +193,7 @@
                                                       title: (NSString *)aTitle
 {
 	/* We set the controller on the track view so it can access the track nodes */
-	ETController *controller = AUTORELEASE([[ETHistoryBrowserController alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]);
+	ETController *controller = [[ETHistoryBrowserController alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 	ETLayoutItemGroup *topBar = [self historyBrowserTopBarWithController: controller];
 	ETLayoutItemGroup *trackView = [self historyBrowserTrackViewWithRepresentedObject: aTrack controller: controller];
 	ETLayoutItemGroup *browser = [self itemGroupWithItems: A(topBar, trackView)];
@@ -232,7 +232,7 @@
 	[[groupTemplate item] setValueTransformer: [self iconValueTransformer]
 	                              forProperty: @"icon"];
 
-	ETAssert([AUTORELEASE([[template item] copy]) valueTransformerForProperty: @"icon"]
+	ETAssert([[[template item] copy] valueTransformerForProperty: @"icon"]
 		== [ETItemValueTransformer valueTransformerForName: @"HistoryBrowserIcon"]);
 
 	return self;
@@ -251,7 +251,7 @@
 	if (transformer != nil)
 		return transformer;
 
-	transformer = AUTORELEASE([[ETItemValueTransformer alloc] initWithName: @"HistoryBrowserIcon"]);
+	transformer = [[ETItemValueTransformer alloc] initWithName: @"HistoryBrowserIcon"];
 
 	[transformer setTransformBlock: ^id (id value, NSString *key, ETLayoutItem *item)
 	{

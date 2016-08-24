@@ -410,9 +410,9 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 }
 
 #define HANDLE(x) \
-	AUTORELEASE([[ETHandle alloc] initWithActionHandler: [x sharedInstanceForObjectGraphContext: aContext] \
-	                                  manipulatedObject: self \
-                                     objectGraphContext: aContext])
+	[[ETHandle alloc] initWithActionHandler: [x sharedInstanceForObjectGraphContext: aContext] \
+	                      manipulatedObject: self \
+                         objectGraphContext: aContext]
 
 - (id) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget

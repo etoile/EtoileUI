@@ -43,14 +43,14 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 /** Returns a custom shape based on the given bezier path. */
 + (ETShape *) shapeWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return AUTORELEASE([[self alloc] initWithBezierPath: aPath objectGraphContext: aContext]);
+	return [[self alloc] initWithBezierPath: aPath objectGraphContext: aContext];
 }
 
 /** Returns a rectangular shape with the width and height of aRect. */
 + (ETShape *) rectangleShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSBezierPath *path = [NSBezierPath bezierPathWithRect: aRect];
-	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path objectGraphContext: aContext]);
+	ETShape *shape = [[self alloc] initWithBezierPath: path objectGraphContext: aContext];
 	[shape setPathResizeSelector: @selector(bezierPathWithRect:)];
 	[shape setName: _(@"Rectangle")];
 	[shape setIcon: [NSImage imageNamed: @"layer-shape"]];
@@ -67,7 +67,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 + (ETShape *) ovalShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect: aRect];
-	ETShape *shape = AUTORELEASE([[self alloc] initWithBezierPath: path objectGraphContext: aContext]);
+	ETShape *shape = [[self alloc] initWithBezierPath: path objectGraphContext: aContext];
 	[shape setPathResizeSelector: @selector(bezierPathWithOvalInRect:)];
 	[shape setName: _(@"Ellipse")];
 	[shape setIcon: [NSImage imageNamed: @"layer-shape-ellipse"]];
@@ -87,7 +87,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	if (self == nil)
 		return nil;
 
-	ASSIGN(_icon, [NSImage imageNamed: @"layer-shape-curve"]);
+	_icon = [NSImage imageNamed: @"layer-shape-curve"];
 	[self setPath: aPath];
 	[self setFillColor: [NSColor darkGrayColor]];
 	[self setStrokeColor: [NSColor lightGrayColor]];
@@ -102,17 +102,6 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 	return [self initWithBezierPath: nil objectGraphContext: aContext];
 }
 
-- (void) dealloc
-{
-	DESTROY(_icon);
-	DESTROY(_path);
-    DESTROY(_fillColor);
-    DESTROY(_strokeColor);
-	DESTROY(_pathResizeSelectorName);
-    [super dealloc];
-}
-
-
 - (NSImage *) icon
 {
 	return _icon;
@@ -120,7 +109,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 
 - (void) setIcon: (NSImage *)anIcon
 {
-	ASSIGN(_icon, anIcon);
+	_icon = anIcon;
 }
 
 /** Returns NO to indicate the receiver can never be shared between several 
@@ -140,7 +129,7 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 - (void) setPath: (NSBezierPath *)aPath
 {
 	[self willChangeValueForProperty: @"path"];
-	ASSIGN(_path, aPath);
+	_path = aPath;
 	[self didChangeValueForProperty: @"path"];
 }
 
@@ -212,31 +201,31 @@ are notified. */
 - (void) setPathResizeSelector: (SEL)aSelector
 {
 	[self willChangeValueForProperty: @"pathResizeSelectorName"];
-	ASSIGN(_pathResizeSelectorName, NSStringFromSelector(aSelector));
+	_pathResizeSelectorName = NSStringFromSelector(aSelector);
 	[self didChangeValueForProperty: @"pathResizeSelectorName"];
 }
 
 - (NSColor *) fillColor
 {
-    return AUTORELEASE([_fillColor copy]); 
+    return [_fillColor copy]; 
 }
 
 - (void) setFillColor: (NSColor *)color
 {
 	[self willChangeValueForProperty: @"fillColor"];
-	ASSIGN(_fillColor, [color copy]);
+	_fillColor = [color copy];
 	[self didChangeValueForProperty: @"fillColor"];
 }
 
 - (NSColor *) strokeColor
 {
-    return AUTORELEASE([_strokeColor copy]); 
+    return [_strokeColor copy]; 
 }
 
 - (void) setStrokeColor: (NSColor *)color
 {
 	[self willChangeValueForProperty: @"strokeColor"];
-	ASSIGN(_strokeColor, [color copy]);
+	_strokeColor = [color copy];
 	[self didChangeValueForProperty: @"strokeColor"];
 }
 
