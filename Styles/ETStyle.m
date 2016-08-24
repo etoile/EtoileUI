@@ -50,7 +50,7 @@ See also [NSObject(ETAspectRegistration)]. */
 {
 	stylePrototypes = [[NSMutableSet alloc] init];
 
-	FOREACH([self allSubclasses], subclass, Class)
+	for (Class subclass in [self allSubclasses])
 	{
 		/* -init returns nil in in some ETDecoratorItem subclasses.
 		   Astract class like ETUIItem should also not be registered.

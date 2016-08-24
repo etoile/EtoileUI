@@ -149,7 +149,7 @@ original items which are replaced by the layout. */
 	if ([_renderedItems containsObject: item])
 		return;
 
-	FOREACH(_templateKeys, key, NSString *)
+	for (NSString *key in _templateKeys)
 	{
 		id value = [item valueForKey: key];
 
@@ -270,7 +270,7 @@ by the value returned by the template item. */
 	[self restoreAllItems];
 	[_renderedItems removeAllObjects];
 
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		[self setUpTemplateElementsForItem: item];
 	}
@@ -288,7 +288,7 @@ their initial state. */
 		/* Equivalent to [item setExposed: NO] */
 		[[item displayView] removeFromSuperview];
 
-		FOREACH(_renderedTemplateKeys, key, NSString *)
+		for (NSString *key in _renderedTemplateKeys)
 		{
 			id restoredValue = [item defaultValueForProperty: key];
 

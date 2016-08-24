@@ -137,7 +137,7 @@ unlike ETPositionalLayout.  */
 
 - (void) showHandles
 {
-	FOREACH(_observedItems, item, ETLayoutItem *)
+	for (ETLayoutItem *item in _observedItems)
 	{
 		if ([item isSelected])
 		{
@@ -148,7 +148,7 @@ unlike ETPositionalLayout.  */
 
 - (void) hideHandles
 {
-	FOREACH(_observedItems, item, ETLayoutItem *)
+	for (ETLayoutItem *item in _observedItems)
 	{
 		if ([item isSelected])
 		{
@@ -198,7 +198,7 @@ unlike ETPositionalLayout.  */
 {
 	[[self layerItem] removeAllItems];
 
-	FOREACH(manipulatedItems, item, ETLayoutItem *)
+	for (ETLayoutItem *item in manipulatedItems)
 	{
 		if ([item isSelected])
 		{
@@ -236,7 +236,7 @@ layout context, based on the rules or policy of the given layout. */
 	[layoutContext updateLayoutRecursively: NO];
 
 	/* Sync the persistent frames with the frames just computed */
-	FOREACH([layoutContext items], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [layoutContext items])
 	{
 		[item setPersistentFrame: [item frame]];
 	}

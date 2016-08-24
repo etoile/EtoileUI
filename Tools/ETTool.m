@@ -83,7 +83,7 @@ See also NSObject(ETAspectRegistration). */
 {
 	toolPrototypes = [NSMutableSet set];
 
-	FOREACH([self allSubclasses], subclass, Class)
+	for (Class subclass in [self allSubclasses])
 	{
 		[self registerTool: [[subclass alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]];
 	}
@@ -702,7 +702,7 @@ Hence whether or not the item has children, this method will be called. */
 		return anItem;
 
 	/* Hit in explicit children */
-	FOREACH([(ETLayoutItemGroup *)anItem items], childItem, ETLayoutItem *)
+	for (ETLayoutItem *childItem in [(ETLayoutItemGroup *)anItem items])
 	{
 		NSPoint childRelativePoint = [childItem convertPointFromParent: pointInParentContent];
 		BOOL isInside = [childItem pointInside: childRelativePoint useBoundingBox: YES];
@@ -866,7 +866,7 @@ NO. */
 	if ([item isGroup] == NO)
 		return NO;
 
-	FOREACH([(ETLayoutItemGroup *)item items], childItem, ETLayoutItem *)
+	for (ETLayoutItem *childItem in [(ETLayoutItemGroup *)item items])
 	{
 		if ([self performKeyEquivalent: anEvent inItem: childItem])
 			return YES;

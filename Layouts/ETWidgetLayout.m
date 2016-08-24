@@ -381,7 +381,7 @@ its usefulness would be more limited. */
 {
 	NSMutableArray *indexPaths = [NSMutableArray array];
 
-	FOREACH([self selectedItems], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [self selectedItems])
 	{
 		[indexPaths addObject: [item indexPathFromItem: (ETLayoutItem *)[self layoutContext]]];
 	}

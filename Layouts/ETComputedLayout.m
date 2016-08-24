@@ -290,7 +290,7 @@ bounding box). */
 {
 	NSMutableArray *exposedItems = [NSMutableArray array];
 
-	FOREACH(fragments, fragment, ETLineFragment *)
+	for (ETLineFragment *fragment in fragments)
 	{
 		[exposedItems addObjectsFromArray: [fragment items]];
 	}
@@ -300,7 +300,7 @@ bounding box). */
 
 - (void) adjustSeparatorItemsForLayoutSize: (NSSize)newLayoutSize 
 {
-	FOREACH([[self layerItem] items], separator, ETLayoutItem *)
+	for (ETLayoutItem *separator in [[self layerItem] items])
 	{
 		[self adjustSeparatorItem: separator forLayoutSize: newLayoutSize];
 	}
@@ -600,7 +600,7 @@ next time you call it. */
 	NSMutableArray *spacedItems = [NSMutableArray array];
 	ETLayoutItem *lastItem = [items lastObject];
 
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		[spacedItems addObject: item];
 

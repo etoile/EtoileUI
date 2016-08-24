@@ -128,7 +128,7 @@ in the given style collection. */
 When no style matches, returns nil.  */
 - (id) firstStyleOfClass: (Class)aStyleClass
 {
-	FOREACH(_styles, style, ETStyle *)
+	for (ETStyle *style in _styles)
 	{
 		if ([style isKindOfClass: aStyleClass])
 		{
@@ -163,7 +163,7 @@ inside that redisplayed area and won't be clipped by the graphics context. */
      layoutItem: (ETLayoutItem *)item 
 	  dirtyRect: (NSRect)dirtyRect
 {
-	FOREACH(_styles, style, ETStyle *)
+	for (ETStyle *style in _styles)
 	{
 		[style render: inputValues layoutItem: item dirtyRect: dirtyRect];
 	}
@@ -173,7 +173,7 @@ inside that redisplayed area and won't be clipped by the graphics context. */
 item, to which the receiver is bound to, has been resized. */
 - (void) didChangeItemBounds: (NSRect)bounds
 {
-	FOREACH(_styles, style, ETStyle *)
+	for (ETStyle *style in _styles)
 	{
 		[style didChangeItemBounds: bounds];
 	}

@@ -341,7 +341,7 @@ See also -newItemWithRepresentedObject:options:. */
 	NSMutableArray *types = [NSMutableArray array];
 
 	// TODO: Should be rewritten [[[[self supportedTypes] mappedCollection] fileExtensions] flattenedCollection]
-	FOREACH(fileExtensionArrays, extensionArray, NSArray *)
+	for (NSArray *extensionArray in fileExtensionArrays)
 	{
 		if ([extensionArray isEqual: [NSNull null]])
 			continue;

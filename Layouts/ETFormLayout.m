@@ -131,7 +131,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 	/* Scaling is always computed from the base image size (scaleFactor equal to 
 	   1) in order to avoid rounding error that would increase on each scale change. */
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		/* When no view is present, we use the item size to get a valid 
 		   boundingSize and be able to compute labelWidth */

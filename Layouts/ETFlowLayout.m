@@ -105,7 +105,7 @@ to the items, which are expected to be already broken into lines in layoutModel.
        In the layout context coordinates we have:   
        baselineLocation.x = A.x and baselineLocation.y = A.y - B.y 
 	 */
-	FOREACH(layoutModel, line, ETLineFragment *)
+	for (ETLineFragment *line in layoutModel)
 	{
 		/* Will compute and set the item locations */
 		[line setOrigin: lineOrigin];

@@ -167,7 +167,7 @@ You can override -builder to customize the conversion. */
 {
 	[_nibOwner rebuildTopLevelObjectsWithBuilder: [self builder]];
 
-	FOREACH([_nibOwner topLevelItems], topLevelItem, ETLayoutItem *)
+	for (ETLayoutItem *topLevelItem in [_nibOwner topLevelItems])
 	{
 		BOOL isVisibleAtLaunchTime = [[[topLevelItem windowItem] window] isVisible];
 
@@ -349,7 +349,7 @@ register the aspects it wants to make available to EtoileUI facilities
 (inspector, etc.) that allow to change the UI at runtime. */
 - (void) _registerAllAspects
 {
-	FOREACH([self aspectBaseClassNames], className, NSString *)
+	for (NSString *className in [self aspectBaseClassNames])
 	{ 
 		[NSClassFromString(className) registerAspects];
 	}
@@ -503,7 +503,7 @@ See also -_buildMainMenuIfNeeded. */
 {
 	NSMenu *menu = [[NSMenu alloc] initWithTitle: aTitle];
 
-	FOREACH([ETLayout registeredLayoutClasses], layoutClass, Class)
+	for (Class layoutClass in [ETLayout registeredLayoutClasses])
 	{
 		[menu addItemWithTitle: [layoutClass displayName] 
 		                target: aTarget 
@@ -1116,7 +1116,7 @@ See also [ ETLayoutItem +setShowsFrame: ].  */
 {
 	[ETLayoutItem setShowsFrame: ![ETLayoutItem showsFrame]];
 	[sender setState: [ETLayoutItem showsFrame]];
-	FOREACH([[self rootItem] items], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [[self rootItem] items])
 	{
 		[item setNeedsDisplay: YES];
 	}
@@ -1129,7 +1129,7 @@ See also [ETLayoutItem +setShowsBoundingBox: ]. */
 {
 	[ETLayoutItem setShowsBoundingBox: ![ETLayoutItem showsBoundingBox]];
 	[sender setState: [ETLayoutItem showsBoundingBox]];
-	FOREACH([[self rootItem] items], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [[self rootItem] items])
 	{
 		[item setNeedsDisplay: YES];
 	}

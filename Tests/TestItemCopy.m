@@ -108,7 +108,7 @@
 		@"postsFrameChangedNotifications", @"postsBoundsChangedNotifications", 
 		@"visibleRect", @"opaque", @"needsPanelToBecomeKey"); 
 
-	FOREACH(equalProperties, property, NSString *)
+	for (NSString *property in equalProperties)
 	{
 		/* We could use -valueForKey: as well */
 		id value = [aView valueForProperty: property];
@@ -166,7 +166,7 @@
 
 	ETLayoutItem *newItem = [item copy];
 
-	FOREACH(equalProperties, property, NSString *)
+	for (NSString *property in equalProperties)
 	{
 		/* We could use -valueForKey: as well, see -testItemCopy */
 		id value = [item valueForProperty: property];
@@ -211,7 +211,7 @@
 	[item setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	[newItem setDecoratorItem: [ETDecoratorItem itemWithDummySupervisorView]];
 	
-	FOREACH(equalProperties, property, NSString *)
+	for (NSString *property in equalProperties)
 	{
 		/* We don't want to check the properties on the represented object but 
 		   on the item itself, so we must use -valueForKey: which has no custom 
@@ -262,7 +262,7 @@
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
-	FOREACH(equalProperties, property, NSString *)
+	for (NSString *property in equalProperties)
 	{
 		/* We don't want to check the properties on the represented object but 
 		   on the item itself, so we must use -valueForKey: which has no custom 
@@ -331,7 +331,7 @@
 	// -hasVerticalScroller should just return NO in this case.
 	equalProperties = [equalProperties arrayByRemovingObjectsInArray: A(@"cachedScrollViewDecoratorItem")];
 
-	FOREACH(equalProperties, property, NSString *)
+	for (NSString *property in equalProperties)
 	{
 		/* We don't want to check the properties on the represented object but 
 		   on the item itself, so we must use -valueForKey: which has no custom 

@@ -272,7 +272,7 @@ The ancestor layout on which the tool was changed can be retrieved with
 - (void) didChangeAttachedTool: (ETTool *)oldTool
                         toTool: (ETTool *)newTool
 {
-	FOREACH([[self layoutContext] arrangedItems], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [[self layoutContext] arrangedItems])
 	{
 		[[item layout] didChangeAttachedTool: oldTool
 		                              toTool: newTool];
@@ -926,7 +926,7 @@ The location must be expressed in the layout context coordinates.<br />
 If the given point doesn't lie inside the layout size, nil is returned. */
 - (ETLayoutItem *) itemAtLocation: (NSPoint)location
 {
-	FOREACH([[self layoutContext] visibleItems], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [[self layoutContext] visibleItems])
 	{
 		if (NSPointInRect(location, [item frame]))
 				return item;

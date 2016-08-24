@@ -134,7 +134,7 @@ the given application object. */
 {
 	NSMutableArray *items = [NSMutableArray array];
 
-	FOREACH([NSArray arrayWithArray: windows], window, NSWindow *) 
+	for (NSWindow *window in [NSArray arrayWithArray: windows]) 
 	{
 		BOOL isStandaloneWindow = ([[window contentView] isSupervisorView] == NO);
 		BOOL shouldBecomeVisibleItem = ([window isVisible] 
@@ -183,7 +183,7 @@ returns YES to -[ETWindowItem shouldKeepWindowFrame:].  */
 {
 	NSMutableArray *items = [NSMutableArray arrayWithCapacity: [views count]];
 
-	FOREACH([NSArray arrayWithArray: views], view, NSView *)
+	for (NSView *view in [NSArray arrayWithArray: views])
 	{
 		[items addObject: [self renderView: view]];
 	}

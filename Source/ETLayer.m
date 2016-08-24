@@ -170,7 +170,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 	[[_rootWindowItem window] setFrame: [self rootWindowFrame] display: NO];
 	[[_rootWindowItem window] makeKeyAndOrderFront: nil];
 
-	FOREACH([ETApp windows], win, NSWindow *)
+	for (NSWindow *win in [ETApp windows])
 	{
 		if ([win isEqual: [_rootWindowItem window]] == NO)
 		{
@@ -190,7 +190,7 @@ items owned by the receiver.
 You should never call this method unless you write an ETWindowLayout subclass. */
 - (void) showHardWindows
 {
-	FOREACH(_hiddenWindows, win, NSWindow *)
+	for (NSWindow *win in _hiddenWindows)
 	{
 		[win orderFront: self];
 	}
@@ -201,7 +201,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 
 - (void) removeWindowDecoratorItems
 {
-	FOREACH([self items], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [self items])
 	{
 		[item setDefaultValue: [item windowItem] forProperty: @"windowItem"];
 		[[[item windowItem] decoratedItem] setDecoratorItem: nil];
@@ -210,7 +210,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 
 - (void) restoreWindowDecoratorItems
 {
-	FOREACH([self items], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [self items])
 	{
 		ETWindowItem *windowItem = [item defaultValueForProperty: @"windowItem"];
 

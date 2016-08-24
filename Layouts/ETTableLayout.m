@@ -94,7 +94,7 @@
 	_sortable = YES;
 
 	/* Retain initial columns to be able to restore exactly identical columns later */	
-	FOREACH([tv tableColumns], column, NSTableColumn *)
+	for (NSTableColumn *column in [tv tableColumns])
 	{
 		NSString *colId = [column identifier];
 		
@@ -175,7 +175,7 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 
 	/* Remove all existing columns
 	   NOTE: We cannot enumerate [tv tableColumns] directly because we remove columns */
-	FOREACH([NSArray arrayWithArray: [tv tableColumns]], column, NSTableColumn *)
+	for (NSTableColumn *column in [NSArray arrayWithArray: [tv tableColumns]])
 	{
 		if ([self canRemoveTableColumn: column])
 		{
@@ -186,7 +186,7 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 	BOOL isFirstColumn = YES;
 
 	/* Add all columns to be displayed */	
-	FOREACH(properties, property, NSString *)
+	for (NSString *property in properties)
 	{
 		NSTableColumn *column = [_propertyColumns objectForKey: property];
 
@@ -369,7 +369,7 @@ returned by -allTableColumns. */
 	[self willChangeValueForProperty: @"contentFont"];
 	[self willChangeValueForProperty: @"layoutView"];
 	_contentFont = aFont;
-	FOREACH([self allTableColumns], column, NSTableColumn *)
+	for (NSTableColumn *column in [self allTableColumns])
 	{
 		[[column dataCell] setFont: _contentFont];
 	}
@@ -964,7 +964,7 @@ Note: For now, private method. */
 	NSArray *currentSortKeys = (id)[[currentSortDescriptors mappedCollection] key];
 	NSMutableArray *sortDescriptors = [currentSortDescriptors mutableCopy];
 
-	FOREACH(tableSortDescriptors, descriptor, NSSortDescriptor *)
+	for (NSSortDescriptor *descriptor in tableSortDescriptors)
 	{
 		NSString *tableColumnSortKey = [descriptor key];
 

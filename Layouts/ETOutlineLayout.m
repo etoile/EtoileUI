@@ -514,7 +514,7 @@ in a similar way. */
 {
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
 
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		[indexes addIndex: [self rowForItem: item]];
 	}

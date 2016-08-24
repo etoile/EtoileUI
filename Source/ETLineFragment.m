@@ -93,7 +93,7 @@ input. */
 	CGFloat length = 0;
 	CGFloat maxLength = [self maxLength];
 
-	FOREACH(fragments, fragment, ETLayoutItem *)
+	for (ETLayoutItem *fragment in fragments)
 	{
 		/* The right or bottom margin must not result in a line break, we don't 
 		   include it in the sum right now. */

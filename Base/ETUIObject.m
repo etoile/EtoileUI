@@ -313,7 +313,7 @@ The observer will receive NSKeyValueObservingOptionOld and
 NSKeyValueObservingOptionNew in the change dictionary. */
 - (void)startObserveObject: (id)anObject
 {
-	FOREACH([anObject observableKeyPaths], keyPath, NSString *)
+	for (NSString *keyPath in [anObject observableKeyPaths])
 	{
 		[anObject addObserver: self
 		           forKeyPath: keyPath
@@ -326,7 +326,7 @@ NSKeyValueObservingOptionNew in the change dictionary. */
 by -observableKeyPaths. */
 - (void)endObserveObject: (id)anObject
 {
-	FOREACH([anObject observableKeyPaths], keyPath, NSString *)
+	for (NSString *keyPath in [anObject observableKeyPaths])
 	{
 		[anObject removeObserver: self forKeyPath: keyPath];
 	}

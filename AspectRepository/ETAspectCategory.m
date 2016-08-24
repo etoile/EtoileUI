@@ -110,7 +110,7 @@ usually use -resolvedAspectForKey: than this method.
 See also -setAspect:forKey:. */
 - (id) aspectForKey: (NSString *)aKey
 {
-	FOREACH(_aspectEntries, pair, ETKeyValuePair *)
+	for (ETKeyValuePair *pair in _aspectEntries)
 	{
 		if ([[pair key] isEqualToString: aKey])
 		{

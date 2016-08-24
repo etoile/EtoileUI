@@ -1161,7 +1161,7 @@ You shouldn't need to call this method by yourself. */
 {
 	NSMutableArray *exposedItems = [NSMutableArray array];
 
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		if ([item isExposed])
 			[exposedItems addObject: item];
@@ -1173,7 +1173,7 @@ You shouldn't need to call this method by yourself. */
 /* See -setExposedItems:. */
 - (void) setExposedItems: (NSArray *)exposedItems forItems: (NSArray *)items
 {
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		[item setExposed: [exposedItems containsObject: item]];
 	}
@@ -1221,7 +1221,7 @@ length equal one. */
 {
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
 
-	FOREACH([self selectionIndexPaths], indexPath, NSIndexPath *)
+	for (NSIndexPath *indexPath in [self selectionIndexPaths])
 	{
 		if ([indexPath length] == 1)
 			[indexes addIndex: [indexPath firstIndex]];

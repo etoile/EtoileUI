@@ -125,7 +125,7 @@ receiver is not observed.
 		[affectedKeys unionSet: [self observableKeyPaths]];
 	}
 
-	FOREACH(affectedKeys, key, NSString *)
+	for (NSString *key in affectedKeys)
 	{
 		[self willChangeValueForKey: key];
 	}
@@ -138,7 +138,7 @@ receiver is not observed.
 	if (nil == affectedKeys)
 		return;
 
-	FOREACH(affectedKeys, key, NSString *)
+	for (NSString *key in affectedKeys)
 	{
 		[self didChangeValueForKey: key];
 	}

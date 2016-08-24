@@ -212,7 +212,7 @@ UI level for a photo viewer. */
 	
 	[images removeAllObjects];
     
-    FOREACH([panel URLs], URL, NSURL *)
+    for (NSURL *URL in [panel URLs])
     {
 		NSString *path = [URL path];
         NSImage *image = AUTORELEASE([[NSImage alloc] initWithContentsOfFile: path]);
@@ -287,7 +287,7 @@ protocol methods. */
 	
 	ETLog(@"Set up layout items directly...");
 	
-	FOREACH(images, img, NSImage *)
+	for (NSImage *img in images)
 	{
 		ETLayoutItem *item =
 			[[ETLayoutItemFactory factory] itemWithView: [self imageViewForImage: img]];

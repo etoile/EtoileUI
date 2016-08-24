@@ -199,7 +199,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	//[iconStyle setLabelMargin: 8];
 	//[iconStyle setMaxImageSize: iconSize];
 
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 
 		[item setSize: [iconStyle boundingSizeForItem: item imageOrViewSize: iconSize]];

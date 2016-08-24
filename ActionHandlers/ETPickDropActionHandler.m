@@ -591,7 +591,7 @@ Returns YES when the item conforms to a pick type returned by
 	// on the first conforming type.
 	ETUTI *draggedType = [item UTI];
 
-	FOREACH([self allowedPickTypesForItem: item], pickType, ETUTI *)
+	for (ETUTI *pickType in [self allowedPickTypesForItem: item])
 	{
 		if ([draggedType conformsToType: pickType])
 		{
@@ -621,7 +621,7 @@ When the dropped object is a pick collection, each element type is checked with
 
 	ETUTI *droppedType = [droppedObject UTI];
 
-	FOREACH([self allowedDropTypesForItem: dropTarget], dropType, ETUTI *)
+	for (ETUTI *dropType in [self allowedDropTypesForItem: dropTarget])
 	{
 		if ([droppedType conformsToType: dropType])
 		{

@@ -204,7 +204,7 @@
 	NSArray *selectedCells = [[self browser] selectedCells];
 	NSMutableArray *selectedItems = [NSMutableArray arrayWithCapacity: [selectedCells count]];
 	
-	FOREACH(selectedCells, aCell, NSCell *)
+	for (NSCell *aCell in selectedCells)
 	{
 		NSAssert([aCell representedObject] != nil, @"All browser cells must "
 			@"have a represented object set");

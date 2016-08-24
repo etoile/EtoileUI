@@ -154,7 +154,7 @@ When an item has no persistent frame value, the sync is done the other way
 around: the persistent frame is initialized with the frame value. */
 - (void) loadPersistentFramesForItems: (NSArray *)items
 {
-	FOREACH(items, item, ETLayoutItem *)
+	for (ETLayoutItem *item in items)
 	{
 		/* First time persistent frame is accessed, initialize it */
 		if (ETIsNullRect([item persistentFrame]))

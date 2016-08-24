@@ -211,7 +211,7 @@ By default, returns the item represented object UTI, otherwise the item UTI. */
 	NSMutableArray *types = [NSMutableArray array];
 
 	// TODO: Should be rewritten [[[[self supportedTypes] mappedCollection] fileExtensions] flattenedCollection]
-	FOREACH(fileExtensionArrays, extensionArray, NSArray *)
+	for (NSArray *extensionArray in fileExtensionArrays)
 	{
 		if ([extensionArray isEqual: [NSNull null]])
 			continue;
@@ -263,7 +263,7 @@ See also [ETDocumentCreation] protocol. */
 	ETLayoutItem *openedItem = nil;
 
 	/* Open each URL content */
-	FOREACH(urls, url, NSURL *)
+	for (NSURL *url in urls)
 	{
 		openedItem = [self openItemWithURL: url options: options];
 

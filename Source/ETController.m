@@ -119,7 +119,7 @@ You can also use it -init to create a controller. See -[ETNibOwner init]. */
 {
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 
-	FOREACH(_observations, observation, ETObservation *)
+	for (ETObservation *observation in _observations)
 	{
 		[notifCenter removeObserver: [observation object]];
 	}
@@ -375,7 +375,7 @@ The observed object must not be nil. */
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 	BOOL removeAll = (nil == aName);
 
-	FOREACH([NSSet setWithSet: _observations], observation, ETObservation *)
+	for (ETObservation *observation in [NSSet setWithSet: _observations])
 	{
 		COObject *object = [observation object];
 
@@ -448,7 +448,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 		return template;
 
 	/* Supercasting */
-	FOREACH([aUTI allSupertypes], supertype, ETUTI *)
+	for (ETUTI *supertype in [aUTI allSupertypes])
 	{
 		template = [_templates objectForKey: [supertype stringValue]];
 		if (nil != template)
@@ -1203,7 +1203,7 @@ When all pending changes have been committed and all editors have been
 unregistered returns YES, otherwise returns NO. */
 - (BOOL) commitEditing
 {
-	FOREACH(_editedItems, item, ETLayoutItem *)
+	for (ETLayoutItem *item in _editedItems)
 	{
 		if ([item commitEditing] == NO)
 		{

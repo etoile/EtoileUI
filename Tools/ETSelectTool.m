@@ -448,7 +448,7 @@ be reactivated when we exit our owner layout. */
 	}
 	else
 	{
-		FOREACH([self selectedItems], item, ETLayoutItem *)
+		for (ETLayoutItem *item in [self selectedItems])
 		{
 			[[item actionHandler] handleTranslateItem: item 
 			                                  byDelta: aDelta];
@@ -684,7 +684,7 @@ item will be selected. */
 - (void) deselectAllWithItem: (ETLayoutItem *)item
 {
 	/* Deselect all */
-	FOREACH([self selectedItems], selectedItem, ETLayoutItem *)
+	for (ETLayoutItem *selectedItem in [self selectedItems])
 	{
 		[[selectedItem actionHandler] handleDeselect: selectedItem];
 		// NOTE: We should eventually update the controller selection here
@@ -763,7 +763,7 @@ on the selection elements, when the receiver becomes the first responder. */
 	}
 	else
 	{
-		FOREACH([self selectedItems], item, ETLayoutItem *)
+		for (ETLayoutItem *item in [self selectedItems])
 		{
 				[inv invokeWithTarget: item];
 		}
@@ -787,7 +787,7 @@ on the selection elements, when the receiver becomes the first responder. */
 /** Tells each item currently deselected in the target item to select itself. */
 - (IBAction) selectAll: (id)sender
 {
-	FOREACH([(ETLayoutItemGroup *)[self targetItem] items], item, ETLayoutItem *)
+	for (ETLayoutItem *item in [(ETLayoutItemGroup *)[self targetItem] items])
 	{
 		if ([item isSelected] == NO && [[item actionHandler] canSelect: item])
 		{
@@ -815,7 +815,7 @@ the target item. */
 	[newGroup setSelected: YES]; // FIXME: ETFreeLayout doesn't detect selected before -addItem:
 
 	/* Convert the item origins to the coordinate space of the new group */
-	FOREACH(children, item, ETLayoutItem *)
+	for (ETLayoutItem *item in children)
 	{
 		NSPoint rebasedPosition = [newGroup convertPointFromParent: [item position]];
 		[item setPosition: rebasedPosition];
@@ -846,7 +846,7 @@ that parent. */
 	int insertionIndex = (isChildGroup ? [parent indexOfItem: aGroup] : [parent numberOfItems] - 1);
 
 	// TODO: Use a reverse object enumerator or eventually implement -insertItems:atIndex:
-	FOREACH([aGroup items], newChild, ETLayoutItem *)
+	for (ETLayoutItem *newChild in [aGroup items])
 	{
 		if (isChildGroup)
 		{
