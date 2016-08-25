@@ -24,8 +24,7 @@ item tree through a text representation. */
 	BOOL _textRepIncludesContext;
 }
 
-- (BOOL) textRepresentationIncludesLayoutContext;
-- (void) setTextRepresentationIncludesLayoutContext: (BOOL)flag;
+@property (nonatomic) BOOL textRepresentationIncludesLayoutContext;
 
 /** The delegate, usually a ETController object.
  

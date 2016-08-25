@@ -50,7 +50,7 @@ rather than -initWithObjectGraphContext:. */
 
 /** @taskunit Aspect Sharing */
 
-- (BOOL) isShared;
+@property (nonatomic, readonly) BOOL isShared;
 
 /** @taskunit Editing */
 
@@ -60,13 +60,14 @@ rather than -initWithObjectGraphContext:. */
 
 /** @taskunit Text Editing */
 
-- (ETLayoutItem *) fieldEditorItem;
-- (void) setFieldEditorItem: (ETLayoutItem *)anItem;
+@property (nonatomic, strong) ETLayoutItem *fieldEditorItem;
+
 - (void) beginEditingItem: (ETLayoutItem *)item 
                  property: (NSString *)property
                    inRect: (NSRect)fieldEditorRect;
 - (void) endEditingItem: (ETLayoutItem *)editedItem;
-- (BOOL) isEditing;
+
+@property (nonatomic, getter=isEditing, readonly) BOOL editing;
 
 /** @taskunit Tool/Tool Actions */
 
@@ -105,10 +106,10 @@ rather than -initWithObjectGraphContext:. */
 
 /** @taskunit Generic Actions */
 
-- (BOOL) acceptsFirstResponder;
-- (BOOL) becomeFirstResponder;
-- (BOOL) resignFirstResponder;
-- (BOOL) acceptsFirstMouse;
+@property (nonatomic, readonly) BOOL acceptsFirstResponder;
+@property (nonatomic, readonly) BOOL becomeFirstResponder;
+@property (nonatomic, readonly) BOOL resignFirstResponder;
+@property (nonatomic, readonly) BOOL acceptsFirstMouse;
 
 - (void) insertRectangle: (id)sender onItem: (ETLayoutItem *)item;
 

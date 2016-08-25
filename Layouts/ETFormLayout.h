@@ -20,7 +20,7 @@ ETLayoutHorizontalAlignmentGuided, in order to right align the labels at the
 left of the guide, and to left align the views at the right of the guide. 
 Which means we cannot use the positional layout to control how the whole content 
 is aligned. */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETFormLayoutAlignment)
 {
 	ETFormLayoutAlignmentCenter,
 /** Centers the content horizontally in the layout context.
@@ -34,7 +34,7 @@ Also means the inset is interpreted as a left inset. */
 /** Shifts the content as much as possible towards the right edge of the layout context.
 
 Also means the inset is interpreted as a right inset. */
-} ETFormLayoutAlignment;
+};
 
 /** ETFormLayout is a layout that allows to present an existing item tree in a 
 form UI.
@@ -122,15 +122,14 @@ width remain flexible in case the UI is resized later. */
 
 /** @taskunit Label and Form Alignment */
 
-- (ETFormLayoutAlignment) alignment;
-- (void) setAlignment: (ETFormLayoutAlignment)alignment;
-- (NSFont *) itemLabelFont;
-- (void) setItemLabelFont: (NSFont *)aFont;
+@property (nonatomic) ETFormLayoutAlignment alignment;
+@property (nonatomic) NSFont *itemLabelFont;
 
 /** @taskunit Shared Alignment Support */
 
 - (CGFloat) alignmentHintForLayout: (ETLayout *)aLayout;
-- (CGFloat) maxCombinedBoundingWidth;
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
+
+@property (nonatomic, readonly) CGFloat maxCombinedBoundingWidth;
 
 @end

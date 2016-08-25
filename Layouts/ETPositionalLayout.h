@@ -18,7 +18,7 @@ rendering.
 
 When the constraint is not ETSizeConstraintStyleNone, the item autoresizing 
 provided by -[ETLayoutItem autoresizingMask] won't be respected. */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETSizeConstraintStyle)
 {
 /** The items are not resized but let as is. */
 	ETSizeConstraintStyleNone,
@@ -28,7 +28,7 @@ typedef enum : NSUInteger
 	ETSizeConstraintStyleHorizontal,
 /** The size of the items are set to -[ETLayout constrainedItemSize]. */
 	ETSizeConstraintStyleVerticalHorizontal
-} ETSizeConstraintStyle;
+};
 
 /** @group Layout
  
@@ -47,19 +47,17 @@ subclasses. */
 
 /** @taskunit Initialization */
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Layout Size Control and Feedback */
 
-- (void) setIsContentSizeLayout: (BOOL)flag;
-- (BOOL) isContentSizeLayout;
+@property (nonatomic) BOOL isContentSizeLayout;
 
 /** @taskunit Item Sizing */
 
-- (void) setItemSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
-- (ETSizeConstraintStyle) itemSizeConstraintStyle;
-- (void) setConstrainedItemSize: (NSSize)size;
-- (NSSize) constrainedItemSize;
+@property (nonatomic) ETSizeConstraintStyle itemSizeConstraintStyle;
+@property (nonatomic) NSSize constrainedItemSize;
+
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor;
 
 /** @taskunit Framework Private */

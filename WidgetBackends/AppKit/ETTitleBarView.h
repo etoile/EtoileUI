@@ -21,16 +21,13 @@
     BOOL _highlighted;
 }
 
-- (id) initWithFrame: (NSRect)frame;
+- (instancetype) initWithFrame: (NSRect)frame;
 
-- (void) setTitleString: (NSString *)title;
-- (NSString *) titleString;
+@property (nonatomic, copy) NSString *titleString;
 
-- (BOOL) isExpanded;
+@property (nonatomic, getter=isExpanded, readonly) BOOL expanded;
 
-- (void) setTarget: (id)target;
-- (id) target;
-- (void) setAction: (SEL)action;
-- (SEL) action;
+@property (nonatomic, assign) id target;
+@property (nonatomic) SEL action;
 
 @end

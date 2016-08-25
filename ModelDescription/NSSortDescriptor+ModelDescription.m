@@ -17,8 +17,7 @@
 @end
 
 @interface NSSortDescriptorMutableViewpointTrait (ETViewpoint)
-- (id) value;
-- (void) setValue: (id)aValue;
+@property (nonatomic, strong) id value;
 @end
 
 
@@ -59,7 +58,7 @@
 }
 
 /* ETItemTemplate uses ETDocumentCreation protocol to instantiate a new sort descriptor. */
-- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
+- (instancetype) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
 	return [self initWithKey: @"unknown" ascending: YES];
 }

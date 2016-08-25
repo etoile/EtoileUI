@@ -62,24 +62,23 @@ next EtoileUI release. */
 
 - (SEL) defaultItemFactorySelector;
 
-- (NSArray *) propertyNames;
+@property (nonatomic, readonly, copy) NSArray *propertyNames;
 
 /* Basic Accessors */
 
 // TODO: Rename -layoutItem to -item. Will be done separately because it is a 
 // pretty big change which needs to be handled very carefully.
-- (id) layoutItem;
+@property (nonatomic, readonly, weak) id layoutItem;
+
 - (void) setItemWithoutInsertingView: (ETUIItem *)item;
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flag;
+
+@property (nonatomic, getter=isFlipped) BOOL flipped;
 
 /* Embbeded Views */
 
-- (void) setWrappedView: (NSView *)subview;
-- (NSView *) wrappedView;
-- (void) setTemporaryView: (NSView *)subview;
-- (NSView *) temporaryView;
-- (NSView *) contentView;
+@property (nonatomic, strong) NSView *wrappedView;
+@property (nonatomic, strong) NSView *temporaryView;
+@property (nonatomic, readonly) NSView *contentView;
 
 /* Actions */
 

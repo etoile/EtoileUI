@@ -26,7 +26,7 @@
 
 /** @taskunit Aspect Sharing */
 
-- (BOOL) isShared;
+@property (nonatomic, readonly) BOOL isShared;
 
 /** @taskunit Copying */
 
@@ -61,6 +61,6 @@
 
 
 @protocol COForeignObjectSerialization <NSObject>
-- (id) initWithSerializedRepresentation;
-- (id) serializedRepresentation;
+- (instancetype) initWithSerializedRepresentation;
+@property (nonatomic, readonly) id serializedRepresentation;
 @end

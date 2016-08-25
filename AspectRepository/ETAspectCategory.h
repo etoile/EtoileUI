@@ -51,12 +51,12 @@ invalid arguments. */
 
 /** @taskunit Initialization */
 
-- (id) initWithName: (NSString *)aName
+- (instancetype) initWithName: (NSString *)aName
 		 dictionary: (NSDictionary *)aDict
+ objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
+- (instancetype) initWithName: (NSString *)aName
  objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithName: (NSString *)aName
- objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 /** @taskunit Basic Properties */
 
@@ -74,8 +74,9 @@ Must not be nil. */
 - (id) aspectForKey: (NSString *)aKey;
 - (void) setAspect: (id)anAspect forKey: (NSString *)aKey;
 - (void) removeAspectForKey: (NSString *)aKey;
-- (NSArray *) aspectKeys;
-- (NSArray *) aspects;
+
+@property (nonatomic, readonly, copy) NSArray *aspectKeys;
+@property (nonatomic, readonly, copy) NSArray *aspects;
 
 /** @taskunit Restricting Valid Aspects */
 

@@ -18,16 +18,18 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 @implementation ETHandle
 
-- (id) initWithView: (NSView *)view 
+- (instancetype) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext:(COObjectGraphContext *)aContext
 {
 	[self doesNotRecognizeSelector: _cmd];
+	// NOTE: Prevent the compiler to wars us about a missing initializer call.
+	self = [self init];
 	return nil;
 }
 
-- (id) initWithActionHandler: (ETActionHandler *)aHandler 
+- (instancetype) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
           objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -401,7 +403,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 
 @implementation ETHandleGroup
 
-- (id) initWithView: (NSView *)view 
+- (instancetype) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext:(COObjectGraphContext *)aContext
@@ -414,7 +416,7 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
 	                      manipulatedObject: self \
                          objectGraphContext: aContext]
 
-- (id) initWithActionHandler: (ETActionHandler *)aHandler 
+- (instancetype) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
           objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -586,7 +588,7 @@ or not. */
 
 @implementation ETResizeRectangle
 
-- (id) initWithManipulatedObject: (id)aTarget objectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithManipulatedObject: (id)aTarget objectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [super initWithActionHandler: nil manipulatedObject: aTarget objectGraphContext: aContext];
 }

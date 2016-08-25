@@ -45,15 +45,17 @@ extern NSString *ETLayoutItemPboardType;
 - (ETPickboardRef *) appendObject: (id)object metadata: (NSDictionary *)metadata;
 - (void) removeObjectForPickboardRef: (ETPickboardRef *)ref;
 - (id) objectForPickboardRef: (ETPickboardRef *)ref;
-- (NSArray *) allObjects;
 
-- (id) firstObject;
+@property (nonatomic, readonly) NSArray *allObjects;
+@property (nonatomic, readonly) id firstObject;
+@property (nonatomic, readonly) NSDictionary *firstObjectMetadata;
+
 - (id) firstObjectAsPickCollection: (BOOL)boxed;
-- (NSDictionary *) firstObjectMetadata;
 
 /* @taskunit Pick and Drop Palette */
 
-- (NSWindow *) pickPalette;
+@property (nonatomic, readonly) NSWindow *pickPalette;
+
 - (void) showPickPalette;
 
 @end
@@ -79,8 +81,9 @@ a pickboard. */
 	ETUTI *_type;
 }
 
-+ (id) pickCollectionWithCollection: (id <ETCollection>)objects;
-- (id) initWithCollection: (id <ETCollection>)objects;
-- (ETUTI *) type;
++ (instancetype) pickCollectionWithCollection: (id <ETCollection>)objects;
+- (instancetype) initWithCollection: (id <ETCollection>)objects NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, readonly) ETUTI *type;
 
 @end

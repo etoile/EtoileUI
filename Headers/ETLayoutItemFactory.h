@@ -30,23 +30,22 @@ ETStyle, ETActionHandler;
 
 + (instancetype) factory;
 + (instancetype) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Object Graph Context */
 
-- (COObjectGraphContext *) objectGraphContext;
+@property (nonatomic, readonly, strong) COObjectGraphContext *objectGraphContext;
 
 /** Aspect Sharing Boundaries and Persistency */
 
-- (ETStyle *) currentCoverStyle;
-- (ETActionHandler *) currentActionHandler;
+@property (nonatomic, readonly) ETStyle *currentCoverStyle;
+@property (nonatomic, readonly) ETActionHandler *currentActionHandler;
 
 /* Bar Building Settings */
 
-- (ETStyle *) currentBarElementStyle;
-- (void) setCurrentBarElementStyle: (ETStyle *)aStyle;
-- (CGFloat) currentBarElementHeight;
-- (void) setCurrentBarElementHeight: (CGFloat)aHeight;
+@property (nonatomic, strong) ETStyle *currentBarElementStyle;
+@property (nonatomic) CGFloat currentBarElementHeight;
+
 - (CGFloat) defaultIconAndLabelBarHeight;
 
 /* Basic Item Factory Methods */
@@ -133,8 +132,8 @@ ETStyle, ETActionHandler;
 
 /* Special Group Access Methods */
 
-- (ETLayoutItemGroup *) windowGroup;
-- (id) pickboardGroup;
+@property (nonatomic, readonly) ETLayoutItemGroup *windowGroup;
+@property (nonatomic, readonly) id pickboardGroup;
 
 /* Shape Factory Methods */
 

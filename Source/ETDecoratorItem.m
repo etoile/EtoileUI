@@ -23,7 +23,7 @@
 @implementation ETDecoratorItem
 
 /** Do not use. May be remove later. */
-+ (id) itemWithObjectGraphContext: (COObjectGraphContext *)aContext
++ (instancetype) itemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NSAssert([self isEqual: [ETDecoratorItem class]] == NO, @"ETDecoratorItem "
 		"is an abstract class which cannot be instantiated.");
@@ -44,7 +44,7 @@ supervisorView.
 
 If you write a subclass that uses no supervisor view, you must override this 
 initializer. */
-- (id) initWithSupervisorView: (ETView *)aSupervisorView
+- (instancetype) initWithSupervisorView: (ETView *)aSupervisorView
            objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
@@ -57,7 +57,7 @@ initializer. */
 	return self;
 }
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithSupervisorView: nil objectGraphContext: aContext];
 }

@@ -29,7 +29,7 @@
 
 /** Returns a new autoreleased template based on the given item and 
 represented object class. */
-+ (id) templateWithItem: (ETLayoutItem *)anItem
++ (instancetype) templateWithItem: (ETLayoutItem *)anItem
             objectClass: (Class)aClass
      objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -41,7 +41,7 @@ represented object class. */
 
 /** Returns a new autoreleased template based on the given item and 
 entity name for the represented object. */
-+ (id) templateWithItem: (ETLayoutItem *)anItem
++ (instancetype) templateWithItem: (ETLayoutItem *)anItem
              entityName: (NSString *)anEntityName
      objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -60,7 +60,7 @@ at least one argument must be nil, otherwise an NSInvalidArgumentException is
 raised.
 
 Raises an NSInvalidArgumentException if the item is nil. */
-- (id) initWithItem: (ETLayoutItem *)anItem
+- (instancetype) initWithItem: (ETLayoutItem *)anItem
         objectClass: (Class)aClass
          entityName: (NSString *)anEntityName
  objectGraphContext: (COObjectGraphContext *)aContext
@@ -414,7 +414,7 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 	return nil;
 }
 
-- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
+- (instancetype) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
 	id <COPersistentObjectContext> context =
 		[options objectForKey: kETTemplateOptionPersistentObjectContext];

@@ -28,7 +28,7 @@
 @interface ETLayout (Private)
 + (void) registerBuiltInLayoutClasses;
 - (BOOL) loadNibNamed: (NSString *)nibName;
-- (BOOL) isLayoutViewInUse;
+@property (nonatomic, getter=isLayoutViewInUse, readonly) BOOL layoutViewInUse;
 @end
 
 @interface COObject (RelationshipCache)
@@ -130,14 +130,14 @@ several prototypes might share the same class. */
 /* Factory Method */
 
 /** Returns a new autoreleased instance. */
-+ (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext
++ (instancetype) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [[[self class] alloc] initWithObjectGraphContext: aContext];
 }
 
 /** <init /> 
 Returns a new ETLayout instance. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -154,7 +154,7 @@ Returns a new ETLayout instance. */
 	return self;
 }
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithObjectGraphContext: nil];
 }

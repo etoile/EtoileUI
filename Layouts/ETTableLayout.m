@@ -31,7 +31,7 @@
 /* Private Interface */
 
 @interface ETTableLayout (Private)
-- (ETLayoutItemGroup *) layoutContext;
+@property (nonatomic, readonly, copy) ETLayoutItemGroup *layoutContext;
 - (void) _updateDisplayedPropertiesFromSource;
 @end
 

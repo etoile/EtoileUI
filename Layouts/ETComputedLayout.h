@@ -21,7 +21,7 @@ extern CGFloat ETAlignmentHintNone;
 
 @protocol ETAlignmentHint
 - (CGFloat) alignmentHintForLayout: (ETLayout *)aLayout;
-- (CGFloat) maxCombinedBoundingWidth;
+@property (nonatomic, readonly) CGFloat maxCombinedBoundingWidth;
 @end
 
 /** Describes how the content is horizontally positioned inside the layout 
@@ -29,7 +29,7 @@ context.
 
 The horizontal aligment computation takes in account all the margins previously 
 specified on the layout. */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETLayoutHorizontalAlignment)
 {
 	ETLayoutHorizontalAlignmentCenter,
 /** Centers the content horizontally in the layout context. */
@@ -40,7 +40,7 @@ typedef enum : NSUInteger
 	ETLayoutHorizontalAlignmentGuided
 /** Positions the content on the right of the horizontal alignment guide.<br />
 Each layouted item origin will use -horizontalAlignmentGuidePosition as its 'x' value. */
-} ETLayoutHorizontalAlignment;
+};
 
 
 /** ETComputedLayout is the base class for layouts whose role is only consists 
@@ -82,23 +82,17 @@ In the rare case where more control is required, you might want to reimplement
 
 /** @taskunit Alignment and Margins */
 
-- (CGFloat) borderMargin;
-- (void) setBorderMargin: (CGFloat)aMargin;
-- (void) setItemMargin: (CGFloat)aMargin;
-- (CGFloat) itemMargin;
-- (BOOL) autoresizesItemToFill;
-- (void) setAutoresizesItemToFill: (BOOL)stretchToFill;
-- (ETLayoutHorizontalAlignment) horizontalAlignment;
-- (void) setHorizontalAlignment: (ETLayoutHorizontalAlignment)anAlignment;
-- (CGFloat) horizontalAlignmentGuidePosition;
-- (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
-- (BOOL) usesAlignmentHint;
-- (void) setUsesAlignmentHint: (BOOL)usesHint;
+@property (nonatomic) CGFloat borderMargin;
+@property (nonatomic) CGFloat itemMargin;
+@property (nonatomic) BOOL autoresizesItemToFill;
+@property (nonatomic) ETLayoutHorizontalAlignment horizontalAlignment;
+@property (nonatomic) CGFloat horizontalAlignmentGuidePosition;
+@property (nonatomic) BOOL usesAlignmentHint;
 
 /** @taskunit Layout Computation */
 
-- (BOOL) computesItemRectFromBoundingBox;
-- (void) setComputesItemRectFromBoundingBox: (BOOL)usesBoundingBox;
+@property (nonatomic) BOOL computesItemRectFromBoundingBox;
+
 - (NSRect) rectForItem: (ETLayoutItem *)anItem;
 - (void) setOrigin: (NSPoint)newOrigin forItem: (ETLayoutItem *)anItem;
 
@@ -123,10 +117,8 @@ In the rare case where more control is required, you might want to reimplement
 
 /** @taskunit Separator support */
 
-- (void) setSeparatorTemplateItem: (ETLayoutItem *)separator;
-- (ETLayoutItem *) separatorTemplateItem;
-- (void) setSeparatorItemEndMargin: (CGFloat)aMargin;
-- (CGFloat) separatorItemEndMargin;
+@property (nonatomic, strong) ETLayoutItem *separatorTemplateItem;
+@property (nonatomic) CGFloat separatorItemEndMargin;
 
 - (NSArray *) insertSeparatorsBetweenItems: (NSArray *)items;
 - (void) prepareSeparatorItem: (ETLayoutItem *)separator;

@@ -17,7 +17,7 @@
 -[ETLayoutItem drawingForStyle:] with the style to be drawn as argument.
 
 See -setLabelPosition: and -labelPosition: */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETLabelPosition)
 {
 /** Don't draw the label. */
 	ETLabelPositionNone, 
@@ -51,7 +51,7 @@ on the inner side. */
 /** Draw the label close to the bottom border of the item drawing bounds and 
 on the outer side. */
 	ETLabelPositionOutsideBottom
-} ETLabelPosition;
+};
 
 /** @abstract Very generic style class to draw layout items.
  
@@ -90,8 +90,8 @@ makes the label invisible. */
 + (ETBasicItemStyle *) styleWithLabelPosition: (ETLabelPosition)aPositionRule
                            objectGraphContext: (COObjectGraphContext *)aContext;
 
-- (NSRect) currentLabelRect;
-- (NSRect) currentImageRect;
+@property (nonatomic, readonly) NSRect currentLabelRect;
+@property (nonatomic, readonly) NSRect currentImageRect;
 
 /** @taskunit Drawing */
 
@@ -110,16 +110,12 @@ makes the label invisible. */
 
 /* Label */
 
-- (void) setMaxLabelSize: (NSSize)aSize;
-- (NSSize) maxLabelSize;
-- (ETLabelPosition) labelPosition;
-- (void) setLabelPosition: (ETLabelPosition)aPositionRule;
-- (CGFloat) labelMargin;
-- (void) setLabelMargin: (CGFloat)aMargin;
-- (NSDictionary *) labelAttributes;
-- (void) setLabelAttributes: (NSDictionary *)stringAttributes;
-- (NSDictionary *) selectedLabelAttributes;
-- (void) setSelectedLabelAttributes: (NSDictionary *)stringAttributes;
+@property (nonatomic) NSSize maxLabelSize;
+@property (nonatomic) ETLabelPosition labelPosition;
+@property (nonatomic) CGFloat labelMargin;
+@property (nonatomic, copy) NSDictionary *labelAttributes;
+@property (nonatomic, copy) NSDictionary *selectedLabelAttributes;
+
 - (NSDictionary *) labelAttributesForDrawingItem: (ETLayoutItem *)item;
 
 - (NSRect) rectForLabel: (NSString *)aLabel 
@@ -131,8 +127,7 @@ makes the label invisible. */
 
 - (NSImage *) imageForItem: (ETLayoutItem *)anItem;
 
-- (NSSize) maxImageSize;
-- (void) setMaxImageSize: (NSSize)aSize;
+@property (nonatomic) NSSize maxImageSize;
 
 - (NSRect) rectForImage: (NSImage *)anImage 
                  ofItem: (ETLayoutItem *)anItem;
@@ -146,8 +141,7 @@ makes the label invisible. */
 - (NSRect) rectForViewOfItem: (ETLayoutItem *)anItem
                withLabelRect: (NSRect)labelRect;
 
-- (CGFloat) edgeInset;
-- (void) setEdgeInset: (CGFloat)anInset;
+@property (nonatomic) CGFloat edgeInset;
 
 - (NSSize) boundingSizeForItem: (ETLayoutItem *)anItem imageOrViewSize: (NSSize)imgSize;
  

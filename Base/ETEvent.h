@@ -24,17 +24,17 @@
 #define ETEVENT(evt, drag, pick) [ETEvent eventWithBackendEvent: (void *)evt type: [evt type] pickingMask: pick draggingInfo: drag layoutItem: nil]
 
 @protocol ETKeyInputAction
-- (NSString *) characters;
-- (unsigned int) modifierFlags;
+@property (nonatomic, readonly) NSString *characters;
+@property (nonatomic, readonly) unsigned int modifierFlags;
 @end
 
 /** Represents an arbitrary touch action. The input device can be a mouse, a 
 stylus, one or multiple fingers etc. */
 @protocol ETTouchAction
 /** Returns the hit item set by the active tool. */
-- (ETLayoutItem *) layoutItem;
+@property (nonatomic, readonly) ETLayoutItem *layoutItem;
 /** See -[ETEvent locationInLayoutItem]. */
-- (NSPoint) locationInLayoutItem;
+@property (nonatomic, readonly) NSPoint locationInLayoutItem;
 // TODO: Support the methods below.
 /*- (NSPoint) tilt;
 - (CGFloat) pressure;
@@ -102,48 +102,45 @@ this is expected to change though. */
 + (ETEvent *) exitEventWithEvent: (ETEvent *)anEvent 
 					  layoutItem: (ETLayoutItem *)exitedItem;
 
-- (BOOL) isUIEvent;
-- (NSEventType) type;
+@property (nonatomic, getter=isUIEvent, readonly) BOOL UIEvent;
+@property (nonatomic, readonly) NSEventType type;
 
 /* Event Dispatch Status */
 
-- (BOOL) wasDelivered;
+@property (nonatomic, readonly) BOOL wasDelivered;
 - (void) markAsDelivered;
-- (id) layoutItem;
-- (void) setLayoutItem: (id)anItem;
-- (NSPoint) locationInLayoutItem;
-- (void) setLocationInLayoutItem: (NSPoint)aPoint;
-- (unsigned int) pickingMask;
-- (void) setPickingMask: (unsigned int)pickMask;
+@property (nonatomic, strong) id layoutItem;
+@property (nonatomic) NSPoint locationInLayoutItem;
+@property (nonatomic) unsigned int pickingMask;
 
 /* Input Device Data */
 
-- (int) clickCount;
-- (NSString *) characters;
-- (unsigned int) modifierFlags;
+@property (nonatomic, readonly) int clickCount;
+@property (nonatomic, readonly) NSString *characters;
+@property (nonatomic, readonly) unsigned int modifierFlags;
 
 /* Event Location */
 
-- (ETUIItem *) contentItem;
-- (ETWindowItem *) windowItem;
-- (NSPoint) locationInWindowItem;
-- (NSPoint) locationInWindowContentItem;
-- (NSPoint) location;
+@property (nonatomic, readonly) ETUIItem *contentItem;
+@property (nonatomic, readonly) ETWindowItem *windowItem;
+@property (nonatomic, readonly) NSPoint locationInWindowItem;
+@property (nonatomic, readonly) NSPoint locationInWindowContentItem;
+@property (nonatomic, readonly) NSPoint location;
 
 /* Widget Backend Integration */
 
-- (BOOL) isWindowDecorationEvent;
-- (void *) backendEvent;
-- (int) windowNumber;
-- (id) contentView;
+@property (nonatomic, getter=isWindowDecorationEvent, readonly) BOOL windowDecorationEvent;
+@property (nonatomic, readonly) void *backendEvent;
+@property (nonatomic, readonly) int windowNumber;
+@property (nonatomic, readonly) id contentView;
 
 /* Deprecated */
 
 // FIXME: Remove by not relying on it in our code... it exposes a class that 
 // is only valid for the AppKit backend.
-- (NSWindow *) window;
-- (id) draggingInfo;
-- (NSPoint) draggingLocation;
-- (NSPoint) locationInWindow;
+@property (nonatomic, readonly) NSWindow *window;
+@property (nonatomic, readonly, strong) id draggingInfo;
+@property (nonatomic, readonly) NSPoint draggingLocation;
+@property (nonatomic, readonly) NSPoint locationInWindow;
 
 @end

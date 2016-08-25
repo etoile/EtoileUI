@@ -43,12 +43,12 @@
 	CGFloat _expandedHeight;
 }
 
-- (id) initWithSupervisorView: (ETView *)aSupervisorView
-           objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
-- (CGFloat) titleBarHeight;
+@property (nonatomic, readonly) CGFloat titleBarHeight;
 - (void) tile;
-- (BOOL) isExpanded;
+@property (nonatomic, getter=isExpanded, readonly) BOOL expanded;
 
 - (void) toggleExpanded: (id)sender;
 

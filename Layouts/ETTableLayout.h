@@ -40,8 +40,8 @@ descriptor bound to the widget table column will be used (and eventually created
 
 /** @taskunit Item Property Display */
 
-- (NSArray *) displayedProperties;
-- (void) setDisplayedProperties: (NSArray *)properties;
+@property (nonatomic, copy) NSArray *displayedProperties;
+
 - (NSString *) displayNameForProperty: (NSString *)property;
 - (void) setDisplayName: (NSString *)displayName forProperty: (NSString *)property;
 - (BOOL) isEditableForProperty: (NSString *)property;
@@ -54,18 +54,16 @@ descriptor bound to the widget table column will be used (and eventually created
 
 /** @taskunit Sorting */
 
-- (void) setSortable: (BOOL)isSortable;
-- (BOOL) isSortable;
+@property (nonatomic, getter=isSortable) BOOL sortable;
 
 /** @taskunit Fonts */
 
-- (NSFont *) contentFont;
-- (void) setContentFont: (NSFont *)aFont;
+@property (nonatomic, copy) NSFont *contentFont;
 
 /** @taskunit Widget Backend Access */
 
-- (NSArray *) allTableColumns;
-- (NSTableView *) tableView;
+@property (nonatomic, readonly) NSArray *allTableColumns;
+@property (nonatomic, readonly, strong) NSTableView *tableView;
 
 /** @taskunit Framework Private & Subclassing */
 
@@ -81,12 +79,15 @@ descriptor bound to the widget table column will be used (and eventually created
          forTableColumn: (NSTableColumn *)column
                    item: (ETLayoutItem *)item;
 - (void) trySortRecursively: (BOOL)recursively oldSortDescriptors: (NSArray *)oldDescriptors;
-- (NSEvent *) backendDragEvent;
-- (void) setBackendDragEvent: (NSEvent *)event;
-- (NSImage *) dragImage;
+
+@property (nonatomic, strong) NSEvent *backendDragEvent;
+@property (nonatomic, readonly) NSImage *dragImage;
+
 - (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row;
-- (ETLayoutItem *) editedItem;
-- (NSString *) editedProperty;
+
+@property (nonatomic, readonly) ETLayoutItem *editedItem;
+@property (nonatomic, readonly) NSString *editedProperty;
+
 - (void) controlTextDidEndEditingForItem: (ETLayoutItem *)editedItem
                                 property: (NSString *)editedProperty;
 
@@ -108,5 +109,5 @@ level. */
 
 
 @interface NSTableView (EtoileUI)
-- (NSArray *) visibleTableColumns;
+@property (nonatomic, readonly, copy) NSArray *visibleTableColumns;
 @end

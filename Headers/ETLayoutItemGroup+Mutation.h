@@ -37,13 +37,12 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 
 /** @taskunit Mutation Coordination */
 
-- (BOOL) hasNewContent;
-- (void) setHasNewContent: (BOOL)flag;
+@property (nonatomic) BOOL hasNewContent;
 - (void) didChangeContentWithMoreComing: (BOOL)moreComing;
-- (BOOL) isCoalescingModelMutation;
+@property (nonatomic, getter=isCoalescingModelMutation, readonly) BOOL coalescingModelMutation;
 - (void) beginCoalescingModelMutation;
 - (void) endCoalescingModelMutation;
-- (BOOL) isMutating;
+@property (nonatomic, getter=isMutating, readonly) BOOL mutating;
 
 /** @taskunit Mutation Actions */
 
@@ -74,8 +73,9 @@ like -addItem, removeItem:, -insertItem:atIndex: etc. */
 	
 /** @taskunit Providing */
 
-- (BOOL) isReloading;
-- (NSArray *) itemsFromSource;
+@property (nonatomic, getter=isReloading, readonly) BOOL reloading;
+@property (nonatomic, readonly) NSArray *itemsFromSource;
+
 - (void) sourceDidUpdate: (NSNotification *)notif;
 
 /** @taskunit Controller Coordination */

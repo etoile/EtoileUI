@@ -31,7 +31,8 @@
 - (void) removeItems: (NSSet *)items;
 - (void) removeAllItems;
 - (BOOL) containsItem: (ETLayoutItemGroup *)anItem;
-- (BOOL) isEmpty;
+
+@property (nonatomic, getter=isEmpty, readonly) BOOL empty;
 
 /** @taskunit Executing Layout Updates */
 

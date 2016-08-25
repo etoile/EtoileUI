@@ -41,10 +41,9 @@ The viewpoint on the data is initially provided by your model and whether it
 implements ETCollection protocol or not. */
 @protocol ETFragment
 
-- (NSPoint) origin;
-- (void) setOrigin: (NSPoint)location;
-- (CGFloat) height;
-- (CGFloat) width;
+@property (nonatomic) NSPoint origin;
+@property (nonatomic, readonly) CGFloat height;
+@property (nonatomic, readonly) CGFloat width;
 
 @end
 
@@ -80,19 +79,16 @@ treated under various circumstances:
 Warning: this API will probably evolve a bit. */
 @protocol ETColumnFragment
 /** Sets the column width. */
-- (void) setWidth: (CGFloat)width;
 /** Returns the column width. */
-- (CGFloat) width;
+@property (nonatomic) CGFloat width;
 /** Sets the minimum width allowed and resizes the column if the current width 
 is inferior. */
-- (void) setMinWidth: (CGFloat)width;
 /** Returns the minimum width allowed. */
-- (CGFloat) minWidth;
+@property (nonatomic) CGFloat minWidth;
 /** Sets the maximum allowed width and resizes the column if the current width 
 is superior. */
-- (void) setMaxWidth: (CGFloat)width;
 /** Returns the maximum width allowed. */
-- (CGFloat) maxWidth;
+@property (nonatomic) CGFloat maxWidth;
 /** Sets the resizing behavior:
 
 <deflist>
@@ -105,7 +101,6 @@ is superior. */
 </deflist>
 
 TODO: We should have our own enum rather than the one documented above.*/
-- (void) setResizingMask: (NSUInteger)mask;
 /** Returns the resizing behavior. See -setResizingMask:. */
-- (NSUInteger) resizingMask;
+@property (nonatomic) NSUInteger resizingMask;
 @end

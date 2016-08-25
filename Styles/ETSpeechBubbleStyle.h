@@ -21,6 +21,6 @@ applied. */
 }
 
 + (id) speechWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 @end

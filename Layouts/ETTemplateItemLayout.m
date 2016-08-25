@@ -46,7 +46,7 @@ The positional layout item size contraint style is also set to none.
 
 You are responsible to specify a template item and the template keys on the 
 returned instance (usually in a subclass initializer). */ 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -360,6 +360,11 @@ Does nothing by default. */
 - (void) setExposedItems: (NSArray *)exposedItems
 {
 	[[self layoutContext] setExposedItems: exposedItems];
+}
+
+- (NSArray *) visibleItems
+{
+	return [[self layoutContext] visibleItems];
 }
 
 - (NSSize) size

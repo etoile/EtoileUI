@@ -37,35 +37,34 @@ it doesn't have to.<br />
 ETLayoutingContext describes how a layout is expected to interact with a layout 
 item and limit the interaction complexity between ETLayoutItemGroup and 
 ETLayout. */
-@protocol ETLayoutingContext <NSObject, ETResponder>
+@protocol ETLayoutingContext <NSObject>
 // TODO: Remove in favor of -arrangedItems
-- (NSArray *) items;
+@property (nonatomic, readonly) NSArray *items;
 /** See -[ETLayoutItemGroup arrangedItems]. */
-- (NSArray *) arrangedItems;
+@property (nonatomic, readonly) NSArray *arrangedItems;
 /** See -[ETLayoutItem size]. */
-- (NSSize) size;
+@property (nonatomic, readonly) NSSize size;
 /** See -[ETLayoutItemGroup setLayoutView:]. */
 - (void) setLayoutView: (NSView *)aView;
 /** See -[ETLayoutItem setNeedsDislay:]. */
 - (void) setNeedsDisplay: (BOOL)now;
 /** See -[ETLayoutItem isFlipped]. */
-- (BOOL) isFlipped;
+@property (nonatomic, getter=isFlipped, readonly) BOOL flipped;
 /** See -[ETLayoutItemGroup isChangingSelection]. */
-- (BOOL) isChangingSelection;
+@property (nonatomic, getter=isChangingSelection, readonly) BOOL changingSelection;
 /** See -[ETLayoutItemGroup itemScaleFactor]. */
-- (CGFloat) itemScaleFactor;
+@property (nonatomic, readonly) CGFloat itemScaleFactor;
 /** See -[ETLayoutItemGroup visibleContentSize]. */
-- (NSSize) visibleContentSize;
+@property (nonatomic, readonly) NSSize visibleContentSize;
 /** See -[ETLayoutItem setContentSize:]. */
 - (void) setContentSize: (NSSize)size;
 /** See -[ETLayoutItem(Scrollable) isScrollable]. */
-- (BOOL) isScrollable;
+@property (nonatomic, getter=isScrollable, readonly) BOOL scrollable;
 /** See -[ETLayoutItemGroup visibleItems]. */
-- (NSArray *) visibleItems;
+@property (nonatomic, readonly) NSArray *visibleItems;
 /** See -[ETLayoutItemGroup exposedItems]. */
-- (NSArray *) exposedItems;
+@property (nonatomic, copy) NSArray *exposedItems;
 /** See -[ETLayoutItemGroup setExposedItems:]. */
-- (void) setExposedItems: (NSArray *)items;
 @end
 
 /** ETLayoutingContext optional methods the layout context might implement.
@@ -74,19 +73,19 @@ ETLayout subclasses must check the layout context responds to the method before
 using it. For example, <code>[[[self layoutContext] ifResponds] source]</code>. */
 @interface NSObject (ETLayoutingContextOptional)
 /** See -[ETLayoutItemGroup source]. */
-- (id) source;
+@property (nonatomic, readonly, strong) id source;
 @end
 
 /** Represents a selection state in an item tree. */
 @protocol ETItemSelection
 /** See -[ETLayoutItemGroup selectionIndex]. */
-- (unsigned int) selectionIndex;
+@property (nonatomic, readonly) NSUInteger selectionIndex;
 /** See -[ETLayoutItemGroup selectionIndexes]. */
-- (NSMutableIndexSet *) selectionIndexes;
+@property (nonatomic, readonly) NSIndexSet *selectionIndexes;
 /** See -[ETLayoutItemGroup selectionIndexPaths]. */
-- (NSArray *) selectionIndexPaths;
+@property (nonatomic, readonly) NSArray *selectionIndexPaths;
 /** See -[ETLayoutItemGroup selectedItems]. */
-- (NSArray *) selectedItems;
+@property (nonatomic, readonly) NSArray *selectedItems;
 @end
 
 @protocol ETItemPropertyLayout
@@ -98,14 +97,13 @@ You can choose to make the ordering in the property array reflects the order
 in which properties are presented by the layout.
 
 If no properties are displayed, must return an empty array. */
-- (NSArray *) displayedProperties;
+@property (nonatomic, copy) NSArray *displayedProperties;
 /** Sets the laid out item properties that should be visible in the layout.
 
 Implements this method in your subclasses to adjust which properties are 
 presented by the layout.<br />
 You can choose to make the order in which properties are presented by the 
 layout reflect the ordering in the property array. */
-- (void) setDisplayedProperties: (NSArray *)properties;
 /** <override-dummy /> 
 Returns an arbitrary style object used to draw the given property in the layout. 
 
@@ -141,19 +139,17 @@ Warning: This protocol is very much subject to change. */
 /** See -[ETLayout setUp:]. */
 - (void) setUp: (BOOL)isDeserialization;
 /** See -[ETPositionalLayout setIsContentSizeLayout]. */
-- (void) setIsContentSizeLayout: (BOOL)flag;
 /** See -[ETPositionalLayout isContentSizeLayout]. */
-- (BOOL) isContentSizeLayout;
+@property (nonatomic) BOOL isContentSizeLayout;
 /** See -[ETLayout validateLayoutContext:]. */
 - (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 /** See -[ETLayout layoutContext:]. */
-- (id <ETLayoutingContext>) layoutContext;
+@property (nonatomic, readonly, weak) id<ETLayoutingContext> layoutContext;
 /** See -[ETComputedLayout setBorderMargin:]. */
 - (void) setBorderMargin: (CGFloat)margin;
 /** See -[ETComputedLayout itemMargin:]. */
-- (CGFloat) itemMargin;
+@property (nonatomic) CGFloat itemMargin;
 /** See -[ETComputedLayout setItemMargin:]. */
-- (void) setItemMargin: (CGFloat)margin;
 /** See -[ETComputedLayout setHorizontalAlignmentGuidePosition:]. */
 - (void) setHorizontalAlignmentGuidePosition: (CGFloat)aPosition;
 /** See -[ETLayout renderWithItems:isNewContent:]. */
@@ -164,8 +160,7 @@ Warning: This protocol is very much subject to change. */
 
 /** Warning: Experimental protocol that is subject to change or be removed. */
 @protocol ETCompositeLayout
-- (id <ETComputableLayout>) positionalLayout;
-- (void) setPositionalLayout: (id <ETComputableLayout>)layout;
+@property (nonatomic, strong) id<ETComputableLayout> positionalLayout;
 - (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
 @end
 
@@ -210,8 +205,8 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Initialization */
 
-+ (id) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (instancetype) layoutWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Attached Tool */
 
@@ -219,42 +214,44 @@ For a copy, -attachedTool is copied. */
 - (id) attachedTool;
 - (void) didChangeAttachedTool: (ETTool *)oldTool
                         toTool: (ETTool *)newTool;
-- (id) responder;
+
+@property (nonatomic, readonly) id responder;
 
 /** @taskunit Layout Context */
 
-- (id <ETLayoutingContext>) layoutContext;
+@property (nonatomic, readonly, weak) id<ETLayoutingContext> layoutContext;
+
 - (void) tearDown;
 - (void) setUp: (BOOL)isDeserialization;
 
 /** @taskunit Type Querying */
 
-- (BOOL) isComposite;
-- (BOOL) isPositional;
-- (BOOL) isWidget;
-- (BOOL) isComputedLayout;
-- (BOOL) isOpaque;
-- (BOOL) isScrollable;
+@property (nonatomic, getter=isComposite, readonly) BOOL composite;
+@property (nonatomic, getter=isPositional, readonly) BOOL positional;
+@property (nonatomic, readonly) BOOL isWidget;
+@property (nonatomic, getter=isComputedLayout, readonly) BOOL computedLayout;
+@property (nonatomic, getter=isOpaque, readonly) BOOL opaque;
+@property (nonatomic, getter=isScrollable, readonly) BOOL scrollable;
 
-- (BOOL) hasScrollers;
+@property (nonatomic, readonly) BOOL hasScrollers;
 
 /** @taskunit Layout Size Control and Feedback */
 
-- (NSSize) layoutSize;
-- (BOOL) isContentSizeLayout;
-- (BOOL) isAllContentVisible;
-- (ETPositionalLayout *) positionalLayout;
+@property (nonatomic) NSSize layoutSize;
+@property (nonatomic, getter=isContentSizeLayout, readonly) BOOL contentSizeLayout;
+@property (nonatomic, getter=isAllContentVisible, readonly) BOOL allContentVisible;
+@property (nonatomic, readonly, strong) id<ETComputableLayout> positionalLayout;
 
 /** @taskunit Requesting Internal Layout Updates */
 
-- (BOOL) isRendering;
-- (BOOL) canRender;
+@property (nonatomic, getter=isRendering, readonly) BOOL rendering;
+@property (nonatomic, readonly) BOOL canRender;
 - (void) renderAndInvalidateDisplay;
 
 /** @taskunit Layouting */
 
 - (NSSize) renderWithItems: (NSArray *)items isNewContent: (BOOL)isNewContent;
-- (NSSize) resetLayoutSize;
+@property (nonatomic, readonly) NSSize resetLayoutSize;
 - (void) resizeItems: (NSArray *)items
     forNewLayoutSize: (NSSize)newLayoutSize
              oldSize: (NSSize)oldLayoutSize;
@@ -263,11 +260,12 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Layout Update Dependencies */
 
-- (BOOL) isLayoutExecutionItemDependent;
+@property (nonatomic, getter=isLayoutExecutionItemDependent, readonly) BOOL layoutExecutionItemDependent;
 
 /** @taskunit Presentational Item Tree */
 
-- (ETLayoutItemGroup *) layerItem;
+@property (nonatomic, readonly, strong) ETLayoutItemGroup *layerItem;
+
 - (void) mapLayerItemIntoLayoutContext;
 - (void) unmapLayerItemFromLayoutContext;
 - (void) syncLayerItemGeometryWithSize: (NSSize)aSize;
@@ -278,9 +276,10 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Selection */
 
-- (NSArray *) selectedItems;
+@property (nonatomic, readonly) NSArray *selectedItems;
+@property (nonatomic, getter=isChangingSelection, readonly) BOOL changingSelection;
+
 - (void) selectionDidChangeInLayoutContext: (id <ETItemSelection>)aSelection;
-- (BOOL) isChangingSelection;
 
 /** @taskunit Item Geometry and Display */
 
@@ -290,9 +289,8 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Item State Indicators */
 
-- (ETDropIndicator *) dropIndicator;
-- (void) setDropIndicator: (ETDropIndicator *)aStyle;
-- (BOOL) preventsDrawingItemSelectionIndicator;
+@property (nonatomic, strong) ETDropIndicator *dropIndicator;
+@property (nonatomic, readonly) BOOL preventsDrawingItemSelectionIndicator;
 
 /** @taskunit Sorting */
 
@@ -300,7 +298,6 @@ For a copy, -attachedTool is copied. */
 
 /** @taskunit Framework Private */
 
-- (void) setLayoutSize: (NSSize)size;
 - (void) render: (BOOL)isNewContent;
 - (void) validateLayoutContext: (id <ETLayoutingContext>)context;
 

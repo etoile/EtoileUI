@@ -75,7 +75,7 @@ into a scrollable area. */
 	return (NSScrollView *)[[self supervisorView] wrappedView];
 }
 
-- (id) initWithSupervisorView: (ETView *)aSupervisorView
+- (instancetype) initWithSupervisorView: (ETView *)aSupervisorView
            objectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithScrollView: nil objectGraphContext: aContext];
@@ -89,7 +89,7 @@ into a scrollable area. */
 	                                           object: [self supervisorView]];
 }
 
-- (id) initWithScrollView: (NSScrollView *)aScrollView
+- (instancetype) initWithScrollView: (NSScrollView *)aScrollView
        objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithSupervisorView: [[ETView alloc] init]

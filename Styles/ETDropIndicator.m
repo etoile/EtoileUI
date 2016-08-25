@@ -19,7 +19,7 @@
 	return @"DropIndicator";
 }
 
-- (id) initWithLocation: (NSPoint)dropLocation 
+- (instancetype) initWithLocation: (NSPoint)dropLocation 
             hoveredItem: (ETLayoutItem *)hoveredItem
            isDropTarget: (BOOL)dropOn
      objectGraphContext: (COObjectGraphContext *)aContext

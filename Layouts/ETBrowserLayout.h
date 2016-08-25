@@ -18,6 +18,6 @@
 
 }
 
-- (NSBrowser *) browser;
+@property (nonatomic, readonly, strong) NSBrowser *browser;
 
 @end

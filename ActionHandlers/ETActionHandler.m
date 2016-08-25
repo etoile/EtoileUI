@@ -50,7 +50,7 @@ Returns Nil by default. */
 }
 
 /** Initializes and returns a new action handler. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [super initWithObjectGraphContext: aContext];
 }

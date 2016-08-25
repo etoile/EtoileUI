@@ -37,7 +37,7 @@ The first responder is the current responder where the action dispatch starts in
 the EtoileUI responder chain.
 
 See -focusedItem and -makeFirstResponder:. */
-- (id <ETResponder>) firstResponder;
+@property (nonatomic, readonly) id<ETResponder> firstResponder;
 /** Returns the item that currently has the focus from the user standpoint.
 
 For example, if you edit a text area, the first responder is -fieldEditorItem, 
@@ -54,13 +54,13 @@ items that represent rows don't become focused items in this case.
 You can track focused item changes using ETEditionCoordinator protocol.
 
 See also -firstResponder. */
-- (ETLayoutItem *) focusedItem;
+@property (nonatomic, readonly) ETLayoutItem *focusedItem;
 /** Returns the item that serves as a field editor in the item tree presently.
 
 When no editing is underway, returns nil.
 
 See -firstResponder. */
-- (ETLayoutItem *) activeFieldEditorItem;
+@property (nonatomic, readonly) ETLayoutItem *activeFieldEditorItem;
 /** Returns the item whose subject is currently edited.
 
 The edited item is usually an item representing a model object whose content 
@@ -72,7 +72,7 @@ doesn't always represent the item that owns this text view, but can be another
 item used to present the value elswhere in the UI.
  
 When no editing is underway, returns nil. */
-- (ETLayoutItem *) editedItem;
+@property (nonatomic, readonly) ETLayoutItem *editedItem;
 /** Inserts the item that serves field editor into the item tree at the 
 beginning of the editing targeting the given edited item.
  
@@ -120,14 +120,14 @@ interaction among multiple UI objects present in their area. See
 /** @taskunit Responder Chain */
 
 /** See -[ETResponderTrait nextResponder]. */
-- (id) nextResponder;
+@property (nonatomic, readonly) id nextResponder;
 
 /** @taskunit Coordinating User Interaction */
 
 /** See -[ETResponderTrait firstResponderSharingArea]. */
-- (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
+@property (nonatomic, readonly) id<ETFirstResponderSharingArea> firstResponderSharingArea;
 /** See -[ETResponderTrait editionCoordinator]. */
-- (id <ETEditionCoordinator>) editionCoordinator;
+@property (nonatomic, readonly) id<ETEditionCoordinator> editionCoordinator;
 /** This method is only exposed to be used internally by Etoile. For reacting to 
 focused item changes, use ETEditionCoordinator.
  
@@ -136,7 +136,7 @@ responder chain.
  
 The returned item must be identical to the receiver or encloses it in the item 
 tree. */
-- (ETLayoutItem *) candidateFocusedItem;
+@property (nonatomic, readonly) ETLayoutItem *candidateFocusedItem;
 
 @end
 
@@ -151,11 +151,11 @@ to which the trait is applied. */
 
 /** @taskunit Responder Chain */
 
-- (id) nextResponder;
+@property (nonatomic, readonly, strong) id nextResponder;
 
 /** @taskunit Coordinating User Interaction */
 
-- (id <ETFirstResponderSharingArea>) firstResponderSharingArea;
-- (id <ETEditionCoordinator>) editionCoordinator;
+@property (nonatomic, readonly, strong) id<ETFirstResponderSharingArea> firstResponderSharingArea;
+@property (nonatomic, readonly, strong) id<ETEditionCoordinator> editionCoordinator;
 
 @end

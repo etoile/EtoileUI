@@ -51,9 +51,9 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @interface ETLayoutItem (Private) <ETWidget>
 - (void) setViewAndSync: (NSView *)newView;
-- (NSRect) bounds;
+@property (nonatomic, readonly) NSRect bounds;
 - (void) setBoundsSize: (NSSize)size;
-- (NSPoint) centeredAnchorPoint;
+@property (nonatomic, readonly) NSPoint centeredAnchorPoint;
 @end
 
 @implementation ETLayoutItem
@@ -144,7 +144,7 @@ rather than this method.
 Initializes and returns a layout item.
 
 The returned item will use +defaultItemRect as its frame. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithView: nil 
 	               coverStyle: [ETBasicItemStyle sharedInstanceForObjectGraphContext: aContext]
@@ -156,7 +156,7 @@ The returned item will use +defaultItemRect as its frame. */
 objects in a Nib.
 
 Beside this Nib support, this initializer must never be called directly. */
-- (id) init
+- (instancetype) init
 {
 	return [self initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
@@ -179,7 +179,7 @@ When the given view is nil, the returned item will use +defaultItemRect as its
 frame.
 
 See also -setView:, -setCoverStyle: and -setActionHandler:.  */
-- (id) initWithView: (NSView *)view 
+- (instancetype) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext: (COObjectGraphContext *)aContext

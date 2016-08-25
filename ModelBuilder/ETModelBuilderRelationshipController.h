@@ -15,7 +15,7 @@
 @class ETItemValueTransformer;
 
 @protocol ETModelBuilderEditionCoordinator
-- (ETModelDescriptionRepository *) repository;
+@property (nonatomic, readonly) ETModelDescriptionRepository *repository;
 @end
 
 @interface ETModelBuilderController : ETController <ETModelBuilderEditionCoordinator, ETObjectValueFormatterDelegate>

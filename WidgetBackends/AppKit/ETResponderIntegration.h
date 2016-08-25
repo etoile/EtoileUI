@@ -15,7 +15,7 @@
  
 @abstract Additions to integrate NSResponder and ETResponder. */
 @interface NSResponder (ETResponderSupportAdditions)
-- (ETLayoutItem *) candidateFocusedItem;
+@property (nonatomic, readonly) ETLayoutItem *candidateFocusedItem;
 @end
 
 
@@ -23,8 +23,8 @@
  
 @abstract Additions to integrate NSView and ETResponder. */
 @interface NSView (ETResponderSupportAdditions)
-- (ETLayoutItem *) candidateFocusedItem;
-- (id) responder;
+@property (nonatomic, readonly) ETLayoutItem *candidateFocusedItem;
+@property (nonatomic, readonly) id responder;
 @end
 
 
@@ -32,7 +32,7 @@
  
 @abstract Additions to integrate NSText and ETResponder. */
 @interface NSText (ETResponderSupportAdditions)
-- (ETLayoutItem *) candidateFocusedItem;
+@property (nonatomic, readonly) ETLayoutItem *candidateFocusedItem;
 @end
 
 
@@ -40,5 +40,5 @@
  
 @abstract Additions to integrate NSScrollView and ETResponder. */
 @interface NSScrollView (ETResponderSupportAdditions)
-- (id) responder;
+@property (nonatomic, readonly) id responder;
 @end

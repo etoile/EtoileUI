@@ -18,15 +18,14 @@
 
 }
 
-- (id) initWithFrame: (NSRect)frameRect textFieldHeight: (CGFloat)aFieldHeight;
+- (instancetype) initWithFrame: (NSRect)frameRect textFieldHeight: (CGFloat)aFieldHeight NS_DESIGNATED_INITIALIZER;
 
-- (NSTextField *) textField;
-- (NSStepper *) stepper;
+@property (nonatomic, readonly) NSTextField *textField;
+@property (nonatomic, readonly) NSStepper *stepper;
 
-- (double) minValue;
-- (void) setMinValue: (double)aValue;
-- (double) maxValue;
-- (void) setMaxValue: (double)aValue;
+@property (nonatomic) double minValue;
+@property (nonatomic) double maxValue;
+
 - (void) setDoubleValue: (double)aValue;
 
 @end

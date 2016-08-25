@@ -49,20 +49,19 @@ considered private. */
                    isFlipped: (BOOL)isFlipped;
 
 - (NSArray *) fillWithItems: (NSArray *)fragments;
-- (NSArray *) items;
-- (CGFloat) itemMargin;
+@property (nonatomic, readonly) NSArray *items;
+@property (nonatomic, readonly) CGFloat itemMargin;
 
-- (NSPoint) origin;
-- (void) setOrigin: (NSPoint)location;
-- (CGFloat) height;
-- (CGFloat) width;
+@property (nonatomic) NSPoint origin;
+@property (nonatomic, readonly) CGFloat height;
+@property (nonatomic, readonly) CGFloat width;
 
-- (CGFloat) maxWidth;
-- (CGFloat) maxHeight;
-- (CGFloat) maxLength;
+@property (nonatomic, readonly) CGFloat maxWidth;
+@property (nonatomic, readonly) CGFloat maxHeight;
+@property (nonatomic, readonly) CGFloat maxLength;
 
-- (CGFloat) length;
-- (CGFloat) thickness;
-- (BOOL) isVerticallyOriented;
+@property (nonatomic, readonly) CGFloat length;
+@property (nonatomic, readonly) CGFloat thickness;
+@property (nonatomic, getter=isVerticallyOriented, readonly) BOOL verticallyOriented;
 
 @end

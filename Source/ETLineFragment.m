@@ -21,7 +21,7 @@
 @implementation ETLineFragment
 
 /* <init /> */
-- (id) initWithOwner: (id <ETLayoutFragmentOwner>)anOwner 
+- (instancetype) initWithOwner: (id <ETLayoutFragmentOwner>)anOwner 
       fragmentMargin: (CGFloat)aMargin 
             maxWidth: (CGFloat)aWidth
            maxHeight: (CGFloat)aHeight
@@ -37,7 +37,7 @@
 	return self;
 }
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithOwner: nil fragmentMargin: 0 maxWidth: FLT_MAX maxHeight: FLT_MAX isFlipped: YES];
 }

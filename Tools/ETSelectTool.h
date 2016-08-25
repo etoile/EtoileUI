@@ -80,19 +80,14 @@ to return NO.
 
 /** @taskunit Selection Settings */
 
-- (BOOL) allowsMultipleSelection;
-- (void) setAllowsMultipleSelection: (BOOL)multiple;
-- (BOOL) allowsEmptySelection;
-- (void) setAllowsEmptySelection: (BOOL)empty;
-- (ETSelectionAreaItem *) selectionAreaItem;
-- (void) setSelectionAreaItem: (ETSelectionAreaItem *)anItem;
+@property (nonatomic) BOOL allowsMultipleSelection;
+@property (nonatomic) BOOL allowsEmptySelection;
+@property (nonatomic, strong) ETSelectionAreaItem *selectionAreaItem;
 
 /** @taskunit Pick and Drop Settings */
 
-- (BOOL) shouldRemoveItemsAtPickTime;
-- (void) setShouldRemoveItemsAtPickTime: (BOOL)flag;
-- (BOOL) forcesItemPick;
-- (void) setForcesItemPick: (BOOL)forceItemPick;
+@property (nonatomic) BOOL shouldRemoveItemsAtPickTime;
+@property (nonatomic) BOOL forcesItemPick;
 
 /** @taskunit Event Handlers */
 
@@ -103,8 +98,8 @@ to return NO.
 
 /** @taskunit Selection Status */
 
-- (NSArray *) selectedItems;
-- (BOOL) isSelectingArea;
+@property (nonatomic, readonly) NSArray *selectedItems;
+@property (nonatomic, getter=isSelectingArea, readonly) BOOL selectingArea;
 
 /** @taskunit Selection Area Support */
 
@@ -130,10 +125,9 @@ to return NO.
 
 /** @taskunit Targeted Action Handler */
 
-- (void) setActionHandlerPrototype: (id)aHandler;
-- (id) actionHandlerPrototype;
-- (id) actionHandler;
-- (id) nextResponder;
+@property (nonatomic, strong) id actionHandlerPrototype;
+@property (nonatomic, readonly) id actionHandler;
+@property (nonatomic, readonly) id nextResponder;
 
 /** @taskunit Additional Tool Actions */
 

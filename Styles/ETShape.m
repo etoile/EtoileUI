@@ -17,7 +17,7 @@ typedef NSBezierPath* (*PathProviderFunction)(id, SEL, NSRect);
 @interface ETShape (Private)
 - (void) setIcon: (NSImage *)anIcon;
 - (NSBezierPath *) providedPathWithRect: (NSRect)aRect;
-- (id) pathProvider;
+@property (nonatomic, readonly) id pathProvider;
 @end
 
 
@@ -81,7 +81,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
 }
 
 /** Initializes and returns a new custom shape based on the given bezier path. */
-- (id) initWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -97,7 +97,7 @@ static NSRect shapeFactoryRect = {{ 0, 0 }, { 150, 100 }};
     return self;
 }
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithBezierPath: nil objectGraphContext: aContext];
 }
@@ -119,6 +119,11 @@ See also -[ETUIObject isShared] and -[ETStyle isShared]. */
 - (BOOL) isShared
 {
 	return NO;
+}
+
+- (void) setIsShared: (BOOL)isShared
+{
+	
 }
 
 - (NSBezierPath *) path

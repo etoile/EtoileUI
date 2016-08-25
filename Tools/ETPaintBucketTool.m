@@ -18,7 +18,7 @@
 
 /** Initializes and returns a new paint bucket tool which is set up with orange 
 as stroke color and brown as fill color. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

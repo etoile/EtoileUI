@@ -15,11 +15,11 @@
 @class ETLayoutItemGroup;
 
 @interface ETModelElementDescription (ETModelBuilder)
-- (ETLayoutItemGroup *) itemRepresentation;
+@property (nonatomic, readonly) ETLayoutItemGroup *itemRepresentation;
 - (void) view: (id)sender;
 @end
 
 @interface ETEntityDescription (ETModelBuilder)
-- (ETLayoutItemGroup *) itemRepresentation;
+@property (nonatomic, readonly) ETLayoutItemGroup *itemRepresentation;
 - (void) view: (id)sender;
 @end

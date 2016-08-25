@@ -131,7 +131,7 @@ NSString * const ETEventProcessorDidProcessEventNotification =
 @interface NSWindow (GNUstepCocoaPrivate)
 // NOTE: This method is implemented on NSWindow, although the public API 
 // only exposes it at NSPanel level.
-- (BOOL) becomesKeyOnlyIfNeeded;
+@property (nonatomic, readonly) BOOL becomesKeyOnlyIfNeeded;
 @end
 
 

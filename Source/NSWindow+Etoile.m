@@ -24,7 +24,7 @@
 // FIXME: Window closing doesn't work on GNUstep when YES is passed for defer, 
 // the window remains on screen.
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithContentRect: WINDOW_CONTENT_RECT
 					       styleMask: [NSWindow defaultStyleMask]
@@ -32,7 +32,7 @@
 							   defer: NO];
 }
 
-- (id) initWithFrame: (NSRect)frame styleMask: (NSUInteger)windowStyle
+- (instancetype) initWithFrame: (NSRect)frame styleMask: (NSUInteger)windowStyle
 {
 	NSRect contentRect = [NSWindow contentRectForFrameRect: frame 
 	                                             styleMask: windowStyle];
@@ -42,7 +42,7 @@
 							   defer: NO];
 }
 
-- (id) initWithContentRect: (NSRect)rect styleMask: (NSUInteger)windowStyle
+- (instancetype) initWithContentRect: (NSRect)rect styleMask: (NSUInteger)windowStyle
 {
 	return [self initWithContentRect: rect
 					       styleMask: windowStyle
@@ -183,7 +183,7 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 @implementation ETFullScreenWindow
 
 /** Initializes and returns a new borderless window that fills the main screen. */
-- (id) init
+- (instancetype) init
 {
 	return [self initWithContentRect: [[NSScreen mainScreen] frame]
 	                       styleMask: NSBorderlessWindowMask
@@ -191,7 +191,7 @@ top left coordinates when the content view returns YES to -isFlipped.  */
 	                           defer: NO];
 }
 
-- (id) initWithContentRect: (NSRect)contentRect 
+- (instancetype) initWithContentRect: (NSRect)contentRect 
                  styleMask: (NSUInteger)windowStyle
                    backing: (NSBackingStoreType)bufferingType 
                      defer: (BOOL)deferCreation

@@ -52,33 +52,35 @@ such as -performClose: are forwarded to the NSWindow. */
 
 /** @taskunit Initialization */
 
-- (id) initWithWindow: (NSWindow *)window
-   objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithWindow: (NSWindow *)window
+   objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Main Accessors */
 
-- (NSWindow *) window;
-- (BOOL) usesCustomWindowTitle;
-- (BOOL) isUntitled;
-- (BOOL) shouldKeepWindowFrame;
-- (void) setShouldKeepWindowFrame: (BOOL)shouldKeepWindowFrame;
-- (CGFloat) titleBarHeight;
+@property (nonatomic, readonly, strong) NSWindow *window;
+@property (nonatomic, readonly) BOOL usesCustomWindowTitle;
+@property (nonatomic, readonly) BOOL isUntitled;
+@property (nonatomic) BOOL shouldKeepWindowFrame;
+@property (nonatomic, readonly) CGFloat titleBarHeight;
 
 /** @taskunit Customized Decorator Methods */
 
-- (NSView *) view;
-- (NSRect) decorationRect;
-- (NSRect) contentRect;
+@property (nonatomic, readonly) NSView *view;
+@property (nonatomic, readonly) NSRect decorationRect;
+@property (nonatomic, readonly) NSRect contentRect;
+
 - (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (BOOL) canDecorateItem: (id)item;
 
 /** @taskunit First Responder Sharing Area */
 
 - (BOOL) makeFirstResponder: (id <ETResponder>)aResponder;
-- (id <ETResponder>) firstResponder;
-- (ETLayoutItem *) focusedItem;
-- (ETLayoutItem *) activeFieldEditorItem;
-- (ETLayoutItem *) editedItem;
+
+@property (nonatomic, readonly) id<ETResponder> firstResponder;
+@property (nonatomic, readonly) ETLayoutItem *focusedItem;
+@property (nonatomic, readonly) ETLayoutItem *activeFieldEditorItem;
+@property (nonatomic, readonly) ETLayoutItem *editedItem;
+
 - (void) setActiveFieldEditorItem: (ETLayoutItem *)editorItem 
                        editedItem: (ETLayoutItem *)editedItem;
 - (void) removeActiveFieldEditorItem;

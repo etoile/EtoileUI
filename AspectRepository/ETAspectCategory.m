@@ -45,7 +45,7 @@ entries.
 
 If the given name is nil, the string value of +anyType is set as the category 
 name. */
-- (id) initWithName: (NSString *)aName
+- (instancetype) initWithName: (NSString *)aName
          dictionary: (NSDictionary *)aDict
  objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -77,7 +77,7 @@ name. */
 /** Initializes and returns a new empty category.
 
 See -initWithName:dictionary:objectGraphContext:. */
-- (id) initWithName: (NSString *)aName
+- (instancetype) initWithName: (NSString *)aName
  objectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithName: aName dictionary: nil objectGraphContext: aContext];
@@ -86,7 +86,7 @@ See -initWithName:dictionary:objectGraphContext:. */
 /** Initializes and returns a new empty category.
 
 See -initWithName:dictionary:objectGraphContext:. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithName: nil dictionary: nil objectGraphContext: aContext];
 }

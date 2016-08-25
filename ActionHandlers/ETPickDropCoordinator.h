@@ -51,19 +51,19 @@
 - (void) beginDragItem: (ETLayoutItem *)item
                  image: (NSImage *)customDragImage
               inLayout: (ETLayout *)aLayout;
-- (BOOL) isPasting;
-- (BOOL) isDragging;
-- (BOOL) isPickDropForced;
-- (BOOL) isPickDropEnabledForAllItems;
-- (void) setPickDropEnabledForAllItems: (BOOL)enabled;
-- (unsigned int) modifierFlags;
+@property (nonatomic, getter=isPasting, readonly) BOOL pasting;
+@property (nonatomic, getter=isDragging, readonly) BOOL dragging;
+@property (nonatomic, getter=isPickDropForced, readonly) BOOL pickDropForced;
+@property (nonatomic, getter=isPickDropEnabledForAllItems) BOOL pickDropEnabledForAllItems;
+@property (nonatomic, readonly) unsigned int modifierFlags;
 
 /* Drag Session Infos */
 
-- (ETEvent *) pickEvent;
+@property (nonatomic, readonly, strong) ETEvent *pickEvent;
 
-- (ETLayoutItem *) dragSource;
-- (unsigned int) dragModifierFlags;
+@property (nonatomic, readonly, strong) ETLayoutItem *dragSource;
+@property (nonatomic, readonly) unsigned int dragModifierFlags;
+
 - (NSDragOperation) dragOperationMaskForDestinationItem: (ETLayoutItem *)item;
 - (NSPoint) dragLocationInDestinationItem: (ETLayoutItem *)item;
 
@@ -104,7 +104,7 @@ action handler bound to the hit item, then -handleValidateDropXXX and
 -handleDropXXX methods on the action handler bound the drop targets.<br />
 When a drop validation returns a new drop target, -handleDropXXX must be sent to 
 this drop target action handler.  */
-- (BOOL) hasBuiltInDragAndDropSupport;
+@property (nonatomic, readonly) BOOL hasBuiltInDragAndDropSupport;
 @end
 
 extern NSString *ETLayoutItemPboardType;

@@ -38,14 +38,13 @@ EtHandle mediatedTool property. */
  
  }
 
-- (id) initWithActionHandler: (ETActionHandler *)aHandler 
+- (instancetype) initWithActionHandler: (ETActionHandler *)aHandler 
            manipulatedObject: (id)aTarget
-          objectGraphContext: (COObjectGraphContext *)aContext;
+          objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
  
- - (ETTool *) mediatedTool;
- - (void) setMediatedTool: (ETTool *)anTool;
- - (id) manipulatedObject;
- - (void) setManipulatedObject: (id)anObject;
+ @property (nonatomic, strong) ETTool *mediatedTool;
+ @property (nonatomic, strong) id manipulatedObject;
+
  
  @end
  
@@ -60,10 +59,9 @@ the resize tool more straightforward to use for the user. */
 
 //- (ETTool *) mediatedTool;
 //- (void) setMediatedTool: (ETTool *)anTool;
-- (id) manipulatedObject;
-- (void) setManipulatedObject: (id)anObject;
+@property (nonatomic, strong) id manipulatedObject;
 - (void) setNeedsDisplay: (BOOL)flag;
-- (BOOL) acceptsActionsForItemsOutsideOfFrame;
+@property (nonatomic, readonly) BOOL acceptsActionsForItemsOutsideOfFrame;
 
 @end
 
@@ -72,17 +70,17 @@ the resize tool more straightforward to use for the user. */
 
 }
 
-- (id) initWithManipulatedObject: (id)aTarget
-              objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithManipulatedObject: (id)aTarget
+              objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
-- (ETHandle *) topLeftHandle;
-- (ETHandle *) topRightHandle;
-- (ETHandle *) bottomRightHandle;
-- (ETHandle *) bottomLeftHandle;
-- (ETHandle *) leftHandle;
-- (ETHandle *) rightHandle;
-- (ETHandle *) topHandle;
-- (ETHandle *) bottomHandle;
+@property (nonatomic, readonly) ETHandle *topLeftHandle;
+@property (nonatomic, readonly) ETHandle *topRightHandle;
+@property (nonatomic, readonly) ETHandle *bottomRightHandle;
+@property (nonatomic, readonly) ETHandle *bottomLeftHandle;
+@property (nonatomic, readonly) ETHandle *leftHandle;
+@property (nonatomic, readonly) ETHandle *rightHandle;
+@property (nonatomic, readonly) ETHandle *topHandle;
+@property (nonatomic, readonly) ETHandle *bottomHandle;
 
 - (void) render: (NSMutableDictionary *)inputValues 
 	  dirtyRect: (NSRect)dirtyRect

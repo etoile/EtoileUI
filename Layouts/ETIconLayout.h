@@ -89,10 +89,8 @@ In this example, here are the icon sizes when the
 
 /* Icon Sizing */
 
-- (NSSize) iconSizeForScaleFactorUnit;
-- (void) setIconSizeForScaleFactorUnit: (NSSize)aSize;
-- (NSSize) minIconSize;
-- (void) setMinIconSize: (NSSize)aSize;
+@property (nonatomic) NSSize iconSizeForScaleFactorUnit;
+@property (nonatomic) NSSize minIconSize;
 
 @end
 
@@ -137,7 +135,6 @@ It is usually used in conjunction with ETIconAndLabelStyle and ETIconLayout. */
 	BOOL _ignoresBackgroundClick;
 }
 
-- (BOOL) ignoresBackgroundClick;
-- (void) setIgnoresBackgroundClick: (BOOL)noBackgroundClick;
+@property (nonatomic) BOOL ignoresBackgroundClick;
 
 @end

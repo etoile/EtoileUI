@@ -23,13 +23,12 @@
 
 /** @taskunit Type Querying */
 
-- (BOOL) isPositional;
-- (BOOL) isComputedLayout;
+@property (nonatomic, getter=isPositional, readonly) BOOL positional;
+@property (nonatomic, getter=isComputedLayout, readonly) BOOL computedLayout;
 
 /** @taskunit Autoresizing */
 
-- (BOOL) autoresizesItems;
-- (void) setAutoresizesItems: (BOOL)autoresize;
+@property (nonatomic) BOOL autoresizesItems;
 
 /** @taskunit Persistent Item Frames */
 

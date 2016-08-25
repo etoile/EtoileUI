@@ -36,10 +36,10 @@
 #import "ETCompatibility.h"
 
 @interface ETPickDropCoordinator (Private)
-- (id) initWithEvent: (ETEvent *)anEvent;
+- (instancetype) initWithEvent: (ETEvent *)anEvent;
 - (void) reset;
 
-- (BOOL) ignoreModifierKeysWhileDragging;
+@property (nonatomic, readonly) BOOL ignoreModifierKeysWhileDragging;
 - (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal;
 - (void) draggedImage: (NSImage *)anImage beganAt: (NSPoint)aPoint;
 - (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint;
@@ -93,7 +93,7 @@ event. */
 	return [sharedInstance initWithEvent: anEvent];
 }
 
-- (id) initWithEvent: (ETEvent *)anEvent
+- (instancetype) initWithEvent: (ETEvent *)anEvent
 {
 	SUPERINIT
 	[self reset];

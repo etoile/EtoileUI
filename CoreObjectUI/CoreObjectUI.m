@@ -27,23 +27,23 @@
 #include <objc/runtime.h>
 
 @interface COObject (EtoileUI)
-- (NSImage *) icon;
+@property (nonatomic, readonly, copy) NSImage *icon;
 @end
 
 @interface COLibrary (EtoileUI)
-- (NSImage *) icon;
+@property (nonatomic, readonly, copy) NSImage *icon;
 @end
 
 @interface COGroup (EtoileUI)
-- (NSImage *) icon;
+@property (nonatomic, readonly, copy) NSImage *icon;
 @end
 
 @interface COTag (EtoileUI)
-- (NSImage *) icon;
+@property (nonatomic, readonly, copy) NSImage *icon;
 @end
 
 @interface COTagGroup (EtoileUI)
-- (NSImage *) icon;
+@property (nonatomic, readonly, copy) NSImage *icon;
 @end
 
 @implementation COObject (EtoileUI)
@@ -216,7 +216,7 @@
 
 @implementation ETHistoryBrowserController
 
-- (id) initWithNibName: (NSString *)aNibName
+- (instancetype) initWithNibName: (NSString *)aNibName
                 bundle: (NSBundle *)aBundle
     objectGraphContext: (COObjectGraphContext *)aContext
 {

@@ -19,13 +19,13 @@
 
 Based on the drop indicator position, the indicator drawing will vary. e.g. bar 
 or rectangle. */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETIndicatorPosition)
 {
 	ETIndicatorPositionNone, /** No visible indicator. */
 	ETIndicatorPositionOn, /** Drop on indicator. */
 	ETIndicatorPositionLeft, /** Left bar indicator. */
 	ETIndicatorPositionRight /** Right bar indicator. */
-} ETIndicatorPosition;
+};
 
 /** @abstract Draws a drop insertion bar.
 
@@ -52,20 +52,20 @@ drop validation time. */
 	NSRect _prevInsertionIndicatorRect;
 }
 
-- (id) initWithLocation: (NSPoint)dropLocation 
+- (instancetype) initWithLocation: (NSPoint)dropLocation 
             hoveredItem: (ETLayoutItem *)hoveredItem
            isDropTarget: (BOOL)dropOn
-     objectGraphContext: (COObjectGraphContext *)aContext;
+     objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
-- (CGFloat) thickness;
-- (NSColor *) color;
+@property (nonatomic, readonly) CGFloat thickness;
+@property (nonatomic, readonly) NSColor *color;
 
 - (void) drawVerticalInsertionIndicatorInRect: (NSRect)indicatorRect;
 - (void) drawRectangularInsertionIndicatorInRect: (NSRect)indicatorRect;
-- (NSRect) previousIndicatorRect;
-- (NSRect) currentIndicatorRect;
+@property (nonatomic, readonly) NSRect previousIndicatorRect;
+@property (nonatomic, readonly) NSRect currentIndicatorRect;
 
-- (ETIndicatorPosition) indicatorPosition;
+@property (nonatomic, readonly) ETIndicatorPosition indicatorPosition;
 + (ETIndicatorPosition) indicatorPositionForPoint: (NSPoint)dropPoint
                                     nearItemFrame: (NSRect)itemRect;
 

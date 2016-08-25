@@ -15,10 +15,6 @@
 #import "ETWidgetBackend.h"
 #import "ETWindowItem.h"
 
-@interface ETScrollableAreaItem ()
-- (NSScrollView *) scrollView;
-@end
-
 @interface ETDecoratorItem (CoreObject)
 @end
 

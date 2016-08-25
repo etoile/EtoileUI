@@ -31,7 +31,8 @@
 
 /** @taskunit View Integration */
 
-- (ETView *) supervisorView;
+@property (nonatomic, readonly, strong) ETView *supervisorView;
+
 - (void) setSupervisorView: (ETView *)aSupervisorView
                       sync: (ETSyncSupervisorView)syncDirection;
 
@@ -41,14 +42,13 @@
 
 /** @taskunit Visibility and Layout Interaction */
 
-- (BOOL) isExposed;
-- (void) setExposed: (BOOL)exposed;
+@property (nonatomic, getter=isExposed) BOOL exposed;
  
 /** @taskunit Geometry */
 
-- (NSRect) drawingBox;
-- (NSRect) contentDrawingBox;
-- (NSRect) visibleContentBounds;
+@property (nonatomic, readonly) NSRect drawingBox;
+@property (nonatomic, readonly) NSRect contentDrawingBox;
+@property (nonatomic, readonly) NSRect visibleContentBounds;
 
 /** taskunit Initial Frame */
 
@@ -62,7 +62,8 @@
 
 /** @taskunit Layout Update Integration */
 
-- (BOOL) usesFlexibleLayoutFrame;
+@property (nonatomic, readonly) BOOL usesFlexibleLayoutFrame;
+
 - (void) updateLayoutRecursively: (BOOL)recursively;
 - (void) setNeedsLayoutUpdate;
 
@@ -73,15 +74,15 @@
 
 /** @taskunit Represented Object Editing */
 
-- (NSString *) editedProperty;
+@property (nonatomic, readonly) NSString *editedProperty;
 
 /** @taskunit Responder Role  */
 
-- (id) responder;
+@property (nonatomic, readonly) id responder;
 
 /** @taskunit Layout Layer Support */
 
-- (BOOL) isLayerItem;
+@property (nonatomic, readonly) BOOL isLayerItem;
 
 /** The foster parent.
 

@@ -42,27 +42,20 @@ returns NO unlike ETStyle. */
 + (ETShape *) ovalShapeWithRect: (NSRect)aRect objectGraphContext: (COObjectGraphContext *)aContext;
 + (ETShape *) ovalShapeWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithBezierPath: (NSBezierPath *)aPath objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
-- (BOOL) isShared;
+@property (nonatomic, readwrite) BOOL isShared;
 
-- (NSBezierPath *) path;
-- (void) setPath: (NSBezierPath *)aPath;
-- (NSRect) bounds;
-- (void) setBounds: (NSRect)aRect;
-- (SEL) pathResizeSelector;
-- (void) setPathResizeSelector: (SEL)aSelector;
+@property (nonatomic, copy) NSBezierPath *path;
+@property (nonatomic) NSRect bounds;
+@property (nonatomic) SEL pathResizeSelector;
 
-- (NSColor *) fillColor;
-- (void) setFillColor: (NSColor *)color;
-- (NSColor *) strokeColor;
-- (void) setStrokeColor: (NSColor *)color;
+@property (nonatomic, copy) NSColor *fillColor;
+@property (nonatomic, copy) NSColor *strokeColor;
 
-- (CGFloat) alphaValue;
-- (void) setAlphaValue: (CGFloat)newAlpha;
+@property (nonatomic) CGFloat alphaValue;
 
-- (BOOL) hidden;
-- (void) setHidden: (BOOL)flag;
+@property (nonatomic) BOOL hidden;
 
 /** Returns whether the shape acts as a mask over previous drawing. All drawing
 done by all previous renderers will be clipped by the path of the receiver. 

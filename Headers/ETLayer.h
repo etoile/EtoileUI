@@ -28,7 +28,7 @@
 
 /* Framework Private */
 
-- (NSRect) rootWindowFrame;
+@property (nonatomic, readonly) NSRect rootWindowFrame;
 
 @end
 

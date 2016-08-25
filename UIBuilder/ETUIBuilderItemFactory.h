@@ -39,7 +39,7 @@
                                              controller: (id)aController
                                              aspectName: (NSString *)anAspectName;
 
-- (ETLayoutItemGroup *) objectPicker;
+@property (nonatomic, readonly) ETLayoutItemGroup *objectPicker;
 
 @end
 

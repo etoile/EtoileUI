@@ -60,7 +60,7 @@
 	                  forName: kETNegateBooleanTransformerName];
 }
 
-- (id) initWithName: (NSString *)aName;
+- (instancetype) initWithName: (NSString *)aName;
 {
 	NILARG_EXCEPTION_TEST(aName);
 	SUPERINIT;
@@ -68,7 +68,7 @@
 	return self;
 }
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithName: nil];
 }
@@ -141,7 +141,7 @@ NSString * const kETNegateBooleanTransformerName = @"kETNegateBooleanTransformer
 
 @implementation ETNegateBooleanTransformer
 
-- (id) init
+- (instancetype) init
 {
 	return [super initWithName: kETNegateBooleanTransformerName];
 }
@@ -169,7 +169,7 @@ NSString * const kETBooleanFromMaskTransformerName = @"kETBooleanFromMaskTransfo
 
 @synthesize editedBitValue = _editedBitValue;
 
-- (id) init
+- (instancetype) init
 {
 	return [super initWithName: kETBooleanFromMaskTransformerName];
 }

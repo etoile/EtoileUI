@@ -35,7 +35,7 @@ when a layout other than ETWindowLayout is set on the receiver. */
 	return [[ETWindowItem alloc] initWithWindow: fullScreenWindow objectGraphContext: aContext];
 }
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -228,7 +228,7 @@ You should never call this method unless you write an ETWindowLayout subclass. *
 
 @implementation ETWindowLayout
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

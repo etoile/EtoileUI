@@ -13,14 +13,24 @@
 static const NSInteger textFieldTag = 1;
 static const NSInteger stepperTag = 2;
 
+@interface ETNumberPicker()
+- (instancetype) initWithCoder: (NSCoder *)coder NS_DESIGNATED_INITIALIZER;
+@end
+
+
 @implementation ETNumberPicker
+
+- (instancetype) initWithFrame: (NSRect)frameRect
+{
+	return [self initWithFrame: frameRect textFieldHeight: frameRect.size.height];
+}
 
 /** <init />
 Initializes and returns a new number picker.
  
 The provided height indicates the inner text field height that is expected to 
 be smaller or equal to the frame height. */
-- (id) initWithFrame: (NSRect)frameRect textFieldHeight: (CGFloat)aFieldHeight
+- (instancetype) initWithFrame: (NSRect)frameRect textFieldHeight: (CGFloat)aFieldHeight 
 {
 	self = [super initWithFrame: frameRect];
 	if (self == nil)
@@ -61,6 +71,16 @@ be smaller or equal to the frame height. */
 	  withKeyPath: @"doubleValue"
 	      options: nil];*/
 
+	return self;
+}
+
+- (instancetype) initWithCoder: (NSCoder *)coder
+{
+	self = [super initWithCoder: coder];
+	if (self == nil)
+		return nil;
+
+	[self doesNotRecognizeSelector: _cmd];
 	return self;
 }
 

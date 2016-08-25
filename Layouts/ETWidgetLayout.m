@@ -100,7 +100,7 @@ concrete subclass instance based on the view type.
 e.g. If you pass an NSOutlineView, an ETOutlineLayout instance is returned, the 
 substitution list in -layoutClassForLayoutView:. The instantiation behaves like 
 a class cluster. */
-- (id) initWithLayoutView: (NSView *)aView
+- (instancetype) initWithLayoutView: (NSView *)aView
        objectGraphContext: (COObjectGraphContext *)aContext
 {
 	id oldInstance = self;
@@ -132,7 +132,7 @@ a class cluster. */
 	return self;
 }
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithLayoutView: nil objectGraphContext: aContext];
 }

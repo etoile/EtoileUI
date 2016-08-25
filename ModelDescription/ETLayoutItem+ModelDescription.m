@@ -269,10 +269,10 @@
 	[selectedItemsInLayout setMultivalued: YES];
 	[selectedItemsInLayout setOrdered: YES];
 	[selectedItemsInLayout setDerived: YES];
-	ETPropertyDescription *isSorted = [ETPropertyDescription descriptionWithName: @"isSorted" type: (id)@"BOOL"];
+	ETPropertyDescription *isSorted = [ETPropertyDescription descriptionWithName: @"sorted" type: (id)@"BOOL"];
 	[isSorted setReadOnly: YES];
 	[isSorted setDerived: YES];
-	ETPropertyDescription *isFiltered = [ETPropertyDescription descriptionWithName: @"isFiltered" type: (id)@"BOOL"];
+	ETPropertyDescription *isFiltered = [ETPropertyDescription descriptionWithName: @"filtered" type: (id)@"BOOL"];
 	[isFiltered setReadOnly: YES];
 	[isFiltered setDerived: YES];
 	ETPropertyDescription *doubleClickedItem = [ETPropertyDescription descriptionWithName: @"doubleClickedItem" type: (id)@"ETLayoutItem"];

@@ -20,30 +20,29 @@
 
 /** @taskunit Type Querying */
 
-- (BOOL) isWindowContentView;
+@property (nonatomic, readonly) BOOL isWindowContentView;
 
 /** @taskunit Frame Utility Methods */
 
-- (CGFloat) height;
-- (CGFloat) width;
-- (void) setHeight: (CGFloat)height;
-- (void) setWidth: (CGFloat)width;
-- (CGFloat) x;
-- (CGFloat) y;
-- (void) setX: (CGFloat)x;
-- (void) setY: (CGFloat)y;
+@property (nonatomic) CGFloat height;
+@property (nonatomic) CGFloat width;
+@property (nonatomic) CGFloat x;
+@property (nonatomic) CGFloat y;
 
 - (void) setFrameSizeFromTopLeft: (NSSize)size;
 - (void) setHeightFromTopLeft: (int)height;
-- (NSPoint) topLeftPoint;
+
+@property (nonatomic, readonly) NSPoint topLeftPoint;
+
 - (void) setFrameSizeFromBottomLeft: (NSSize)size;
 - (void) setHeightFromBottomLeft: (int)height;
-- (NSPoint) bottomLeftPoint;
+
+@property (nonatomic, readonly) NSPoint bottomLeftPoint;
 
 /** @taskunit Generating an Image Representation */
 
-- (NSImage *) snapshot;
-- (NSImage *) icon;
+@property (nonatomic, readonly) NSImage *snapshot;
+@property (nonatomic, readonly) NSImage *icon;
 
 #ifdef GNUSTEP
 - (void) setSubviews: (NSArray *)newSubviews;

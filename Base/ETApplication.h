@@ -60,31 +60,33 @@ For other Nibs to be loaded, see ETNibOwner. */
 /** @taskunit Preparing and Restoring Application State */
 
 - (void) setUp;
-- (ETUIStateRestoration *) UIStateRestoration;
+
+@property (nonatomic, readonly, strong) ETUIStateRestoration *UIStateRestoration;
 
 /** @taskunit Application Identity */
 
-- (NSString *) name;
-- (NSImage *) icon;
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly, copy) NSImage *icon;
 
 /** @taskunit Accessing Item Tree */
 
-- (ETLayoutItemGroup *) rootItem;
-- (ETLayoutItem *) keyItem;
-- (ETLayoutItem *) mainItem;
+@property (nonatomic, readonly) ETLayoutItemGroup *rootItem;
+@property (nonatomic, readonly) ETLayoutItem *keyItem;
+@property (nonatomic, readonly) ETLayoutItem *mainItem;
 
 /** @taskunit Generating Item Tree */
 
-- (ETLayoutItemBuilder *) builder;
+@property (nonatomic, readonly, strong) ETLayoutItemBuilder *builder;
+
 - (void) rebuildMainNib;
 
 /** @taskunit Menu Factory */
 
-- (NSMenuItem *) developmentMenuItem;
-- (NSMenuItem *) documentMenuItem;
-- (NSMenuItem *) editMenuItem;
-- (NSMenuItem *) insertMenuItem;
-- (NSMenuItem *) arrangeMenuItem;
+@property (nonatomic, readonly) NSMenuItem *developmentMenuItem;
+@property (nonatomic, readonly) NSMenuItem *documentMenuItem;
+@property (nonatomic, readonly) NSMenuItem *editMenuItem;
+@property (nonatomic, readonly) NSMenuItem *insertMenuItem;
+@property (nonatomic, readonly) NSMenuItem *arrangeMenuItem;
 
 /** @taskunit Actions */
 
@@ -138,7 +140,9 @@ enum : NSInteger
 
 /** NSMenu conveniency additions. */
 @interface NSMenu (Etoile)
-- (NSMenuItem *) lastItem;
+
+@property (nonatomic, readonly) NSMenuItem *lastItem;
+
 - (void) addItemWithTitle: (NSString *)aTitle
                     state: (NSInteger)aState
                    target: (id)aTarget

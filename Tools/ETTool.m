@@ -39,6 +39,8 @@
 
 @implementation ETTool
 
+@dynamic nextResponder, firstResponderSharingArea, editionCoordinator;
+
 static ETUUID *initialToolUUID = nil;
 static ETUUID *mainToolUUID = nil;
 static ETUUID *activeToolUUID = nil;
@@ -418,12 +420,12 @@ See also -mainTool. */
 #pragma mark Initialization -
 
 /** Returns a new autoreleased tool instance. */
-+ (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (instancetype) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
 {
 	return [[self alloc] initWithObjectGraphContext: aContext];
 }
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

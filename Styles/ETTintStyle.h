@@ -22,8 +22,8 @@ Warning: Unstable API. */
 
 + (id) tintWithStyle: (ETStyle *)style color: (NSColor *)color objectGraphContext: (COObjectGraphContext *)aContext;
 + (id) tintWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext;
-- (void) setColor: (NSColor *)color;
-- (NSColor *) color;
+- (instancetype) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, copy) NSColor *color;
 
 @end

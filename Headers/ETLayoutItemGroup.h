@@ -62,28 +62,32 @@
 - (void) removeItem: (ETLayoutItem *)item;
 - (void) removeItemAtIndex: (NSUInteger)index;
 - (ETLayoutItem *) itemAtIndex: (NSInteger)index;
-- (ETLayoutItem *) firstItem;
-- (ETLayoutItem *) lastItem;
+
+@property (nonatomic, readonly) ETLayoutItem *firstItem;
+@property (nonatomic, readonly) ETLayoutItem *lastItem;
+
 - (NSInteger) indexOfItem: (id)item;
 - (BOOL) containsItem: (ETLayoutItem *)item;
-- (NSInteger) numberOfItems;
+
+@property (nonatomic, readonly) NSInteger numberOfItems;
+
 - (void) addItems: (NSArray *)items;
 - (void) removeItems: (NSArray *)items;
 - (void) removeAllItems;
-- (NSArray *) items;
+
+@property (nonatomic, readonly) NSArray *items;
 
 /** @taskunit Accessing Descendant Items */
 
-- (NSArray *) allDescendantItems;
+@property (nonatomic, readonly) NSArray *allDescendantItems;
+
 - (BOOL) isDescendantItem: (ETLayoutItem *)anItem;
 
 /** @taskunit Controlling Content Mutation and Item Providing */
 
-- (BOOL) shouldMutateRepresentedObject;
-- (void) setShouldMutateRepresentedObject: (BOOL)flag;
-- (BOOL) usesRepresentedObjectAsProvider;
-- (id) source;
-- (void) setSource: (id)source;
+@property (nonatomic) BOOL shouldMutateRepresentedObject;
+@property (nonatomic, readonly) BOOL usesRepresentedObjectAsProvider;
+@property (nonatomic) id source;
 
 /** @@taskunit Reloading Items from Represented Object or Source */
 
@@ -91,10 +95,8 @@
  
 /** @taskunit Controller and Delegate */
 
-- (COObject *) delegate;
-- (void) setDelegate: (COObject *)delegate;
-- (ETController *) controller;
-- (void) setController: (ETController *)aController;
+@property (nonatomic, assign) COObject *delegate;
+@property (nonatomic, strong) ETController *controller;
 
 /** @taskunit Layout */
 
@@ -104,13 +106,12 @@
 - (void) updateLayout;
 - (void) updateLayoutRecursively: (BOOL)recursively;
 - (void) updateLayoutIfNeeded;
-- (BOOL) needsLayoutUpdate;
+@property (nonatomic, readonly) BOOL needsLayoutUpdate;
 - (void) setNeedsLayoutUpdate;
 
 /** @taskunit Item Scaling */
 
-- (CGFloat) itemScaleFactor;
-- (void) setItemScaleFactor: (CGFloat)aFactor;
+@property (nonatomic) CGFloat itemScaleFactor;
 
 /** @taskunit Drawing */
 
@@ -120,32 +121,28 @@
 
 /** @taskunit Selection */
 
-- (NSUInteger) selectionIndex;
-- (void) setSelectionIndex: (NSUInteger)index;
-- (NSMutableIndexSet *) selectionIndexes;
-- (void) setSelectionIndexes: (NSIndexSet *)indexes;
-- (NSArray *) selectionIndexPaths;
-- (void) setSelectionIndexPaths: (NSArray *)indexPaths;
-- (BOOL) isChangingSelection;
+@property (nonatomic) NSUInteger selectionIndex;
+@property (nonatomic) NSIndexSet *selectionIndexes;
+@property (nonatomic) NSArray *selectionIndexPaths;
+@property (nonatomic, getter=isChangingSelection, readonly) BOOL changingSelection;
 
-- (NSArray *) selectedItems;
-- (NSArray *) selectedItemsInLayout;
-- (void) setSelectedItems: (NSArray *)items;
+@property (nonatomic) NSArray *selectedItems;
+@property (nonatomic, readonly) NSArray *selectedItemsInLayout;
 
 /** @taskunit Sorting and Filtering */
 
 - (void) sortWithSortDescriptors: (NSArray *)descriptors recursively: (BOOL)recursively;
 - (void) filterWithPredicate: (NSPredicate *)predicate recursively: (BOOL)recursively;
-- (NSArray *) arrangedItems;
-- (BOOL) isSorted;
-- (BOOL) isFiltered;
+
+@property (nonatomic, readonly) NSArray *arrangedItems;
+@property (nonatomic, getter=isSorted, readonly) BOOL sorted;
+@property (nonatomic, getter=isFiltered, readonly) BOOL filtered;
 
 /** @taskunit Actions */
 
-- (void) setDoubleAction: (SEL)selector;
-- (SEL) doubleAction;
-- (ETLayoutItem *) doubleClickedItem;
-- (BOOL) acceptsActionsForItemsOutsideOfFrame;
+@property (nonatomic) SEL doubleAction;
+@property (nonatomic, readonly) ETLayoutItem *doubleClickedItem;
+@property (nonatomic, readonly) BOOL acceptsActionsForItemsOutsideOfFrame;
 
 /** @taskunit Additions to ETCollectionMutation */
 
@@ -157,22 +154,25 @@
 /** @taskunit Layouting Context Protocol */
 
 - (void) setLayoutView: (NSView *)aView;
-- (NSArray *) visibleItems;
-- (NSArray *) exposedItems;
-- (void) setExposedItems: (NSArray *)items;
-- (NSSize) visibleContentSize;
+
+@property (nonatomic, readonly) NSArray *visibleItems;
+@property (nonatomic, copy) NSArray *exposedItems;
+@property (nonatomic, readonly) NSSize visibleContentSize;
+//@property (nonatomic, getter=isScrollable, readwrite) BOOL scrollable;
 
 /** @taskunit Framework Private */
 
-- (BOOL) canReload;
+@property (nonatomic, readonly) BOOL canReload;
+
 - (void) reload;
 - (void) didAttachItem: (ETLayoutItem *)item;
 - (void) handleAttachViewOfItem: (ETLayoutItem *)item;
 - (void) didDetachItem: (ETLayoutItem *)item;
 - (void) handleDetachViewOfItem: (ETLayoutItem *)item;
 - (void) didChangeSelection;
-- (id) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
-- (BOOL) isLayerItem;
+- (instancetype) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
+
+@property (nonatomic, readonly) BOOL isLayerItem;
 
 /** @taskunit Deprecated */
 

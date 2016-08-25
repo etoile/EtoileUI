@@ -17,7 +17,7 @@
 /** WARNING: Unstable API. */
 @interface ETLayoutItem (KVO)
 
-- (NSSet *) observableKeyPaths;
+@property (nonatomic, readonly) NSSet *observableKeyPaths;
 
 /* Framework Private */
 

@@ -28,6 +28,8 @@
 
 @implementation ETUIItem
 
+@dynamic editionCoordinator, firstResponderSharingArea;
+
 + (void) initialize
 {
 	if (self != [ETUIItem class])

@@ -36,7 +36,7 @@ transparently converts it to the right AppKit autoresizing mask by looking at
 whether the parent is flipped or not.
 
 See also ETContentAspect. */
-enum
+typedef NS_OPTIONS(NSUInteger, ETAutoresizing)
 {
 	ETAutoresizingNone = NSViewNotSizable, 
 /** Lets both the size and the position as is. */
@@ -59,7 +59,6 @@ to be resized. */
 /** Keeps both the top margin and the height fixed but allows the bottom margin 
 to be resized. */
 };
-typedef NSUInteger ETAutoresizing;
 
 /** Describes how the content looks when the layout item is resized.
 
@@ -75,7 +74,7 @@ how they should draw the properties they retrieve through the layout item.
 
 Some content aspects won't be applied to a view because they cannot be 
 translated into an autoresizing mask. */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETContentAspect)
 {
 	ETContentAspectNone, 
 /** Lets the content as is. */
@@ -100,7 +99,7 @@ content height and centers it. */
 	ETContentAspectStretchToFill
 /** Streches the content, by distorting it if needed, to the item content size 
 and centers it. A strech is a scale that doesn't preserve the content proportions. */
-} ETContentAspect;
+};
 
 /** You must never subclass ETLayoutItem. */
 @interface ETLayoutItem : ETUIItem <ETFragment>
@@ -152,20 +151,21 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 
 /** @taskunit Initialization */
 
-- (id) initWithView: (NSView *)view 
+- (instancetype) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
- objectGraphContext: (COObjectGraphContext *)aContext;
+ objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Description */
 
-- (NSString *) shortDescription;
+@property (nonatomic, readonly, copy) NSString *shortDescription;
 
 /** @taskunit Navigating the Item Tree */
 
-- (id) rootItem;
-- (ETLayoutItemGroup *) controllerItem;
-- (ETLayoutItemGroup *) sourceItem;
+@property (nonatomic, readonly) id rootItem;
+@property (nonatomic, readonly) ETLayoutItemGroup *controllerItem;
+@property (nonatomic, readonly) ETLayoutItemGroup *sourceItem;
+
 - (NSIndexPath *) indexPathFromItem: (ETLayoutItem *)item;
 - (NSIndexPath *) indexPathForItem: (ETLayoutItem *)item;
 
@@ -176,53 +176,47 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 For the root item, returns nil.
 
 If a host item is set, returns -hostItem. */
-@property (nonatomic, readonly) ETLayoutItemGroup *parentItem;
+@property (nonatomic, readonly, weak) ETLayoutItemGroup *parentItem;
 
 - (void) removeFromParent;
 
 /** @taskunit Other Ancestor Items */
 
-- (id) windowBackedAncestorItem;
-- (ETLayoutItemGroup *) ancestorItemForOpaqueLayout;
+@property (nonatomic, readonly) id windowBackedAncestorItem;
+@property (nonatomic, readonly) ETLayoutItemGroup *ancestorItemForOpaqueLayout;
 
 /** @taskunit Name and Identifier */
 
-- (NSString *) identifier;
-- (void) setIdentifier: (NSString *)anId;
-- (NSString *) name;
-- (void) setName: (NSString *)name;
-- (NSString *) displayName;
-- (void) setDisplayName: (NSString *)aName;
+@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, copy) NSString *displayName;
 
 /** @taskunit Native Widget */
 
 - (id) view;
 - (void) setView: (NSView *)newView;
-- (BOOL) usesWidgetView;
-- (id <ETWidget>) widget;
+@property (nonatomic, readonly) BOOL usesWidgetView;
+@property (nonatomic, readonly) id<ETWidget> widget;
 
 /** @taskunit Image and Icon */
 
-- (NSImage *) image;
-- (void) setImage: (NSImage *)img;
-- (NSImage *) icon;
-- (void) setIcon: (NSImage *)icon;
+@property (nonatomic, copy) NSImage *image;
+@property (nonatomic, copy) NSImage *icon;
+
 - (NSImage *) snapshotFromRect: (NSRect)aRect;
 
 /** @taskunit Presented Model */
 
-- (id) representedObject;
-- (void) setRepresentedObject: (id)modelObject;
-- (id) subject;
-- (BOOL) isMetaItem;
-- (id) valueKey;
-- (void) setValueKey: (NSString *)aValue;
-- (id) value;
-- (void) setValue: (id)value;
+@property (nonatomic, strong) id representedObject;
+@property (nonatomic, readonly) id subject;
+@property (nonatomic, readonly) BOOL isMetaItem;
+@property (nonatomic, copy) NSString *valueKey;
+@property (nonatomic) id value;
 
 /** @taskunit Property-Value Coding */
 
-- (BOOL) requiresKeyValueCodingForAccessingProperties;
+@property (nonatomic, readonly) BOOL requiresKeyValueCodingForAccessingProperties;
+
 - (id) valueForProperty: (NSString *)key;
 - (BOOL) setValue: (id)value forProperty: (NSString *)key;
 - (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key;
@@ -231,24 +225,20 @@ If a host item is set, returns -hostItem. */
 
 /** @taskunit Type Querying */
 
-- (BOOL) isLayoutItem;
-- (BOOL) isGroup;
+@property (nonatomic, readonly) BOOL isLayoutItem;
+@property (nonatomic, readonly) BOOL isGroup;
 
 /** @taskunit Selection and Visibility */
 
-- (void) setSelected: (BOOL)selected;
-- (BOOL) isSelected;
-- (void) setSelectable: (BOOL)selectable;
-- (BOOL) isSelectable;
-- (void) setHidden: (BOOL)hidden;
-- (BOOL) isHidden;
-- (BOOL) isVisible;
+@property (nonatomic, getter=isSelected) BOOL selected;
+@property (nonatomic, getter=isSelectable) BOOL selectable;
+@property (nonatomic, getter=isHidden) BOOL hidden;
+@property (nonatomic, getter=isVisible, readonly) BOOL visible;
 
 /** @taskunit Attached UTIs */
 
-- (ETUTI *) UTI;
-- (void) setSubtype: (ETUTI *)aUTI;
-- (ETUTI *) subtype;
+@property (nonatomic, readonly, copy) ETUTI *UTI;
+@property (nonatomic, copy) ETUTI *subtype;
 
 /** @taskunit Drawing */
 
@@ -259,8 +249,8 @@ If a host item is set, returns -hostItem. */
 
 /** @task Styles */
 
-- (ETStyleGroup *) styleGroup;
-- (void) setStyleGroup: (ETStyleGroup *)aStyle;
+@property (nonatomic, strong) ETStyleGroup *styleGroup;
+
 - (id) style;
 - (void) setStyle: (ETStyle *)aStyle;
 - (id) coverStyle;
@@ -293,56 +283,41 @@ If a host item is set, returns -hostItem. */
 
 /** @taskunit Decorator Items */
 
-- (ETScrollableAreaItem *) scrollableAreaItem;
-- (ETWindowItem *) windowItem;
+@property (nonatomic, readonly) ETScrollableAreaItem *scrollableAreaItem;
+@property (nonatomic, readonly) ETWindowItem *windowItem;
 
 /** @taskunit Outer Geometry */
 
-- (NSRect) frame;
-- (void) setFrame: (NSRect)rect;
-- (NSPoint) origin;
-- (void) setOrigin: (NSPoint)origin;
-- (NSPoint) anchorPoint;
-- (void) setAnchorPoint: (NSPoint)center;
-- (NSPoint) position;
-- (void) setPosition: (NSPoint)position;
-- (NSSize) size;
-- (void) setSize: (NSSize)size;
-- (CGFloat) x;
-- (void) setX: (CGFloat)x;
-- (CGFloat) y;
-- (void) setY: (CGFloat)y;
-- (CGFloat) height;
-- (void) setHeight: (CGFloat)height;
-- (CGFloat) width;
-- (void) setWidth: (CGFloat)width;
+@property (nonatomic) NSRect frame;
+@property (nonatomic) NSPoint origin;
+@property (nonatomic) NSPoint anchorPoint;
+@property (nonatomic) NSPoint position;
+@property (nonatomic) NSSize size;
+@property (nonatomic) CGFloat x;
+@property (nonatomic) CGFloat y;
+@property (nonatomic) CGFloat height;
+@property (nonatomic) CGFloat width;
 
 /** @taskunit Adjusting Hit Test and Display Area */
 
-- (NSRect) boundingBox;
-- (void) setBoundingBox: (NSRect)extent;
+@property (nonatomic) NSRect boundingBox;
 
 /** @taskunit Inner Geometry  */
 
-- (NSRect) contentBounds;
-- (void) setContentBounds: (NSRect)rect;
+@property (nonatomic) NSRect contentBounds;
 - (void) setContentSize: (NSSize)size;
-- (void) setTransform: (NSAffineTransform *)aTransform;
-- (NSAffineTransform *) transform;
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flip;
+@property (nonatomic, copy) NSAffineTransform *transform;
+@property (nonatomic, getter=isFlipped) BOOL flipped;
 
 /** @taskunit Fixed Geometry */
 
-- (NSRect) persistentFrame;
-- (void) setPersistentFrame: (NSRect) frame;
+@property (nonatomic) NSRect persistentFrame;
 
 /** @taskunit Autoresizing and Content Aspect */
 
-- (ETAutoresizing) autoresizingMask;
-- (void) setAutoresizingMask: (ETAutoresizing)mask;
-- (ETContentAspect) contentAspect;
-- (void) setContentAspect: (ETContentAspect)anAspect;
+@property (nonatomic) ETAutoresizing autoresizingMask;
+@property (nonatomic) ETContentAspect contentAspect;
+
 - (NSRect) contentRectWithRect: (NSRect)aRect 
                  contentAspect: (ETContentAspect)anAspect 
                     boundsSize: (NSSize)maxSize;
@@ -354,27 +329,26 @@ If a host item is set, returns -hostItem. */
 
 /** @taskunit Actions */
 
-- (id) actionHandler;
-- (void) setActionHandler: (id)anHandler;
-- (BOOL) acceptsActions;
+@property (nonatomic, strong) id actionHandler;
+@property (nonatomic, readonly) BOOL acceptsActions;
+@property (nonatomic, assign) id target;
+@property (nonatomic) SEL action;
+
 - (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)anItem;
-- (void) setTarget: (id)aTarget;
-- (id) target;
-- (void) setAction: (SEL)aSelector;
-- (SEL) action;
 
 /** @taskunit Editing */
 
 - (void) beginEditing;
 - (void) discardEditing;
 - (BOOL) commitEditing;
+
 - (void) subjectDidBeginEditingForProperty: (NSString *)aKey
                            fieldEditorItem: (ETLayoutItem *)aFieldEditorItem;
 - (void) subjectDidEndEditingForProperty: (NSString *)aKey;
 
 /** @taskunit API Conveniency */
 
-- (id) layout;
+@property (nonatomic, readonly, strong) id layout;
 
 @end
 

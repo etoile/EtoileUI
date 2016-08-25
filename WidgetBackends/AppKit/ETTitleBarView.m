@@ -19,7 +19,7 @@
 
 @implementation ETTitleBarView
 
-- (id) initWithFrame: (NSRect)rect
+- (instancetype) initWithFrame: (NSRect)rect
 {
 	self = [super initWithFrame: rect];
 	if (self == nil)
@@ -51,7 +51,7 @@
 	return self;
 }
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithFrame: NSMakeRect(0, 0, 100, 24)];
 }

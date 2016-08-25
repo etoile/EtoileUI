@@ -58,8 +58,7 @@ rather than -initWithObjectGraphContext:.  */
 
 /** @taskunit Aspect Sharing */
 
-- (BOOL) isShared;
-- (void) setIsShared: (BOOL)shared;
+@property (nonatomic, readwrite) BOOL isShared;
 
 /** @taskunit Style Rendering */
 

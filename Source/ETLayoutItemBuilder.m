@@ -29,14 +29,14 @@
 @implementation ETLayoutItemBuilder
 
 /** Returns a new autoreleased builder. */
-+ (id) builderWithObjectGraphContext: (COObjectGraphContext *)aContext
++ (instancetype) builderWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [[[self class] alloc] initWithObjectGraphContext: aContext];
 }
 
 /** <init />
 Initializes and returns the receiver builder. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	SUPERINIT
 	itemFactory = [ETLayoutItemFactory factoryWithObjectGraphContext: aContext];
@@ -63,7 +63,7 @@ Built method names follows the pattern <em>render</em> + <em>object type</em>. *
 
 @implementation ETEtoileUIBuilder
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

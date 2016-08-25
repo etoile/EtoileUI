@@ -15,6 +15,7 @@
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
+#import "ETLayoutItemGroup.h"
 #import "EtoileUIProperties.h"
 // FIXME: Add -sizeWithAttributes: or similar to the AppKit graphics backend
 #import "ETWidgetBackend.h"
@@ -25,7 +26,7 @@
 
 /** <init />
 Initializes and returns a new icon layout. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -175,7 +176,7 @@ value becomes the image size used to compute to the new item size.
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	id <ETFirstResponderSharingArea> responderArea = [[self layoutContext] firstResponderSharingArea];
+	id <ETFirstResponderSharingArea> responderArea = [[self contextItem] firstResponderSharingArea];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
 	if ([[[self layoutContext] arrangedItems] containsObject: [responderArea editedItem]])
@@ -216,7 +217,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	return D([NSFont labelFontOfSize: 12], NSFontAttributeName);
 }
 
-- (id) init
+- (instancetype) init
 {
 	SUPERINIT
 
@@ -336,7 +337,7 @@ the given indicator rect. */
 
 @implementation ETSelectAndClickTool
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

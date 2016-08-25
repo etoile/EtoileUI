@@ -44,7 +44,7 @@ graph context.
 
 For each ETLayoutItemFactory subclass, returns a distinct shared instance. 
 The object graph context remains the same accross all these shared instances. */
-+ (id) factory
++ (instancetype) factory
 {
 	return [self factoryWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 }
@@ -57,7 +57,7 @@ For each ETLayoutItemFactory subclass and object graph context combination,
 returns a distinct shared instance.
 
 For a nil context, raises an NSInvalidArgumentException. */
-+ (id) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext
++ (instancetype) factoryWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NILARG_EXCEPTION_TEST(aContext);
 
@@ -83,7 +83,7 @@ Intializes and returns an item factory that instantiates new items in the given
 object graph context.
  
 For a nil context, raises an NSInvalidArgumentException. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	NILARG_EXCEPTION_TEST(aContext);
 	INVALIDARG_EXCEPTION_TEST(aContext, [aContext isKindOfClass: [COObjectGraphContext class]]);
@@ -93,7 +93,7 @@ For a nil context, raises an NSInvalidArgumentException. */
 	return self;
 }
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithObjectGraphContext: nil];
 }

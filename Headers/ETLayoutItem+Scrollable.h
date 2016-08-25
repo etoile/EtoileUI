@@ -37,14 +37,11 @@ inserts or removes the scrollable area item.<br />
 A new scrollable area item has no visible scrollers. */
 @interface ETLayoutItem (Scrollable)
 
-- (BOOL) hasVerticalScroller;
-- (void) setHasVerticalScroller: (BOOL)scroll;
-- (BOOL) hasHorizontalScroller;
-- (void) setHasHorizontalScroller: (BOOL)scroll;
-- (BOOL) hasAnyVisibleScroller;
+@property (nonatomic) BOOL hasVerticalScroller;
+@property (nonatomic) BOOL hasHorizontalScroller;
+@property (nonatomic, readonly) BOOL hasAnyVisibleScroller;
 
-- (BOOL) isScrollable;
-- (void) setScrollable: (BOOL)show;
+@property (nonatomic, getter=isScrollable) BOOL scrollable;
 
 /* Framework Private */
 

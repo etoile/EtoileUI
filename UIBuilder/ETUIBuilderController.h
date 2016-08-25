@@ -14,8 +14,8 @@
 @class ETUIBuilderItemFactory, ETAspectRepository, ETItemValueTransformer;
 
 @protocol ETUIBuilderEditionCoordinator <ETEditionCoordinator>
-- (ETLayoutItem *) documentContentItem;
-- (ETAspectRepository *) aspectRepository;
+@property (nonatomic, readonly) ETLayoutItem *documentContentItem;
+@property (nonatomic, readonly) ETAspectRepository *aspectRepository;
 @end
 
 /** @group UI Builder

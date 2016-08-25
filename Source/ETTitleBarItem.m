@@ -35,7 +35,7 @@
 	[self tile];
 }
 
-- (id) initWithSupervisorView: (ETView *)aSupervisorView
+- (instancetype) initWithSupervisorView: (ETView *)aSupervisorView
            objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithSupervisorView: [[ETView alloc] init]

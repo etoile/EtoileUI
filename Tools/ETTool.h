@@ -74,17 +74,16 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /** @taskunit Initialization */
 
-+ (id) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (instancetype) toolWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Type Querying */
 
-- (BOOL) isTool;
+@property (nonatomic, readonly) BOOL isTool;
 
 /** @taskunit Targeted Item */
 
-- (ETLayoutItem *) targetItem;
-- (void) setTargetItem: (ETLayoutItem *)anItem;
+@property (nonatomic, strong) ETLayoutItem *targetItem;
 
 /** @taskunit Activation Hooks */
 
@@ -95,7 +94,8 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /** @taskunit Hit Test */
 
-- (ETLayoutItem *) hitItemForNil;
+@property (nonatomic, readonly) ETLayoutItem *hitItemForNil;
+
 - (ETLayoutItem *) hitTestWithEvent: (ETEvent *)anEvent;
 - (ETLayoutItem *) hitTest: (NSPoint)itemRelativePoint 
                  withEvent: (ETEvent *)anEvent 
@@ -132,21 +132,22 @@ double-click and deactivated on a mouse click outside of their layout boundaries
 
 /** @taskunit Cursor */
 
-- (NSString *) cursorName;
-- (void) setCursorName: (NSString *)aName;
+@property (nonatomic, copy) NSString *cursorName;
 
 /** @taskunit UI Utility */
 
 + (void) show: (id)sender;
-- (NSMenu *) menuRepresentation;
+
+@property (nonatomic, readonly) NSMenu *menuRepresentation;
 
 /** @taskunit Framework Private */
 
 + (ETUUID *) activeToolUUID;
 + (NSMutableArray *) hoveredItemStackForItem: (ETLayoutItem *)anItem;
 - (void) validateLayoutOwner: (ETLayout *)aLayout;
-- (ETLayout *) layoutOwner;
-- (NSCursor *) cursor;
+
+@property (nonatomic, readonly, weak) ETLayout *layoutOwner;
+@property (nonatomic, readonly, strong) NSCursor *cursor;
 
 // FIXME: Remove... clang complains about -[NSResponder performKeyEquivalent:] 
 // whose argument is NSEvent * and misses the declaration in the private category.

@@ -24,10 +24,10 @@
 @end
 
 @interface ETLayoutItemGroup (ETSource)
-- (BOOL) isReloading;
+@property (nonatomic, getter=isReloading, readonly) BOOL reloading;
 - (int) checkSourceProtocolConformance;
-- (NSArray *) itemsFromSourceWithIndexProtocol;
-- (NSArray *) itemsFromRepresentedObject;
+@property (nonatomic, readonly) NSArray *itemsFromSourceWithIndexProtocol;
+@property (nonatomic, readonly) NSArray *itemsFromRepresentedObject;
 @end
 
 

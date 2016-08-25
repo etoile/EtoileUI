@@ -29,7 +29,7 @@ The Nib name must not be a path. However it can be nil, but then -loadNib
 will look for a Nib whose name matches the receiver class name. See -nibName.
 
 The Nib bundle will be to be the main bundle if you pass nil. */
-- (id) initWithNibName: (NSString *)aNibName
+- (instancetype) initWithNibName: (NSString *)aNibName
                 bundle: (NSBundle *)aBundle
     objectGraphContext: (COObjectGraphContext *)aContext
 {
@@ -45,7 +45,7 @@ The Nib bundle will be to be the main bundle if you pass nil. */
 
 /** Initializes and returns a new Nib owner which uses the receiver class name 
 as the nib name to be found in the main bundle. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithNibName: nil bundle: nil objectGraphContext: aContext];
 }

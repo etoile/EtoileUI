@@ -41,9 +41,9 @@ default they return NO for -isShared unlike ETStyle.  */
 
 /** @taskunit Initialization */
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithStyle: (ETStyle *)aStyle objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithCollection: (id <ETCollection>)styles objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithStyle: (ETStyle *)aStyle objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithCollection: (id <ETCollection>)styles objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Style Collection */
 
@@ -52,9 +52,10 @@ default they return NO for -isShared unlike ETStyle.  */
 - (void) removeStyle: (ETStyle *)aStyle;
 - (void) removeAllStyles;
 - (BOOL) containsStyle: (ETStyle *)aStyle;
-- (id) firstStyle;
 - (id) firstStyleOfClass: (Class)aStyleClass;
-- (id) lastStyle;
+
+@property (nonatomic, readonly) id firstStyle;
+@property (nonatomic, readonly) id lastStyle;
 
 /** @taskunit Style Rendering */
 

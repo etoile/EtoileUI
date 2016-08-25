@@ -159,7 +159,7 @@
 		[ETPropertyDescription descriptionWithName: @"additionIndexPath" type: (id)@"NSIndexPath"];
 	[additionIndexPath setReadOnly: YES];
 	ETPropertyDescription *isEditing =
-		[ETPropertyDescription descriptionWithName: @"isEditing" type: (id)@"BOOL"];
+		[ETPropertyDescription descriptionWithName: @"editing" type: (id)@"BOOL"];
 	[isEditing setReadOnly: YES];
     ETPropertyDescription *editedItems =
         [ETPropertyDescription descriptionWithName: @"editedItems" type: (id)@"ETLayoutItem"];

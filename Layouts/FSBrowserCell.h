@@ -15,8 +15,7 @@
     NSImage *iconImage;
 }
 
-- (void) setIconImage: (NSImage *)image;
-- (NSImage *) iconImage;
+@property (nonatomic, copy) NSImage *iconImage;
 
 @end
 

@@ -154,7 +154,7 @@
 	[itemWindow setValueTransformerName: @"COObjectToArchivedData"];
 	[itemWindow setPersistentTypeName: @"NSData"];
 	ETPropertyDescription *shouldKeepWindowFrame =
-		[ETPropertyDescription descriptionWithName: @"isUntitled" type: (id)@"BOOL"];
+		[ETPropertyDescription descriptionWithName: @"shouldKeepWindowFrame" type: (id)@"BOOL"];
 	ETPropertyDescription *oldDecoratedItemAutoresizingMask =
 		[ETPropertyDescription descriptionWithName: @"oldDecoratedItemAutoresizingMask" type: (id)@"NSUInteger"];
 	// NOTE: We override ETUIItem.flipped to become persistent.

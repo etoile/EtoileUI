@@ -14,6 +14,6 @@
 
 @interface ETLayoutItemFactory (ETUIPatternAdditions)
 
-- (ETLayoutItemGroup *) objectPicker;
+@property (nonatomic, readonly) ETLayoutItemGroup *objectPicker;
 
 @end

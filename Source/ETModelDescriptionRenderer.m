@@ -50,12 +50,12 @@
 	return @"render";
 }
 
-+ (id) renderer
++ (instancetype) renderer
 {
 	return [[self alloc] init];
 }
 
-- (id) init
+- (instancetype) init
 {
 	SUPERINIT;
 	_templateItems = [NSMutableDictionary new];

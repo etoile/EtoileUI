@@ -39,7 +39,7 @@ The returned value transformer is registered among
 +[NSValueTransformer valueTransformerNames].
 
 For a nil name, raises an NSInvalidArgumentException. */
-- (id) initWithName: (NSString *)aName;
+- (instancetype) initWithName: (NSString *)aName NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Name */
 

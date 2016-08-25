@@ -44,8 +44,7 @@
 
 /** @taskunit Delegate */
 
-- (id) delegate;
-- (void) setDelegate: (id)aDelegate;
+@property (nonatomic, assign) id delegate;
 
 @end
 

@@ -24,7 +24,7 @@
 	return NSMakeRect(0, 0, 100, 50);
 }
 
-- (id) init
+- (instancetype) init
 {
 	return [self initWithFrame: [[self class] defaultFrame]];
 }

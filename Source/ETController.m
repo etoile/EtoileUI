@@ -35,6 +35,8 @@
 
 @implementation ETController
 
+@dynamic editionCoordinator, firstResponderSharingArea;
+
 + (void) initialize
 {
 	if ([ETController class] == self) 
@@ -70,7 +72,7 @@ Automatically registers basic templates for -currentObjectType and
 -currentGroupType. See -setTemplate:forType: and -templateForType:.
 
 You can also use it -init to create a controller. See -[ETNibOwner init]. */
-- (id) initWithNibName: (NSString *)aNibName
+- (instancetype) initWithNibName: (NSString *)aNibName
                 bundle: (NSBundle *)aBundle
     objectGraphContext: (COObjectGraphContext *)aContext
 {

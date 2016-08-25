@@ -17,12 +17,9 @@
 
 See -[ETLayoutItem widget]. */
 @protocol ETWidget
-- (id) target;
-- (void) setTarget: (id)aTarget;
-- (SEL) action;
-- (void) setAction: (SEL)aSelector;
-- (id) objectValue;
-- (void) setObjectValue: (id)aValue;
+@property (nonatomic, assign) id target;
+@property (nonatomic) SEL action;
+@property (nonatomic, strong) id objectValue;
 - (void) takeObjectValueFrom: (id)sender;
 - (id) objectValueForCurrentValue: (id)aValue;
 - (id) currentValueForObjectValue: (id)aValue;
@@ -50,20 +47,17 @@ See -formatter: and -[ETLayoutItem valueTransformerForProperty:]. */
 /** Returns the widget cell.
 
 If the widget is the item, returns nil. */
-- (NSActionCell *) cell;
+@property (nonatomic, readonly) NSActionCell *cell;
 @optional
 /** Returns the widget title.
  
 See -title. */
-- (NSString *) title;
+@property (nonatomic, copy) NSString *title;
 /** Sets the widget title and resets the image position for a nil or empty title.
  
 For example, a NSButton image position is reset to NSImageOnly.
  
 See -setTitle: */
-- (void) setTitle: (NSString *)aTitle;
-- (double) minValue;
-- (void) setMinValue: (double)aValue;
-- (double) maxValue;
-- (void) setMaxValue: (double)aValue;
+@property (nonatomic) double minValue;
+@property (nonatomic) double maxValue;
 @end

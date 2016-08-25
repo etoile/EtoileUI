@@ -36,39 +36,33 @@
 
 /** @taskunit Initialization */
 
-+ (id) renderer;
++ (instancetype) renderer;
 
 /** @taskunit Model Description Repository */
 
-- (ETModelDescriptionRepository *) repository;
+@property (nonatomic, readonly, strong) ETModelDescriptionRepository *repository;
 
 /** @taskunit Providing UI Templates */
 
 - (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier;
 - (id) templateItemForIdentifier: (NSString *)anIdentifier;
-- (NSArray *) templateItems;
+@property (nonatomic, readonly, copy) NSArray *templateItems;
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass;
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass;
 
 - (NSSize) defaultItemSize;
-- (NSSize) itemSize;
-- (void) setItemSize: (NSSize)aSize;
+@property (nonatomic) NSSize itemSize;
 
 /** @taskunit Customizing Generated UI */
 
 - (ETFormLayout *) defaultFormLayout;
 
-- (void) setEntityLayout: (ETLayout *)aLayout;
-- (ETLayout *) entityLayout;
-- (void) setEntityItemFrame: (NSRect)aRect;
-- (NSRect) entityItemFrame;
-- (BOOL) usesContentSizeLayout;
-- (void) setUsesContentSizeLayout: (BOOL)isContentSizeLayout;
+@property (nonatomic, strong) ETLayout *entityLayout;
+@property (nonatomic) NSRect entityItemFrame;
+@property (nonatomic) BOOL usesContentSizeLayout;
 
-- (void) setRenderedPropertyNames: (NSArray *)propertyNames;
-- (NSArray *) renderedPropertyNames;
-- (void) setGroupingKeyPath: (NSString *)aKeyPath;
-- (NSString *) groupingKeyPath;
+@property (nonatomic, copy) NSArray *renderedPropertyNames;
+@property (nonatomic, copy) NSString *groupingKeyPath;
 
 /** @taskunit Customizing Value Editing */
 

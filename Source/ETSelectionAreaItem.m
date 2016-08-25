@@ -16,7 +16,7 @@
 /** <init />
 Intializes and returns a selection area item based on a rectangle shape with a 
 dark gray outline, a light gray interior and an overall alpha value of 0.5. */
-- (id) initWithView: (NSView *)view 
+- (instancetype) initWithView: (NSView *)view 
          coverStyle: (ETStyle *)aStyle 
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext: (COObjectGraphContext *)aContext

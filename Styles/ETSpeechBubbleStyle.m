@@ -71,7 +71,7 @@
 	return [[ETSpeechBubbleStyle alloc] initWithStyle: style objectGraphContext: aContext];
 }
 
-- (id) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithStyle: (ETStyle *)style objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

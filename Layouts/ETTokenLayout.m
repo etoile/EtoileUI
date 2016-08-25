@@ -30,7 +30,7 @@
 
 /** <init />
 Initializes and returns a new token layout. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -170,7 +170,7 @@ becomes the token width.
 The resizing isn't delegated to the positional layout unlike in ETTemplateItemLayout. */
 - (void) resizeItems: (NSArray *)items toScaleFactor: (CGFloat)factor
 {
-	id <ETFirstResponderSharingArea> responderArea = [[self layoutContext] firstResponderSharingArea];
+	id <ETFirstResponderSharingArea> responderArea = [[self contextItem] firstResponderSharingArea];
 
 	/* We use -arrangedItems in case we receive only a subset to resize (not true currently) */
 	if ([[[self layoutContext] arrangedItems] containsObject: [responderArea editedItem]])
@@ -215,7 +215,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 	return [NSColor colorWithCalibratedRed: 0.5 green: 0.1 blue: 0.7 alpha: 0.8];
 }
 
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -318,7 +318,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 @synthesize editedProperty = _editedProperty;
 
-- (id) init
+- (instancetype) init
 {
 	SUPERINIT
 	_editedProperty = kETValueProperty;

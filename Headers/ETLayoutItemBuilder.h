@@ -21,7 +21,7 @@
 	ETLayoutItemFactory *itemFactory;
 }
 
-+ (id) builderWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (instancetype) builderWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
 - (id) render: (id)anObject;
 
@@ -38,8 +38,7 @@ and not into a layout when -allowsWidgetLayout returns YES. */
 	BOOL _allowsWidgetLayout;
 }
 
-- (BOOL) allowsWidgetLayout;
-- (void) setAllowsWidgetLayout: (BOOL)allowed;
+@property (nonatomic) BOOL allowsWidgetLayout;
 
 - (id) renderApplication: (NSApplication *)app;
 - (id) renderPasteboards: (NSArray *)pasteboards;

@@ -60,7 +60,7 @@ a label underneath. */
 /** <init />
 Initializes and returns a new basic item style with no visible label, 
 no max image and label size and no edge inset. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

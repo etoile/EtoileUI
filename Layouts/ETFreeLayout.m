@@ -21,7 +21,7 @@
 
 /** <init \> Initializes and returns a new layout without constraint on item size
 unlike ETPositionalLayout.  */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

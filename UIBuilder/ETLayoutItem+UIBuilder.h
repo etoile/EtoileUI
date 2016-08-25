@@ -17,21 +17,16 @@
 
 @interface ETLayoutItem (UIBuilder)
 
-- (ETTool *) attachedTool;
-- (void) setAttachedTool: (ETTool *)aTool;
+@property (nonatomic, strong) ETTool *attachedTool;
 
-- (NSString *) UIBuilderAction;
-- (void) setUIBuilderAction: (NSString *)aString;
+@property (nonatomic, copy) NSString *UIBuilderAction;
 
 
-- (void)setUIBuilderModel: (NSString *)aModel;
-- (NSString *)UIBuilderModel;
-- (void)setUIBuilderController: (NSString *)aController;
-- (NSString *)UIBuilderController;
+@property (nonatomic, copy) NSString *UIBuilderModel;
+@property (nonatomic, copy) NSString *UIBuilderController;
 
 @end
 
 @interface ETUIObject (UIBuilder)
-- (NSString *) instantiatedAspectName;
-- (void) setInstantiatedAspectName: (NSString *)aName;
+@property (nonatomic, copy) NSString *instantiatedAspectName;
 @end

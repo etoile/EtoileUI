@@ -122,7 +122,7 @@ The widget window is inserted in the responder chain between the receiver and
 -[ETLayoutItemFactory windowGroup].
 
 If window is nil, the receiver creates a standard widget backend window. */
-- (id) initWithWindow: (NSWindow *)window objectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithWindow: (NSWindow *)window objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithSupervisorView: nil objectGraphContext: aContext];
 	if (self == nil)
@@ -143,7 +143,7 @@ If window is nil, the receiver creates a standard widget backend window. */
 	return self;
 }
 
-- (id) initWithSupervisorView: (ETView *)aView objectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithSupervisorView: (ETView *)aView objectGraphContext: (COObjectGraphContext *)aContext
 {
 	return [self initWithWindow: nil objectGraphContext: aContext];
 }

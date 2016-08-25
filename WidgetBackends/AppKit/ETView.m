@@ -52,7 +52,7 @@ You should never need to use this method which uses internally by EtoileUI.
 The frame argument can be ignored.
 
 See also -[ETUIItem supervisorView]. */
-- (id) initWithFrame: (NSRect)frame
+- (instancetype) initWithFrame: (NSRect)frame
 {
 	self = [super initWithFrame: frame];
 	if (nil == self)

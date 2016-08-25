@@ -39,12 +39,10 @@ returns YES, otherwise the content height will match the proposed layout size
 
 /** @taskunit Flow Constraining and Streching */
 
-- (void) setLayoutSizeConstraintStyle: (ETSizeConstraintStyle)constraint;
-- (ETSizeConstraintStyle) layoutSizeConstraintStyle;
+@property (nonatomic) ETSizeConstraintStyle layoutSizeConstraintStyle;
 
 /** @taskunit Additions */
 
-- (BOOL) usesGrid;
-- (void) setUsesGrid: (BOOL)constraint;
+@property (nonatomic) BOOL usesGrid;
 
 @end

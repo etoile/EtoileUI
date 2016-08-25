@@ -43,23 +43,23 @@ hierarchy of the layout item tree. */
 /** @taskunit Initialization */
 
 + (Class) layoutClassForLayoutView: (NSView *)layoutView;
-- (id) initWithLayoutView: (NSView *)aView
-       objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithLayoutView: (NSView *)aView
+       objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Attribute and Type Querying */
 
-- (BOOL) isWidget;
-- (BOOL) isOpaque;
-- (BOOL) hasScrollers;
+@property (nonatomic, readonly) BOOL isWidget;
+@property (nonatomic, getter=isOpaque, readonly) BOOL opaque;
+@property (nonatomic, readonly) BOOL hasScrollers;
 
 /** @taskunit Nib Support */
 
-- (NSString *) nibName;
+@property (nonatomic, readonly) NSString *nibName;
 
 /** @taskunit Layout View */
 
-- (void) setLayoutView: (NSView *)aView;
-- (NSView *) layoutView;
+@property (nonatomic, strong) NSView *layoutView;
+
 - (void) setUpLayoutView;
 - (void) syncLayoutViewWithItem: (ETLayoutItem *)item;
 - (void) syncLayoutViewWithTool: (ETTool *)anTool;
@@ -67,18 +67,21 @@ hierarchy of the layout item tree. */
 /** @taskunit Selection */
 
 - (void) didChangeSelectionInLayoutView;
-- (NSArray *) selectionIndexPaths;
+
+@property (nonatomic, readonly) NSArray *selectionIndexPaths;
 
 /** @taskunit Actions */
 
-- (ETLayoutItem *) doubleClickedItem;
+@property (nonatomic, readonly) ETLayoutItem *doubleClickedItem;
+
 - (IBAction) doubleClick: (id)sender;
 
-- (id) responder;
+@property (nonatomic, readonly, strong) id responder;
 
 /** @taskunit Custom Widget Subclass */
 
-- (Class) widgetViewClass;
+@property (nonatomic, readonly) Class widgetViewClass;
+
 - (void) upgradeWidgetView: (id)widgetView toClass: (Class)aClass;
 
 @end

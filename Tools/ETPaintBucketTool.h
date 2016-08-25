@@ -10,11 +10,11 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETTool.h>
 
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETPaintMode)
 {
 	ETPaintModeFill,
 	ETPaintModeStroke
-} ETPaintMode;
+};
 
 /** @group Tools
 
@@ -32,13 +32,10 @@ TODO: Implement tolerance option. */
 
 /** @taskunit Interaction Settings */
 
-- (NSColor *) fillColor;
-- (void) setFillColor: (NSColor *)color;
-- (NSColor *) strokeColor;
-- (void) setStrokeColor: (NSColor *)color;
+@property (nonatomic, copy) NSColor *fillColor;
+@property (nonatomic, copy) NSColor *strokeColor;
 // NOTE: May be better named paintAction with ETStrokePaintAction...
-- (ETPaintMode) paintMode;
-- (void) setPaintMode: (ETPaintMode)aMode;
+@property (nonatomic) ETPaintMode paintMode;
 
 /** @taskunit Settings related Actions */
 

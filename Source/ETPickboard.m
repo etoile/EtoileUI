@@ -112,7 +112,7 @@ static ETPickboard *activePickboard = nil;
 }
 
 /** <init \> Initializes and returns a new pickboard. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)
@@ -375,14 +375,19 @@ If boxed is NO, returns nil when the pickboard is empty. */
 	[self applyTraitFromClass: [ETCollectionTrait class]];
 }
 
-+ (id) pickCollectionWithCollection: (id <ETCollection>)objects
++ (instancetype) pickCollectionWithCollection: (id <ETCollection>)objects
 {
 	return [(ETPickCollection *)[[self class] alloc] initWithCollection: objects];
 }
 
+- (instancetype) init
+{
+	return [self initWithCollection: @[]];
+}
+
 /** <init \> Initializes and returns a picked object set (known as a pick 
 collection) with the objects of the collection passed in parameter. */
-- (id) initWithCollection: (id <ETCollection>)objects
+- (instancetype) initWithCollection: (id <ETCollection>)objects
 {
 	SUPERINIT
 	_pickedObjects = [objects contentArray];

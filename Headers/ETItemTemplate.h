@@ -28,7 +28,7 @@ The receiver is responsible to handle the third URL cases as described:
 <item>valid is a 'Open' document request</item>
 <item>invalid is a 'New' document request to create at a precise URL</item>
 </list> */
-- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
+- (instancetype) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 @end
 
 /** A template that embeds both an item template and an object class template, 
@@ -54,25 +54,25 @@ model initialization. */
 
 /** @taskunit Initialization */
 
-+ (id) templateWithItem: (ETLayoutItem *)anItem
++ (instancetype) templateWithItem: (ETLayoutItem *)anItem
 			objectClass: (Class)aClass
      objectGraphContext: (COObjectGraphContext *)aContext;
-+ (id) templateWithItem: (ETLayoutItem *)anItem
++ (instancetype) templateWithItem: (ETLayoutItem *)anItem
              entityName: (NSString *)anEntityName
      objectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithItem: (ETLayoutItem *)anItem
+- (instancetype) initWithItem: (ETLayoutItem *)anItem
         objectClass: (Class)aClass
          entityName: (NSString *)anEntityName
- objectGraphContext: (COObjectGraphContext *)aContext;
+ objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
 /** @taskunit Properties */
 
-- (Class) objectClass;
-- (NSString *) entityName;
-- (ETLayoutItem *) item;
-- (ETLayoutItem *) contentItem;
-- (NSString *) baseName;
+@property (nonatomic, readonly, strong) Class objectClass;
+@property (nonatomic, readonly, copy) NSString *entityName;
+@property (nonatomic, readonly, strong) ETLayoutItem *item;
+@property (nonatomic, readonly) ETLayoutItem *contentItem;
+@property (nonatomic, readonly) NSString *baseName;
 
 /** @taskunit Template Instantiation & Saving */
 
@@ -84,8 +84,10 @@ model initialization. */
 - (BOOL) writeItem: (ETLayoutItem *)anItem 
              toURL: (NSURL *)aURL 
            options: (NSDictionary *)options;
-- (NSArray *) supportedTypes;
-- (NSURL *) URLFromRunningSavePanel;
+
+@property (nonatomic, readonly) NSArray *supportedTypes;
+@property (nonatomic, readonly) NSURL *URLFromRunningSavePanel;
+
 - (BOOL) allowsMultipleInstancesForURL: (NSURL *)aURL;
 - (NSString *) nameFromBaseNameAndOptions: (NSDictionary *)options;
 
@@ -107,5 +109,5 @@ Based on the context type, the receiver is inserted as a root object (along a
 new persistent root) or as a inner object into the context. 
 
 If the options contains no custom context, does the same than -init. */
-- (id) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
+- (instancetype) initWithURL: (NSURL *)aURL options: (NSDictionary *)options;
 @end

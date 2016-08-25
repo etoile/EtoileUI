@@ -42,7 +42,7 @@
 
 /* Basic Properties (extends Model category in EtoileFoundation) */
 
-- (NSImage *) icon;
+@property (nonatomic, readonly) NSImage *icon;
 
 /* Lively feeling */
 
@@ -63,15 +63,15 @@
 
 /* Event Dispatch */
 
-- (BOOL) isUIItem;
-- (BOOL) isLayoutItem;
-- (BOOL) isLayout;
-- (BOOL) isTool;
-- (BOOL) isView;
+@property (nonatomic, readonly) BOOL isUIItem;
+@property (nonatomic, readonly) BOOL isLayoutItem;
+@property (nonatomic, readonly) BOOL isLayout;
+@property (nonatomic, readonly) BOOL isTool;
+@property (nonatomic, readonly) BOOL isView;
 
 /* Debugging */
 
-- (NSString *) XMLArchive;
+@property (nonatomic, readonly) NSString *XMLArchive;
 
 /** @taskunit Synthesizing Scalar Field Accessors */
 
@@ -85,9 +85,9 @@
 
 /** See NSObject+Model in EtoileFoudation */
 @interface NSImage (EtoileModel)
-- (BOOL) isCommonObjectValue;
+@property (nonatomic, readonly) BOOL isCommonObjectValue;
 @end
 
 @interface ETKeyValuePair (EtoileUI)
-- (NSImage *) icon;
+@property (nonatomic, readonly) NSImage *icon;
 @end

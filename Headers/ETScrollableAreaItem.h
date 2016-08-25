@@ -35,25 +35,22 @@ decorated item returns NO to -isFlipped. */
 + (ETScrollableAreaItem *) itemWithScrollView: (NSScrollView *)scrollView
                            objectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithScrollView: (NSScrollView *)aScrollView
-       objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithScrollView: (NSScrollView *)aScrollView
+       objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
-- (NSRect) visibleRect;
-- (NSRect) visibleContentRect;
+@property (nonatomic, readonly) NSRect visibleRect;
+@property (nonatomic, readonly) NSRect visibleContentRect;
 
-- (BOOL) hasVerticalScroller;
-- (void) setHasVerticalScroller: (BOOL)scroll;
-- (BOOL) hasHorizontalScroller;
-- (void) setHasHorizontalScroller: (BOOL)scroll;
+@property (nonatomic) BOOL hasVerticalScroller;
+@property (nonatomic) BOOL hasHorizontalScroller;
 
-- (BOOL) ensuresContentFillsVisibleArea;
-- (void) setEnsuresContentFillsVisibleArea: (BOOL)flag;
+@property (nonatomic) BOOL ensuresContentFillsVisibleArea;
 
 // TODO: May be nicer to override -contentRect in ETScrollableAreaItem so that 
 // the content rect origin reflects the current scroll position.
 
 /**  @taskunit Framework Private */
 
-- (NSScrollView *) scrollView;
+@property (nonatomic, readonly) NSScrollView *scrollView;
 
 @end

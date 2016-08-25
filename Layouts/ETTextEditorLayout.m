@@ -19,7 +19,7 @@
 
 @dynamic delegate;
 
-- (id) initWithLayoutView: (NSView *)aView
+- (instancetype) initWithLayoutView: (NSView *)aView
        objectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithLayoutView: aView objectGraphContext: aContext];

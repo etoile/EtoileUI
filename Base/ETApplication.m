@@ -63,7 +63,7 @@ See +[NSObject typePrefix]. */
 	return @"ET";
 }
 
-- (id) init
+- (instancetype) init
 {
 	ETAssert([[self className] hasPrefix: [[self class] typePrefix]]);
 	SUPERINIT;

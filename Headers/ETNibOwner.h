@@ -88,20 +88,20 @@ would try to load the Nib file named "PreferencesPanel.nib". */
 	NSMutableArray *_topLevelObjects;
 }
 
-- (id) initWithNibName: (NSString *)aNibName
+- (instancetype) initWithNibName: (NSString *)aNibName
                 bundle: (NSBundle *)aBundle
-    objectGraphContext: (COObjectGraphContext *)aContext;
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
+    objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-- (NSString *) nibName;
-- (NSBundle *) nibBundle;
+@property (nonatomic, readonly, copy) NSString *nibName;
+@property (nonatomic, readonly, strong) NSBundle *nibBundle;
 
-- (BOOL) loadNib;
+@property (nonatomic, readonly) BOOL loadNib;
 - (BOOL) loadNibWithOwner: (id)anOwner;
 - (void) didLoadNib;
 
-- (NSMutableArray *) topLevelObjects;
-- (NSArray *) topLevelItems;
+@property (nonatomic, readonly) NSMutableArray *topLevelObjects;
+@property (nonatomic, readonly, copy) NSArray *topLevelItems;
 
 - (void) rebuildTopLevelObjectsWithBuilder: (id)aBuilder;
 - (id) rebuiltObjectForObject: (id)anObject builder: (id)aBuilder;

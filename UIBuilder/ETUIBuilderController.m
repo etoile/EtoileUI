@@ -39,7 +39,7 @@
 	imageValueTransformer = _imageValueTransformer,
 	typeValueTransformer = _typeValueTransformer;
 
-- (id) initWithNibName: (NSString *)aNibName
+- (instancetype) initWithNibName: (NSString *)aNibName
                 bundle: (NSBundle *)aBundle
     objectGraphContext: (COObjectGraphContext *)aContext
 {

@@ -58,7 +58,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 
 /* Initialization */
 
-- (id) initWithView: (NSView *)view
+- (instancetype) initWithView: (NSView *)view
          coverStyle: (ETStyle *)aStyle
       actionHandler: (ETActionHandler *)aHandler
  objectGraphContext: (COObjectGraphContext *)aContext
@@ -87,7 +87,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 You should never need to use this method.
 
 See also -isLayerItem. */
-- (id) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	_isLayerItem = YES;
 	self = [self initWithView: nil coverStyle: nil actionHandler: nil objectGraphContext: aContext];
@@ -1217,7 +1217,7 @@ the receiver.
 
 Put in another way, the method returns the first index of all index paths with a
 length equal one. */
-- (NSMutableIndexSet *) selectionIndexes
+- (NSIndexSet *) selectionIndexes
 {
 	NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
 
@@ -1819,6 +1819,15 @@ See -[ETController nextResponder]. */
 - (NSSize) visibleContentSize
 {
 	return [self visibleContentBounds].size;
+}
+
+/* Redeclared for conformance with ETLayoutingContext.scrollable. Declaring 
+the property in the header again and marking it as dynamic doesn't cut it, since 
+this +[COObject resolveInstanceMethod: would synthesize new methods rather than 
+doing nothing. */
+- (BOOL) isScrollable
+{
+	return [super isScrollable];
 }
 
 /** This method is only exposed to be used internally by EtoileUI.

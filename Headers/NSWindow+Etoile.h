@@ -20,21 +20,21 @@
 
 + (NSUInteger) defaultStyleMask;
 
-- (id) init;
-- (id) initWithFrame: (NSRect)frame styleMask: (NSUInteger)windowStyle;
-- (id) initWithContentRect: (NSRect)frame styleMask: (NSUInteger)windowStyle;
+- (instancetype) init;
+- (instancetype) initWithFrame: (NSRect)frame styleMask: (NSUInteger)windowStyle;
+- (instancetype) initWithContentRect: (NSRect)frame styleMask: (NSUInteger)windowStyle;
 
-- (ETLayoutItem *) candidateFocusedItem;
+@property (nonatomic, readonly) ETLayoutItem *candidateFocusedItem;
 
 - (void) setFrameSizeFromTopLeft: (NSSize)size;
 - (void) setContentSizeFromTopLeft: (NSSize)size;
-- (NSPoint) topLeftPoint;
 
-- (NSRect) frameRectInContent;
-- (NSRect) contentRectInFrame;
+@property (nonatomic, readonly) NSPoint topLeftPoint;
+@property (nonatomic, readonly) NSRect frameRectInContent;
+@property (nonatomic, readonly) NSRect contentRectInFrame;
 
-- (BOOL) isSystemPrivateWindow;
-- (BOOL) isCacheWindow;
+@property (nonatomic, readonly) BOOL isSystemPrivateWindow;
+@property (nonatomic, readonly) BOOL isCacheWindow;
 
 - (IBAction) browse: (id)sender;
 
@@ -49,10 +49,8 @@
 
 /** Full screen window which can become key. */
 @interface ETFullScreenWindow : NSWindow
-
-- (id) init;
-- (BOOL) canBecomeKeyWindow;
-
+- (instancetype) init;
+@property (nonatomic, readonly) BOOL canBecomeKeyWindow;
 @end
 
 

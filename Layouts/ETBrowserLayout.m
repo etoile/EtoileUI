@@ -420,7 +420,7 @@ related NSBrowser methods are called. */
 
 // FIXME: We should remove this hack to simulate we are a scrollview.
 @interface NSBrowser (EtoileETBrowserLayout)
-- (NSView *) documentView;
+@property (nonatomic, readonly, strong) NSView *documentView;
 @end
 
 @implementation NSBrowser (EtoileETBrowserLayout)

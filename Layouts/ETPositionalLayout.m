@@ -27,7 +27,7 @@ Returns a new positional layout.
 The returned layout has both vertical and horizontal constraint on item size 
 enabled. The size constraint is set to 256 * 256 px. You can customize item size 
 constraint with -setItemSizeConstraint: and -setConstrainedItemSize:. */
-- (id) initWithObjectGraphContext: (COObjectGraphContext *)aContext
+- (instancetype) initWithObjectGraphContext: (COObjectGraphContext *)aContext
 {
 	self = [super initWithObjectGraphContext: aContext];
 	if (self == nil)

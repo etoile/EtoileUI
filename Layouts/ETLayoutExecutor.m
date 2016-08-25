@@ -39,7 +39,7 @@ static ETLayoutExecutor *sharedInstance = nil;
 
 /* <init />
 Initializes and returns a new layout executor. */
-- (id) init
+- (instancetype) init
 {
 	SUPERINIT;
 	_scheduledItems = [[NSMutableSet alloc] init];

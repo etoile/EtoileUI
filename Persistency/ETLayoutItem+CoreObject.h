@@ -21,26 +21,24 @@
 /** Returns the owning compound document, or nil if the receiver is not persisted. 
 
 The owning compound document is an ancestor item. */
-- (ETLayoutItemGroup *) compoundDocument;
+@property (nonatomic, readonly) ETLayoutItemGroup *compoundDocument;
 
 /** @taskunit UI Persistency */
 
-- (NSString *) persistentUIName;
-- (void) setPersistentUIName: (NSString *)aName;
-- (ETLayoutItem *) persistentUIItem;
-- (BOOL) isEditingUI;
-- (void) setEditingUI: (BOOL)editing;
+@property (nonatomic, copy) NSString *persistentUIName;
+@property (nonatomic, readonly) ETLayoutItem *persistentUIItem;
+@property (nonatomic, getter=isEditingUI) BOOL editingUI;
 
 @end
 
 @interface ETLayoutItemGroup (CoreObject) 
 /** Returns whether the receiver is a compound document (aka root object). */
-- (BOOL) isCompoundDocument;
+@property (nonatomic, readonly) BOOL isCompoundDocument;
 /** Returns descendant items of the receiver which are compound documents.
 
 When a compound document is collected, its subtree is not visited.<br />
 The receiver is not included in the returned set. */
-- (NSSet *) descendantCompoundDocuments;
+@property (nonatomic, readonly) NSSet *descendantCompoundDocuments;
 @end
 
 

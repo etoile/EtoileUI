@@ -22,8 +22,8 @@ NSString * const kETCachedScrollableAreaDecoratorItem = @"cachedScrollViewDecora
 - (void) hidesScrollableAreaItem;
 - (void) unhidesScrollableAreaItem;
 - (void) cacheScrollableAreaItem: (ETScrollableAreaItem *)decorator;
-- (ETScrollableAreaItem *) cachedScrollableAreaItem;
-- (ETScrollableAreaItem *) createScrollableAreaItem  NS_RETURNS_RETAINED;
+@property (nonatomic, readonly) ETScrollableAreaItem *cachedScrollableAreaItem;
+- (ETScrollableAreaItem *)createScrollableAreaItem  NS_RETURNS_RETAINED;
 @end
 
 

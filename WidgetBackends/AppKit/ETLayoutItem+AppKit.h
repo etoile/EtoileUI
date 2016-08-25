@@ -14,6 +14,5 @@
  
 @abstract Category to integrate ETLayoutItem and AppKit widgets */
 @interface ETLayoutItem (ETAppKitWidgetBackend)
-- (BOOL) isEditing;
-- (void) setEditing: (BOOL)editing;
+@property (nonatomic, getter=isEditing) BOOL editing;
 @end

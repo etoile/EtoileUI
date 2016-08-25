@@ -43,9 +43,10 @@ integration etc.) without having to resort to another API. */
 
 - (NSArray *) itemsForType: (ETUTI *)aUTI;
 - (NSArray *) itemsForURL: (NSURL *)aURL;
-- (NSArray *) documentItems;
-- (id) activeItem;
-- (NSUInteger) numberOfUntitledDocuments;
+
+@property (nonatomic, readonly) NSArray *documentItems;
+@property (nonatomic, readonly, strong) id activeItem;
+@property (nonatomic, readonly) NSUInteger numberOfUntitledDocuments;
 
 /** @taskunit Insertion */
 
@@ -89,7 +90,7 @@ integration etc.) without having to resort to another API. */
 
 /** @taskunit Error Reporting */
 
-- (NSError *) error;
+@property (nonatomic, readonly) NSError *error;
 
 @end
 

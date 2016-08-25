@@ -50,21 +50,21 @@ view, you must override -contentRect at least. You might also override
 	ETUIItem *_decoratedItem; // previous decorator (weak reference)
 }
 
-+ (id) itemWithObjectGraphContext: (COObjectGraphContext *)aContext;
++ (instancetype) itemWithObjectGraphContext: (COObjectGraphContext *)aContext;
 
-- (id) initWithSupervisorView: (ETView *)aSupervisorView
-           objectGraphContext: (COObjectGraphContext *)aContext;
+- (instancetype) initWithSupervisorView: (ETView *)aSupervisorView
+           objectGraphContext: (COObjectGraphContext *)aContext NS_DESIGNATED_INITIALIZER;
 
-- (BOOL) usesWidgetView;
+@property (nonatomic, readonly) BOOL usesWidgetView;
 
 /* Decoration Geometry */
 
 - (void) setDecorationRect: (NSRect)rect;
 - (void) setAutoresizingMask: (unsigned int)aMask;
 
-- (NSRect) visibleRect;
-- (NSRect) visibleContentRect;
-- (NSRect) contentRect;
+@property (nonatomic, readonly) NSRect visibleRect;
+@property (nonatomic, readonly) NSRect visibleContentRect;
+@property (nonatomic, readonly) NSRect contentRect;
 
 - (NSRect) convertDecoratorRectFromContent: (NSRect)rectInContent;
 - (NSPoint) convertDecoratorPointFromContent: (NSPoint)aPoint;
@@ -72,8 +72,7 @@ view, you must override -contentRect at least. You might also override
 - (NSPoint) convertDecoratorPointToContent: (NSPoint)aPoint;
 - (NSSize) decorationSizeForContentSize: (NSSize)aSize;
 
-- (BOOL) isFlipped;
-- (void) setFlipped: (BOOL)flipped;
+@property (nonatomic, getter=isFlipped) BOOL flipped;
 
 /* Subclass Hooks */
 

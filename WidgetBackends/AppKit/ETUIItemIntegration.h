@@ -20,13 +20,13 @@
 /** @taskunit Initialization */
 
 + (NSRect) defaultFrame;
-- (id) init;
+- (instancetype) init;
 
 /** @taskunit UI Item Interaction */
 
-- (BOOL) isWidget;
-- (BOOL) isSupervisorView;
-- (id) owningItem;
+@property (nonatomic, readonly) BOOL isWidget;
+@property (nonatomic, readonly) BOOL isSupervisorView;
+@property (nonatomic, readonly, strong) id owningItem;
 
 @end
 
@@ -38,7 +38,7 @@
 
 /** @taskunit UI Item Interaction */
 
-- (BOOL) isWidget;
+@property (nonatomic, readonly) BOOL isWidget;
 
 /** @taskunit Copying */
 
@@ -67,7 +67,7 @@
  
 @abstract Additions to integrate NSImageView and ETLayoutItem. */
 @interface NSImageView (ETUIItemSupportAdditions)
-- (BOOL) isWidget;
+@property (nonatomic, getter=isWidget, readonly) BOOL widget;
 @end
 
 
@@ -75,6 +75,6 @@
  
 @abstract Additions to integrate NSScrollView and ETUIItem. */
 @interface NSScrollView (ETUIItemSupportAdditions)
-- (BOOL) isWidget;
-- (id) cell;
+@property (nonatomic, getter=isWidget, readonly) BOOL widget;
+@property (nonatomic, readonly, strong) id cell;
 @end

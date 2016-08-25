@@ -19,11 +19,11 @@
 
 /** Enum used internally by EtoileUI to synchronize supervisor view and item 
 properties. */
-typedef enum : NSUInteger
+typedef NS_ENUM(NSUInteger, ETSyncSupervisorView)
 {
 	ETSyncSupervisorViewToItem,
 	ETSyncSupervisorViewFromItem
-} ETSyncSupervisorView;
+};
 
 // TODO: Turn this class into a mixin and a protocol
 
@@ -66,12 +66,13 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 
 /** @taskunit Supervisor View and View */
 
-- (BOOL) usesWidgetView;
-- (BOOL) isFlipped;
-- (ETView *) supervisorView;
+@property (nonatomic, readonly) BOOL usesWidgetView;
+@property (nonatomic, getter=isFlipped, readonly) BOOL flipped;
+@property (nonatomic, strong) ETView *supervisorView;
+
 - (void) setSupervisorView: (ETView *)aView sync: (ETSyncSupervisorView)syncDirection;
-- (void) setSupervisorView: (ETView *)aView;
-- (ETView *) displayView;
+
+@property (nonatomic, readonly) ETView *displayView;
 
 /** @taskunit Drawing */
 
@@ -81,16 +82,18 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 
 /** @taskunit Accessing and Manipulating Decoration */
 
-- (ETDecoratorItem *) decoratorItem;
-- (void) setDecoratorItem: (ETDecoratorItem *)decorator;
-- (void) removeDecoratorItem: (ETDecoratorItem *)decorator;
-- (id) lastDecoratorItem;
-- (ETUIItem *) decoratedItem;
-- (id) firstDecoratedItem;
-- (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
-- (NSRect) decorationRect;
+@property (nonatomic, strong) ETDecoratorItem *decoratorItem;
 
+- (void) removeDecoratorItem: (ETDecoratorItem *)decorator;
+
+@property (nonatomic, readonly) id lastDecoratorItem;
+@property (nonatomic, readonly, weak) ETUIItem *decoratedItem;
+@property (nonatomic, readonly) id firstDecoratedItem;
+
+- (BOOL) acceptsDecoratorItem: (ETDecoratorItem *)item;
 - (ETUIItem *) decoratorItemAtPoint: (NSPoint)aPoint;
+
+@property (nonatomic, readonly) NSRect decorationRect;
 
 /** @taskunit Decoration Notifications */
 
@@ -99,28 +102,30 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 
 /* @taskunit Basic Type Querying */
 
-- (BOOL) isUIItem;
+@property (nonatomic, readonly) BOOL isUIItem;
 
 /** @taskunit Decoration Type Querying */
 
-- (BOOL) isDecoratorItem;
-- (BOOL) isWindowItem;
-- (BOOL) isScrollableAreaItem;
+@property (nonatomic, readonly) BOOL isDecoratorItem;
+@property (nonatomic, readonly) BOOL isWindowItem;
+@property (nonatomic, readonly) BOOL isScrollableAreaItem;
 
 /** @taskunit Enclosing Item */
 
-- (id) enclosingItem;
+@property (nonatomic, readonly) id enclosingItem;
+
 - (NSRect) convertRectToEnclosingItem: (NSRect)aRect;
 - (NSPoint) convertPointToEnclosingItem: (NSPoint)aPoint;
 
 /** @taskunit Actions */
 
-- (id) nextResponder;
-- (ETLayoutItem *) candidateFocusedItem;
+@property (nonatomic, readonly) id nextResponder;
+@property (nonatomic, readonly) ETLayoutItem *candidateFocusedItem;
 
 /** @taskunit Framework Private */
 
-- (BOOL) shouldSyncSupervisorViewGeometry;
+@property (nonatomic, readonly) BOOL shouldSyncSupervisorViewGeometry;
+
 - (void) syncSupervisorViewGeometry: (ETSyncSupervisorView)syncDirection;
 - (NSRect) convertDisplayRect: (NSRect)rect 
         toAncestorDisplayView: (NSView **)aView 

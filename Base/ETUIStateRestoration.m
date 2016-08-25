@@ -19,7 +19,7 @@
 
 @synthesize delegate = _delegate;
 
-- (id) init
+- (instancetype) init
 {
 	SUPERINIT;
 	_UICreationInvocations = [NSMutableDictionary new];

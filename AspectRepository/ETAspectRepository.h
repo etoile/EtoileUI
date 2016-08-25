@@ -34,7 +34,8 @@ You shouldn't use the superclass API to interact with a repository. */
 - (id) aspectCategoryNamed: (NSString *)aName;
 - (void) addAspectCategory: (ETAspectCategory *)aCategory;
 - (void) removeAspectCategory: (ETAspectCategory *)aCategory;
-- (NSArray *) categoryNames;
+
+@property (nonatomic, readonly, copy) NSArray *categoryNames;
 
 @end
 

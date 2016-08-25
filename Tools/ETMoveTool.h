@@ -36,8 +36,7 @@ move, translate and drag behaviors. */
 
 /** @taskunit Interaction Settings */
 
-- (BOOL) shouldProduceTranslateActions;
-- (void) setShouldProduceTranslateActions: (BOOL)translate;
+@property (nonatomic) BOOL shouldProduceTranslateActions;
 
 /** @taskunit Event Handlers */
 
@@ -46,8 +45,8 @@ move, translate and drag behaviors. */
 
 /** @taskunit Interaction Status */
 
-- (BOOL) isMoving;
-- (id) movedItem;
+@property (nonatomic, getter=isMoving, readonly) BOOL moving;
+@property (nonatomic, readonly, strong) id movedItem;
 
 /** @taskunit Translate Action Producer */
 
@@ -55,16 +54,16 @@ move, translate and drag behaviors. */
 - (void) translateToPoint: (NSPoint)eventLoc;
 - (void) translateByDelta: (NSSize)aDelta;
 - (void) endTranslate;
-- (BOOL) isTranslating;
+@property (nonatomic, getter=isTranslating, readonly) BOOL translating;
 
 /** @taskunit Drag Action Producer */
 
 - (void) beginDragItem: (ETLayoutItem *)item withEvent: (ETEvent *)anEvent;
 - (void) endDrag;
-- (BOOL) isDragging;
+@property (nonatomic, getter=isDragging, readonly) BOOL dragging;
 
 /** @taskunit Targeted Action Handler */
 
-- (id) actionHandler;
+@property (nonatomic, readonly) id actionHandler;
 
 @end
