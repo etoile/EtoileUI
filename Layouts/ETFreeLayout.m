@@ -39,7 +39,7 @@ unlike ETPositionalLayout.  */
 - (void) willDiscard
 {
 	/* Release the observed items */
-	[self updateKVOForItems: [NSArray array]];
+	[self updateKVOForItems: @[]];
 	[super willDiscard];
 }
 
@@ -123,7 +123,7 @@ unlike ETPositionalLayout.  */
 	if (_areHandlesHidden)
 		return;
 
-	BOOL selected = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
+	BOOL selected = [change[NSKeyValueChangeNewKey] boolValue];
 	
 	if (selected)
 	{

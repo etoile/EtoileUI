@@ -35,7 +35,7 @@
 	ETPropertyCollectionController *controller =
 		[ETModelBuilderRelationshipController new];
 	ETLayoutItemGroup *editor = [itemFactory collectionEditorWithSize: [aRenderer defaultItemSize]
-							                         representedObject: [NSArray array]
+							                         representedObject: @[]
 									                        controller: controller];
 	return editor;
 }

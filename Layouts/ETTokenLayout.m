@@ -206,7 +206,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 + (NSDictionary *) defaultSelectedLabelAttributes
 {
 	NSMutableDictionary *newAttributes = [[self standardLabelAttributes] mutableCopy];
-	[newAttributes setObject: [NSColor whiteColor] forKey: NSForegroundColorAttributeName];
+	newAttributes[NSForegroundColorAttributeName] = [NSColor whiteColor];
 	return [newAttributes copy];
 }
 

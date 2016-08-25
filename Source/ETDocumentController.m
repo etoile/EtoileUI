@@ -84,8 +84,7 @@ to open multiple instances of the same document (e.g. a web browser). */
 {
 	NSMutableDictionary *options = [[super defaultOptions] mutableCopy];
 
-	[options setObject: [NSNumber numberWithInteger: [self numberOfUntitledDocuments]]
-	            forKey: kETTemplateOptionNumberOfUntitledDocuments];
+	options[kETTemplateOptionNumberOfUntitledDocuments] = [NSNumber numberWithInteger: [self numberOfUntitledDocuments]];
 
 	return [options copy];
 }
@@ -227,7 +226,7 @@ By default, returns the item represented object UTI, otherwise the item UTI. */
 
 	ETLog(@"Will run open panel for document types %@", [op allowedFileTypes]);
 
-	return ([op runModal] == NSFileHandlingPanelOKButton ? [op URLs] : [NSArray array]);
+	return ([op runModal] == NSFileHandlingPanelOKButton ? [op URLs] : @[]);
 }
 
 /** Creates a new object of the current object type and adds it to the receiver 

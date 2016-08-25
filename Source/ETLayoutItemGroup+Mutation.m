@@ -423,7 +423,7 @@ is an item group. */
 - (NSArray *) itemsFromRepresentedObject
 {
 	if ([[self representedObject] isCollection] == NO)
-        return [NSArray array];
+        return @[];
 
     NSMutableArray *items = nil;
     id collection = [self representedObject];

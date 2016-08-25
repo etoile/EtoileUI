@@ -83,12 +83,12 @@
 
 - (void) setTemplateItem: (ETLayoutItem *)anItem forIdentifier: (NSString *)anIdentifier
 {
-	[_templateItems setObject: anItem forKey: anIdentifier];
+	_templateItems[anIdentifier] = anItem;
 }
 
 - (id) templateItemForIdentifier: (NSString *)anIdentifier
 {
-	return [_templateItems objectForKey: anIdentifier];
+	return _templateItems[anIdentifier];
 }
 
 /** Returns all the template items.
@@ -136,7 +136,7 @@ time. For example:
 	ETPropertyCollectionController *controller = [[ETPropertyCollectionController alloc]
 		initWithObjectGraphContext: [_itemFactory objectGraphContext]];
 	ETLayoutItemGroup *editor = [_itemFactory collectionEditorWithSize: [self defaultItemSize]
-							                         representedObject: [NSArray array]
+							                         representedObject: @[]
 									                        controller: controller];
 	NSFont *smallFont = [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]];
 	[[[(ETLayoutItemGroup *)[editor itemForIdentifier: @"browser"] layout] ifResponds] setContentFont: smallFont];
@@ -199,12 +199,12 @@ time. For example:
 
 - (void) setTemplateIdentifier: (NSString *)anIdentifier forRoleClass: (Class)aClass
 {
-	[_additionalTemplateIdentifiers setObject: anIdentifier forKey: [aClass className]];
+	_additionalTemplateIdentifiers[[aClass className]] = anIdentifier;
 }
 
 - (NSString *) templateIdentifierForRoleClass: (Class)aClass
 {
-	return [_additionalTemplateIdentifiers objectForKey: [aClass className]];
+	return _additionalTemplateIdentifiers[[aClass className]];
 }
 
 - (void) registerDefaultRoleTemplateIdentifiers
@@ -392,15 +392,15 @@ See also -setRenderedPropertyNames:. */
 
 	[propertyItems enumerateObjectsUsingBlock: ^ (id item, NSUInteger i, BOOL *stop)
 	{
-		id groupingValue = [[propertyDescs objectAtIndex: i] valueForKeyPath: aKeyPath];
+		id groupingValue = [propertyDescs[i] valueForKeyPath: aKeyPath];
 		NSString *name = [self displayNameForGroupingValue: groupingValue];
-		ETLayoutItemGroup *itemGroup = [itemGroupsByName objectForKey: name];
+		ETLayoutItemGroup *itemGroup = itemGroupsByName[name];
 
 		if (itemGroup == nil)
 		{
 			itemGroup = [self newItemGroupForGroupingName: name width: anItemWidth];
 
-			[itemGroupsByName setObject: itemGroup forKey: name];
+			itemGroupsByName[name] = itemGroup;
 			[groupNames addObject: name];
 		}
 		[itemGroup addItem: item];
@@ -412,7 +412,7 @@ See also -setRenderedPropertyNames:. */
 
 	for (NSString *name in groupNames)
 	{
-		ETLayoutItemGroup *itemGroup = [itemGroupsByName objectForKey: name];
+		ETLayoutItemGroup *itemGroup = itemGroupsByName[name];
 
 		[[[itemGroup layout] positionalLayout] setIsContentSizeLayout: NO];
 		[itemGroup setWidth: anItemWidth];
@@ -438,7 +438,7 @@ See also -setRenderedPropertyNames:. */
 	
 	do
 	{
-		formatter = [_formattersByType objectForKey: [aType name]];
+		formatter = _formattersByType[[aType name]];
 	}
 	while ((type = [type parent]) != nil);
 
@@ -447,7 +447,7 @@ See also -setRenderedPropertyNames:. */
 
 - (void) setFormatter: (NSFormatter *)aFormatter forType: (ETEntityDescription *)aType
 {
-	[_formattersByType setObject: aFormatter forKey: [aType name]];
+	_formattersByType[[aType name]] = aFormatter;
 }
 
 - (ETItemValueTransformer *) valueTransformerForType: (ETEntityDescription *)aType
@@ -457,7 +457,7 @@ See also -setRenderedPropertyNames:. */
 	
 	do
 	{
-		transformer = [_valueTransformersByType objectForKey: [aType name]];
+		transformer = _valueTransformersByType[[aType name]];
 	}
 	while ((type = [type parent]) != nil);
 
@@ -467,7 +467,7 @@ See also -setRenderedPropertyNames:. */
 - (void) setValueTransformer: (ETItemValueTransformer *)aTransformer
                      forType: (ETEntityDescription *)aType
 {
-	[_valueTransformersByType setObject: aTransformer forKey: [aType name]];
+	_valueTransformersByType[[aType name]] = aTransformer;
 }
 
 - (NSString *) labelForPropertyDescription: (ETPropertyDescription *)aPropertyDesc
@@ -1006,7 +1006,7 @@ See also -setRenderedPropertyNames:. */
 		
 		for (int i = 0; i < [popUpView numberOfItems] && i < [entryModels count]; i++)
 		{
-			id repObject = [entryModels objectAtIndex: i];
+			id repObject = entryModels[i];
 			
 			if ([repObject isEqual: [NSNull null]])
 			{
@@ -1054,8 +1054,7 @@ See also -setRenderedPropertyNames:. */
 
 	ETAssert([self modelDescriptionRepository] != nil);
 	
-	[options setObject: [self modelDescriptionRepository]
-				forKey: kETTemplateOptionModelDescriptionRepository];
+	options[kETTemplateOptionModelDescriptionRepository] = [self modelDescriptionRepository];
 
 	return [options copy];
 }

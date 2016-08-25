@@ -96,8 +96,7 @@ static ETIdentityValueTransformer *identityTransformer = nil;
 
 		[collection enumerateKeysAndObjectsUsingBlock: ^ (id key, id obj, BOOL *stop)
 		{
-			[serializedCollection setObject: [valueTransformer transformedValue: obj]
-									 forKey: [keyTransformer transformedValue: key]];
+			serializedCollection[[keyTransformer transformedValue: key]] = [valueTransformer transformedValue: obj];
 		}];
 	}
 	else
@@ -125,8 +124,7 @@ static ETIdentityValueTransformer *identityTransformer = nil;
 
 		[serializedCollection enumerateKeysAndObjectsUsingBlock: ^ (id key, id obj, BOOL *stop)
 		{
-			[collection setObject: [valueTransformer reverseTransformedValue: obj]
-						   forKey: [keyTransformer reverseTransformedValue: key]];
+			collection[[keyTransformer reverseTransformedValue: key]] = [valueTransformer reverseTransformedValue: obj];
 		}];
 	}
 	else

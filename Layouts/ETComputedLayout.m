@@ -470,7 +470,7 @@ resulting fragment in the array. */
 	if (line != nil)
 		return A(line);
 
-	return [NSArray array];
+	return @[];
 }
 
 /** Returns the location at which the receiver should start to lay out the 

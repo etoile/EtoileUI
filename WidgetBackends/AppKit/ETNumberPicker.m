@@ -125,7 +125,7 @@ terminology) on which actions should be dispatched. */
 {
 	// NOTE: GNUstep still expects a NSDecimalNumber for -setMinimum: and 
 	// -setMaximum: as this was the case prior to Mac OS X 10.4.
-	[[self formatter] setMinimum: (id)[NSNumber numberWithDouble: aValue]];
+	[[self formatter] setMinimum: (id)@(aValue)];
 	[[self stepper] setMinValue: aValue];
 }
 	 
@@ -136,7 +136,7 @@ terminology) on which actions should be dispatched. */
 
 - (void) setMaxValue: (double)aValue
 {
-	[[self formatter] setMaximum: (id)[NSNumber numberWithDouble: aValue]];
+	[[self formatter] setMaximum: (id)@(aValue)];
 	[[self stepper] setMaxValue: aValue];
 }
 

@@ -195,7 +195,7 @@
 	ETPropertyDescription *separatorItemEndMargin =
 		[ETPropertyDescription descriptionWithName: @"separatorItemEndMargin" type: (id)@"CGFloat"];
 	
-	NSArray *transientProperties = [NSArray array];
+	NSArray *transientProperties = @[];
 	NSArray *persistentProperties = A(borderMargin, itemMargin, autoresizesItemToFill,
 		horizontalAlignment, horizontalAligmentGuide, computesItemRectFromBoundingBox,
 		usesAlignmentHint, separatorTemplateItem, separatorItemEndMargin);
@@ -335,12 +335,12 @@ so -propertyColumns is never used unless the user inspects the object. */
 
 	for (NSString *property in _propertyColumns)
 	{
-		NSTableColumn *column = [_propertyColumns objectForKey: property];
+		NSTableColumn *column = _propertyColumns[property];
 		ETMutableObjectViewpoint *formatterViewpoint =
 			[ETMutableObjectViewpoint viewpointWithName: @"formatter"
 			                          representedObject: [column dataCell]];
 	
-		[formatters setObject: formatterViewpoint forKey: property];
+		formatters[property] = formatterViewpoint;
 	}
 	return [formatters copy];
 }

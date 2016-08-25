@@ -67,8 +67,8 @@ that contains this empty string as the new value. */
 	{
 		NSParameterAssert([keyPath isEqual: @"objectValue"] || [keyPath isEqual: @"state"]);
 
-		id newValue = [change objectForKey: NSKeyValueChangeNewKey];
-		id oldValue = [change objectForKey: NSKeyValueChangeOldKey];
+		id newValue = change[NSKeyValueChangeNewKey];
+		id oldValue = change[NSKeyValueChangeOldKey];
 
 		if ([self ignoresChangeForNewValue: newValue oldValue: oldValue])
 			return;
@@ -81,7 +81,7 @@ that contains this empty string as the new value. */
 
 		if ([keyPath isEqual: @"value"] || [keyPath isEqual: @"objectValue"])
 		{
-			[self didChangeRepresentedObjectValue: [change objectForKey: NSKeyValueChangeNewKey]];
+			[self didChangeRepresentedObjectValue: change[NSKeyValueChangeNewKey]];
 		}
 		
 		/* Allow the item to redisplay any visual element that depends on the value 

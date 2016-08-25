@@ -50,7 +50,7 @@
 
 + (NSArray *) menuItems
 {
-	return [NSArray array];
+	return @[];
 }
 
 - (NSImage *) icon

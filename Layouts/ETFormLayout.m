@@ -77,8 +77,8 @@
 	if (attributes == nil)
 		return nil;
 
-	return [NSFont fontWithName: [attributes objectForKey: NSFontAttributeName]
-	                       size: [[attributes objectForKey: NSFontSizeAttribute] floatValue]];
+	return [NSFont fontWithName: attributes[NSFontAttributeName]
+	                       size: [attributes[NSFontSizeAttribute] floatValue]];
 }
 
 - (void) setItemLabelFont: (NSFont *)aFont
@@ -91,8 +91,8 @@
 		return;
 
 	[self willChangeValueForProperty: @"itemLabelFont"];
-	[attributes setObject: [aFont fontName] forKey: NSFontAttributeName];
-	[attributes setObject: [NSNumber numberWithFloat: [aFont pointSize]] forKey: NSFontSizeAttribute];
+	attributes[NSFontAttributeName] = [aFont fontName];
+	attributes[NSFontSizeAttribute] = [NSNumber numberWithFloat: [aFont pointSize]];
 
 	[[[self templateItem] coverStyle] setLabelAttributes: attributes];
 	[self renderAndInvalidateDisplay];

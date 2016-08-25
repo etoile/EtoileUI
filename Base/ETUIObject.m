@@ -68,12 +68,12 @@ static NSMutableDictionary *sharedInstanceUUIDs = nil;
 
 	NSString *className = NSStringFromClass(self);
 	id key = (aContext != nil ? S(className, aContext) : S(className));
-	ETUUID *uuid = [sharedInstanceUUIDs objectForKey: key];
+	ETUUID *uuid = sharedInstanceUUIDs[key];
 
 	if (uuid == nil)
 	{
 		uuid = [ETUUID UUID];
-		[sharedInstanceUUIDs setObject: uuid forKey: key];
+		sharedInstanceUUIDs[key] = uuid;
 	}
 
 	return uuid;
@@ -187,11 +187,11 @@ see -[ETStyle setIsShared:]. */
 // -propertyNames returns redundant properties).
 - (NSArray *) NSObjectPropertyNames
 {
-	return [NSArray arrayWithObjects: @"icon", @"displayName", @"className", 
+	return @[@"icon", @"displayName", @"className", 
 		@"stringValue", @"objectValue", @"isCollection", @"isGroup", 
 		@"isMutable", @"isMutableCollection", @"isCommonObjectValue", 
 		@"isNumber", @"isString", @"isClass", @"description", 
-		@"primitiveDescription", nil];
+		@"primitiveDescription"];
 }
 
 - (NSArray *) propertyNames

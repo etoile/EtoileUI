@@ -77,7 +77,7 @@ or a layout without a context. */
 - (void) willLoadObjectGraph
 {
 	[super willLoadObjectGraph];
-	[self updateKVOForItems: [NSArray array]];
+	[self updateKVOForItems: @[]];
 }
 
 - (void) didLoadObjectGraph
@@ -162,7 +162,7 @@ is not an option. */
 
 	for (NSString *key in _propertyColumns)
 	{
-		NSTableColumn *column =  [_propertyColumns objectForKey: key];
+		NSTableColumn *column =  _propertyColumns[key];
 		BOOL isUsed = ([tableView tableColumnWithIdentifier: key] != nil);
 
 		if (isUsed)
@@ -171,7 +171,7 @@ is not an option. */
 			continue;
 		}
 		
-		[unusedColumns setObject: column forKey: key];
+		unusedColumns[key] = column;
 	}
 	return unusedColumns;
 }
@@ -204,12 +204,11 @@ is not an option. */
 	   cached columns that are not used in the table/outline view currently. */
 	for (NSString *key in deserializedPropertyColumns)
 	{
-		BOOL isUnusedColumn = ([_propertyColumns objectForKey: key] == nil);
+		BOOL isUnusedColumn = (_propertyColumns[key] == nil);
 
 		if (isUnusedColumn)
 		{
-			[_propertyColumns setObject: [deserializedPropertyColumns objectForKey: key]
-			                     forKey: key];
+			_propertyColumns[key] = deserializedPropertyColumns[key];
 		}
 	}
 }

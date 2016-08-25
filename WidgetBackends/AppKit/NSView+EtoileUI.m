@@ -125,7 +125,7 @@ also copied, in other words the new object is a deep copy of the receiver. */
 	{
 		[self addSubview: object 
 		      positioned: NSWindowBelow 
-		      relativeTo: [[self subviews] objectAtIndex: index]];
+		      relativeTo: [self subviews][index]];
 	}
 	else
 	{
@@ -315,7 +315,7 @@ returning the value, otherwise this method is equivalent to -frameOrigin. */
 // TODO: Remove (cause failures in TestItemCopy.m if removed currently)
 - (NSArray *) propertyNames
 {
-	NSArray *properties = [NSArray arrayWithObjects: @"x", @"y", @"width", 
+	NSArray *properties = @[@"x", @"y", @"width", 
 		@"height", @"superview", @"window", @"tag", @"hidden", 
 		@"autoresizingMask", @"autoresizesSubviews", @"subviews", @"flipped", 
 		@"frame", @"frameRotation", @"bounds", @"boundsRotation", @"isRotatedFromBase", 
@@ -324,7 +324,7 @@ returning the value, otherwise this method is equivalent to -frameOrigin. */
 		@"visibleRect", @"opaque", @"opaqueAncestor", @"needsDisplay", 
 		@"canDraw",  @"shouldDrawColor", @"widthAdjustLimit",
 		@"heightAdjustLimit", @"printJobTitle", @"mouseDownCanMoveWindow", 
-		@"needsPanelToBecomeKey", nil]; 
+		@"needsPanelToBecomeKey"]; 
 	
 	return [[super propertyNames] arrayByAddingObjectsFromArray: properties];
 }

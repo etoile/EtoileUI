@@ -33,12 +33,12 @@
 
 - (NSInvocation *) UICreationInvocationForName: (NSString *)aName
 {
-	return [_UICreationInvocations objectForKey: aName];
+	return _UICreationInvocations[aName];
 }
 
 - (void) setUICreationInvocation: (NSInvocation *)anInv forName: (NSString *)aName
 {
-	[_UICreationInvocations setObject: anInv forKey: aName];
+	_UICreationInvocations[aName] = anInv;
 }
 
 - (NSDictionary *) settings
@@ -46,7 +46,7 @@
 	NSDictionary *settings = [[NSUserDefaults standardUserDefaults] objectForKey: [self keyForUserDefaults]];
 	if (settings == nil)
 	{
-		settings = [NSDictionary dictionary];
+		settings = @{};
 	}
 	return settings;
 }
@@ -58,7 +58,7 @@
 
 - (ETUUID *) persistentItemUUIDForName: (NSString *)aName
 {
-	NSString *UUIDString = [[self settings] objectForKey: aName];
+	NSString *UUIDString = [self settings][aName];
 	return (UUIDString != nil ? [ETUUID UUIDWithString: UUIDString] : nil);
 }
 
@@ -71,7 +71,7 @@
 	}
 	else
 	{
-		[settings setObject: [aUUID stringValue] forKey: aName];
+		settings[aName] = [aUUID stringValue];
 	}
 	[self setSettings: settings];
 }

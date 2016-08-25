@@ -330,7 +330,7 @@ related NSBrowser methods are called. */
 	NSAssert(item != nil, @"Parent item must never be nil in -browser:numberOfRowsInColumn:");
 	NSAssert([item isGroup], @"Parent item must always be of ETLayoutItemGroup class kind");
 
-	ETLayoutItem *childItem = [[item arrangedItems] objectAtIndex: row];
+	ETLayoutItem *childItem = [item arrangedItems][row];
 	[cell setRepresentedObject: childItem];
 	ETDebugLog(@"Set represented object %@ of cell %@", [cell representedObject], cell);
 

@@ -171,7 +171,7 @@ The object returned by -render: replaces the original object. When
 		else /* newObject can be identical to the object at i */
 		{
 			NSInteger i = [_topLevelObjects indexOfObject: object];
-			[_topLevelObjects replaceObjectAtIndex: i withObject: newObject];
+			_topLevelObjects[i] = newObject;
 		}
 	}
 }

@@ -202,8 +202,7 @@
 
 	[[_templates content] enumerateKeysAndObjectsUsingBlock: ^ (id UTIString, id itemTemplate, BOOL *stop)
 	{
-		[editableTemplates setObject: itemTemplate
-		                      forKey: [ETUTI typeWithString: UTIString]];
+		editableTemplates[[ETUTI typeWithString: UTIString]] = itemTemplate;
 	}];
 	return [editableTemplates copy];
 }
@@ -215,8 +214,7 @@
 
 	[editedTemplates enumerateKeysAndObjectsUsingBlock: ^ (id UTI, id itemTemplate, BOOL *stop)
 	{
-		[_templates setObject: itemTemplate
-		               forKey: [UTI stringValue]];
+		_templates[[UTI stringValue]] = itemTemplate;
 	}];
 	[self didChangeValueForProperty: @"templates"];
 }
@@ -229,8 +227,7 @@
 
 	[[_allowedDropTypes content] enumerateKeysAndObjectsUsingBlock: ^ (id targetUTIString, id UTIs,  BOOL *stop)
 	{
-		[editableDropTypes setObject: UTIs
-		                      forKey: [ETUTI typeWithString: targetUTIString]];
+		editableDropTypes[[ETUTI typeWithString: targetUTIString]] = UTIs;
 	}];
 	return [editableDropTypes copy];
 }
@@ -242,8 +239,7 @@
 
 	[editedDropTypes enumerateKeysAndObjectsUsingBlock: ^ (id targetUTI, id UTIs, BOOL *stop)
 	{
-		[_allowedDropTypes setObject: UTIs
-		                      forKey: [targetUTI stringValue]];
+		_allowedDropTypes[[targetUTI stringValue]] = UTIs;
 	}];
 	[self didChangeValueForProperty: @"allowedDropTypes"];
 }

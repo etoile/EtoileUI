@@ -104,7 +104,7 @@ handles that. */
 - (id) renderPasteboards: (NSArray *)pasteboards
 {
 	// TODO: Implement
-	return [NSArray array];
+	return @[];
 }
 
 /** Returns an item built with the given pasteboard (not yet implemented). */

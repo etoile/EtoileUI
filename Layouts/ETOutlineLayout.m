@@ -93,8 +93,7 @@
 			[NSKeyedArchiver archivedDataWithRootObject: outlineColumn]];
 
 		/* Remember the existing outline column as a copy in our cache */
-		[_propertyColumns setObject: newColumn
-		                     forKey: [outlineColumn identifier]];
+		_propertyColumns[[outlineColumn identifier]] = newColumn;
 
 		[outlineColumn setIdentifier: [column identifier]];
 		[outlineColumn setDataCell: [column dataCell]];
@@ -113,8 +112,7 @@
 		[outlineColumn setHeaderToolTip: [column headerToolTip]];
 
 		/* Replace the prepared column with the new outline column in our cache. */
-		[_propertyColumns setObject: outlineColumn
-		                     forKey: [outlineColumn identifier]];
+		_propertyColumns[[outlineColumn identifier]] = outlineColumn;
 
 		shouldInsertColumn = NO;
 	}
@@ -231,11 +229,11 @@
 	
 	if (isRootItem)
 	{
-		childItem = [[[self layoutContext] arrangedItems] objectAtIndex: rowIndex];
+		childItem = [[self layoutContext] arrangedItems][rowIndex];
 	}
 	else if ([item isGroup])
 	{
-		childItem = [[(ETLayoutItemGroup *)item arrangedItems] objectAtIndex: rowIndex];
+		childItem = [(ETLayoutItemGroup *)item arrangedItems][rowIndex];
 	}
 
 	//ETLog(@"Returns %@ child item in outline view %@", childItem, outlineView);

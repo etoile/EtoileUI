@@ -75,7 +75,7 @@ NSString * const ETSourceDidUpdateNotification = @"ETSourceDidUpdateNotification
 	//_hasNewLayout = NO;
 	_hasNewContent = NO; /* Private accessors in ETMutationHandler category */
 	_hasNewArrangement = NO;
-	[self setValue: [NSNumber numberWithFloat: 1.0] forVariableStorageKey: kETItemScaleFactorProperty];
+	[self setValue: @1.0f forVariableStorageKey: kETItemScaleFactorProperty];
 
 	_shouldMutateRepresentedObject = YES;
 
@@ -526,14 +526,14 @@ See also -setSource:, -controllerItem and -nextResponder. */
 /** Removes the child item at the given index in the receiver children. */
 - (void) removeItemAtIndex: (NSUInteger)index
 {
-	ETLayoutItem *item = [_items objectAtIndex: index];
+	ETLayoutItem *item = _items[index];
 	[self handleRemoveItem: item atIndex: index hint: nil moreComing: NO];
 }
 
 /** Returns the child item at the given index in the receiver children. */
 - (ETLayoutItem *) itemAtIndex: (NSInteger)index
 {
-	return [_items objectAtIndex: index];
+	return _items[index];
 }
 
 /** Returns the first receiver child item.
@@ -792,7 +792,7 @@ You should never use this method unless you write an ETLayoutItem subclass. */
     /* We must remove the item views, otherwise they might remain visible as
        subviews (think ETBrowserLayout on GNUstep which has transparent areas),
        because view-based layout won't call -setExposedItems: in -renderWithItems:XXX:. */
-    [self setExposedItems: [NSArray array]];
+    [self setExposedItems: @[]];
     [self setHasNewLayout: YES];
     // TODO: May be safer to restore the default frame here rather than relying
     // on the next layout update and -resizeItems:toScaleFactor:...
@@ -1109,13 +1109,13 @@ You should never need to call this method directly. */
 	if (nil != anImage)
 	{
 		_wasViewHidden = [[[self supervisorView] wrappedView] isHidden];
-		[[[self supervisorView] subviews] setValue: [NSNumber numberWithBool: YES]
+		[[[self supervisorView] subviews] setValue: @YES
 		                                    forKey: @"hidden"];
 		//[[[[self supervisorView] subviews] map] setHidden: YES];
 	}
 	else
 	{
-		[[[self supervisorView] subviews] setValue: [NSNumber numberWithBool: NO]
+		[[[self supervisorView] subviews] setValue: @NO
 		                                    forKey: @"hidden"];
 		//[[[self supervisorView] wrappedView] setHidden: _wasViewHidden];
 	}
@@ -1475,7 +1475,7 @@ The returned collection only includes immediate children, other selected
 descendant items below these childrens in the layout item subtree are excluded. */
 - (NSArray *) selectedItems
 {
-	return [[self items] objectsMatchingValue: [NSNumber numberWithBool: YES]
+	return [[self items] objectsMatchingValue: @YES
 	                                   forKey: @"isSelected"];
 }
 

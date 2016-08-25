@@ -93,7 +93,7 @@ repository is the item group represented object). */
 - (BOOL) boxingForcedForDroppedItem: (ETLayoutItem *)droppedItem
                            metadata: (NSDictionary *)metadata
 {
-	return [[metadata objectForKey: kETPickMetadataWasUsedAsRepresentedObject] boolValue];
+	return [metadata[kETPickMetadataWasUsedAsRepresentedObject] boolValue];
 }
 
 @end

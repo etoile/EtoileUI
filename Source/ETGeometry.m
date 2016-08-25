@@ -78,7 +78,7 @@ NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector)
 		return NSZeroRect;
 
 	NSRect rect = NSZeroRect;
-	RectIMP rectFunction = (RectIMP)[[itemArray objectAtIndex: 0] methodForSelector: rectSelector];
+	RectIMP rectFunction = (RectIMP)[itemArray[0] methodForSelector: rectSelector];
 
 	FOREACHI(itemArray, item)
 	{

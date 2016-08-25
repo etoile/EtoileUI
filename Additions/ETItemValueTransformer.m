@@ -197,7 +197,7 @@ NSString * const kETBooleanFromMaskTransformerName = @"kETBooleanFromMaskTransfo
 		mask &= ~[self editedBitValue];
 	}
 
-	return  [NSNumber numberWithUnsignedInteger: mask];
+	return  @(mask);
 }
 
 @end

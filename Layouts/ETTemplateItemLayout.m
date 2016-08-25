@@ -34,7 +34,7 @@
 - (void) prepareTransientState
 {
 	_renderedItems = [NSMutableSet set];
-	_renderedTemplateKeys = [NSArray array];
+	_renderedTemplateKeys = @[];
 	_needsPrepareItems = YES;
 }
 
@@ -123,7 +123,7 @@ See -setTemplateItem:. */
                toItemWithKeyPath: (NSString *)itemProperty
 {
 	[self willChangeValueForProperty: @"localBindings"];
-	[_localBindings setObject: itemProperty forKey: templateKeyPath];
+	_localBindings[templateKeyPath] = itemProperty;
 	[self didChangeValueForProperty: @"localBindings"];
 }
 
@@ -221,7 +221,7 @@ Alternatively a subclass can implement its own item scaling by overriding
 	{
 		id model = ([item representedObject] == nil ? (id)item : [item representedObject]);
 		id itemElement = [item valueForKeyPath: templateKeyPath];
-		NSString *modelKeyPath = [_localBindings objectForKey: templateKeyPath];
+		NSString *modelKeyPath = _localBindings[templateKeyPath];
 
 		[itemElement bind: @"value" 
 		         toObject: model

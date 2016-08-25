@@ -119,7 +119,7 @@ Also updates the copy for NSControl specific properties such target and  action.
 
 	for (int i = 0; i < nbOfItems; i++)
 	{
-		id repObject = [repObjects objectAtIndex: i];
+		id repObject = repObjects[i];
 
 		if ([repObject isEqual: [NSNull null]])
 			continue;

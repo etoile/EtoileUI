@@ -108,7 +108,7 @@ inFlexibleItemQueue: (NSMutableArray *)flexibleItemQueue
 
 	for (int i = 0; i < nbOfQueuedItems; i++)
 	{
-		ETLayoutItemGroup *queuedItem = [flexibleItemQueue objectAtIndex: i];
+		ETLayoutItemGroup *queuedItem = flexibleItemQueue[i];
 		/* The item to insert is a valid predecessor of the queued item.
 
 		   Note: [[queuedItem parentItem] isEqual: anItem] would mean anItem 

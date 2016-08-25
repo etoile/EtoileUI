@@ -181,7 +181,7 @@ You can override -builder to customize the conversion. */
 - (void) _loadMainNib
 {
 	NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-	NSString *nibName = [infoDict objectForKey: @"NSMainNibFile"];
+	NSString *nibName = infoDict[@"NSMainNibFile"];
 	BOOL hasNibNameEntry = (nil != nibName && NO == [nibName isEqual: @""]);
 
 	if (NO == hasNibNameEntry)
@@ -290,7 +290,7 @@ The main controller is never released. */
 	if ([[infoDict allKeys] containsObject: @"ETPrincipalControllerClass"] == NO)
 		return;
 
-	NSString *className = [infoDict objectForKey: @"ETPrincipalControllerClass"];
+	NSString *className = infoDict[@"ETPrincipalControllerClass"];
 	Class delegateClass = NSClassFromString(className);
 
 	if (delegateClass == Nil)
@@ -1261,7 +1261,7 @@ int ETApplicationMain(int argc, const char **argv)
 	@autoreleasepool
 	{
 		NSDictionary *infos = [[NSBundle mainBundle] infoDictionary];
-		NSString *appClassName = [infos objectForKey: @"NSPrincipalClass"];
+		NSString *appClassName = infos[@"NSPrincipalClass"];
 		Class appClass = NSClassFromString(appClassName);
 
 		if (Nil == appClass || NO == [appClass isSubclassOfClass: [ETApplication class]])

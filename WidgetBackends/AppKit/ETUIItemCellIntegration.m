@@ -120,7 +120,7 @@ static NSString *didChangeUnderway = nil;
 
 - (id) objectValueForCurrentValue: (id)aValue
 {
-	return [NSNumber numberWithInteger: [self indexOfItemWithRepresentedObject: aValue]];
+	return @([self indexOfItemWithRepresentedObject: aValue]);
 }
 
 - (id) currentValueForObjectValue: (id)aValue

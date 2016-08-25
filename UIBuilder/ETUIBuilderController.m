@@ -211,7 +211,7 @@
 
 	if (selectionIndexPaths == nil)
 	{
-		selectionIndexPaths = [NSArray array];
+		selectionIndexPaths = @[];
 	}
 	[[self browserItem] setSelectionIndexPaths: selectionIndexPaths];
 	[self didChangeSelectionToIndexPaths: selectionIndexPaths];

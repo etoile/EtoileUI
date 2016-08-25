@@ -103,7 +103,7 @@
 		if (colId == nil)
 			colId = @"";
 		
-		[_propertyColumns setObject: column forKey: colId];
+		_propertyColumns[colId] = column;
 	}
 	/* Set up a list view using a single column without identifier */
 	[tv registerForDraggedTypes: A(ETLayoutItemPboardType)];
@@ -188,7 +188,7 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 	/* Add all columns to be displayed */	
 	for (NSString *property in properties)
 	{
-		NSTableColumn *column = [_propertyColumns objectForKey: property];
+		NSTableColumn *column = _propertyColumns[property];
 
 		if (column == nil)
 		{
@@ -228,7 +228,7 @@ Will raise an NSInvalidArgumentException when the properties array is nil. */
 /** Returns the column header title associated with the given property. */
 - (NSString *) displayNameForProperty: (NSString *)property
 {
-	return [[[_propertyColumns objectForKey: property] headerCell] stringValue];
+	return [[_propertyColumns[property] headerCell] stringValue];
 }
 
 /** Sets the column header title associated with the given property. The 
@@ -253,7 +253,7 @@ property display name should usually be passed as argument. */
 By default, columns are not editable and NO is returned. */
 - (BOOL) isEditableForProperty: (NSString *)property
 {
-	return [[_propertyColumns objectForKey: property] isEditable];
+	return [_propertyColumns[property] isEditable];
 }
 
 /** Sets whether the column associated with the given property is editable. */
@@ -277,7 +277,7 @@ By default, columns are not editable and NO is returned. */
 By default, columns have no formatters and nil returned. */
 - (NSFormatter *) formatterForProperty: (NSString *)property
 {
-	return [[[_propertyColumns objectForKey: property] dataCell] formatter];
+	return [[_propertyColumns[property] dataCell] formatter];
 }
 
 /** Sets the formatter of the column associated with the given property.
@@ -306,7 +306,7 @@ TODO: Return a layout item built dynamically by determining the cell subclass
 kind. May be add -[ETLayoutItemFactory itemWithCell:]. */
 - (id) styleForProperty: (NSString *)property
 {
-	return [[_propertyColumns objectForKey: property] dataCell];
+	return [_propertyColumns[property] dataCell];
 }
 
 /** Sets the widget style used by the column associated with the given property.
@@ -391,12 +391,12 @@ yet, it is created. */
 	ETAssert([SA([[self tableView] tableColumns]) isSubsetOfSet: SA([_propertyColumns allValues])]);
 	ETAssert([SA([_propertyColumns allValues]) count] == [_propertyColumns count]);
 
-	NSTableColumn *column = [_propertyColumns objectForKey: property];
+	NSTableColumn *column = _propertyColumns[property];
 
 	if (column == nil)
 	{
 		column = [self createTableColumnWithIdentifier: property];
-		[_propertyColumns setObject: column forKey: property];
+		_propertyColumns[property] = column;
 	}
 
 	return column;
@@ -527,7 +527,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	int row = [[self tableView] rowAtPoint: location];
 	
 	if (-1 != row)
-		return [[[self layoutContext] arrangedItems] objectAtIndex: row];
+		return [[self layoutContext] arrangedItems][row];
 	
 	return nil;
 }
@@ -567,7 +567,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	
 	FOREACHE(nil, index, NSNumber *, indexEnumerator)
 	{
-		[selectedItems addObject: [items objectAtIndex: [index intValue]]];
+		[selectedItems addObject: items[[index intValue]]];
 	}
 	
 	return selectedItems;
@@ -632,7 +632,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (ETLayoutItem *) itemAtRow: (int)rowIndex
 {
-	return [[[self layoutContext] arrangedItems] objectAtIndex: rowIndex];
+	return [[self layoutContext] arrangedItems][rowIndex];
 }
 
 - (ETLayoutItem *) editedItem
@@ -642,7 +642,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 
 - (NSString *) editedProperty
 {
-	return  [[[[self tableView] tableColumns] objectAtIndex: [[self tableView] editedColumn]] identifier];
+	return  [[[self tableView] tableColumns][[[self tableView] editedColumn]] identifier];
 }
 
 - (void) controlTextDidBeginEditing: (NSNotification *)aNotification
@@ -682,7 +682,7 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
 	if ([tv clickedRow] == -1) /* e.g. a double click on a column header */
 		return;
 
-	NSTableColumn *tableColumn = [[tv tableColumns] objectAtIndex: [tv clickedColumn]];
+	NSTableColumn *tableColumn = [tv tableColumns][[tv clickedColumn]];
 	BOOL canEdit = ([tableColumn isEditable] && 
 		[self tableView: tv shouldEditTableColumn: tableColumn row: [tv clickedRow]]);
 
@@ -753,7 +753,7 @@ compatible with the cell used at the given row/column intersection.  */
 	
 	return [self objectValueForTableColumn: column
 	                                   row: rowIndex
-	                                  item: [items objectAtIndex: rowIndex]];
+	                                  item: items[rowIndex]];
 }
 
 /** This method is only exposed to be used internally by EtoileUI.
@@ -797,7 +797,7 @@ given row/column intersection.  */
 	
 	[self setObjectValue: value
 	      forTableColumn: column
-	                item: [items objectAtIndex: rowIndex]];
+	                item: items[rowIndex]];
 }
 
 /** Returns YES. See [NSObject(ETLayoutPickAndDropIntegration)] protocol.
@@ -866,7 +866,7 @@ Note: For now, private method. */
 
 	if (ETUndeterminedIndex != positiveRow && NSTableViewDropOn == op)
 	{
-		dropTarget = [[[self layoutContext] arrangedItems] objectAtIndex: positiveRow];
+		dropTarget = [[self layoutContext] arrangedItems][positiveRow];
 	}
 
 	ETDebugLog(@"TABLE - Validate drop at %ld on %@ with dragging source %@ in %@ drag mask %lu drop op %lu",
@@ -943,7 +943,7 @@ Note: For now, private method. */
 	
 	if (positiveRow != ETUndeterminedIndex && op == NSTableViewDropOn)
 	{
-		dropTarget = [[dropTarget arrangedItems] objectAtIndex: positiveRow];
+		dropTarget = [dropTarget arrangedItems][positiveRow];
 	}
 
 	return [[dropTarget actionHandler] handleDropCollection: droppedObject
@@ -995,7 +995,7 @@ The current sort descriptors are collected as explained in the class description
 
 	if (nil == sortDescriptors)
 	{
-		sortDescriptors = [NSArray array];
+		sortDescriptors = @[];
 	}
 
 	ETLog(@"Controller sort %@", sortDescriptors);	
@@ -1031,7 +1031,7 @@ this delegate method. When -setSortDescriptors: returns, the table view calls
 
 	ETAssert([tv clickedRow] != -1);
 
-	return [layoutItems objectAtIndex: [tv clickedRow]];
+	return layoutItems[[tv clickedRow]];
 }
 
 /* Framework Private & Subclassing */
@@ -1102,7 +1102,7 @@ Returns the cell substituting for the given view in this layout. */
 Returns the cell to be used at the given column and row intersection in this layout. */
 - (NSCell *) preparedCellAtColumn: (NSInteger)column row: (NSInteger)row
 {
-	NSTableColumn *tableColumn = [[[self tableView] tableColumns] objectAtIndex: column];
+	NSTableColumn *tableColumn = [[self tableView] tableColumns][column];
 	NSCell *cell = nil;
 	
 	if ([[tableColumn identifier] isEqual: kETValueProperty])
@@ -1241,7 +1241,7 @@ receiver. */
 	FOREACHE(nil, index, NSNumber *, indexEnumerator)
 	{
 		/* We don't use -addObject: to carry the ordering over. */
-		[columns insertObject: [[self tableColumns] objectAtIndex: [index intValue]] 
+		[columns insertObject: [self tableColumns][[index intValue]] 
 		              atIndex: 0];
 	}
 

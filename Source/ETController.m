@@ -45,11 +45,11 @@
 	
 		kETTemplateObjectType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-object"
 		                                          description: @"EtoileUI Template Object Type (see ETController)"
-		                                     supertypeStrings: [NSArray array]
+		                                     supertypeStrings: @[]
 		                                             typeTags: nil];
 		kETTemplateGroupType = [ETUTI registerTypeWithString: @"org.etoile-project.etoileui.template-group"
 		                                         description: @"EtoileUI Template Group Type (see ETController)"
-		                                    supertypeStrings: [NSArray array]
+		                                    supertypeStrings: @[]
 		                                            typeTags: nil];
 	}
 }
@@ -444,7 +444,7 @@ This lookup mechanism is named supercasting.
 See -newItemWithURL:ofType:options and ETItemTemplate. */
 - (ETItemTemplate *) templateForType: (ETUTI *)aUTI
 {
-	ETItemTemplate *template = [_templates objectForKey: [aUTI stringValue]];
+	ETItemTemplate *template = _templates[[aUTI stringValue]];
 
 	if (nil != template)
 		return template;
@@ -452,7 +452,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 	/* Supercasting */
 	for (ETUTI *supertype in [aUTI allSupertypes])
 	{
-		template = [_templates objectForKey: [supertype stringValue]];
+		template = _templates[[supertype stringValue]];
 		if (nil != template)
 			break;
 	}
@@ -471,7 +471,7 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
                          withObjects: A(aTemplate)
                         mutationKind: ETCollectionMutationKindReplacement];
 
-	[_templates setObject: aTemplate forKey: [aUTI stringValue]];
+	_templates[[aUTI stringValue]] = aTemplate;
 
     [self didChangeValueForProperty: @"templates"
                           atIndexes: [NSIndexSet indexSet]
@@ -679,7 +679,7 @@ See also ETItemTemplate. */
 			uniqueKey = [NSString stringWithFormat: @"%@ %lu", key, (unsigned long)counter];
 		}
 		// TODO: Remove the content call once -objectForKey: is included in ETKeyedCollection
-		isUsed = ([[aCollection content] objectForKey: uniqueKey] != nil);
+		isUsed = ([aCollection content][uniqueKey] != nil);
 		counter++;
 	} while (isUsed);
 
@@ -711,21 +711,19 @@ Extra options can be added to the returned dictionary. */
 
 	if ([self persistentObjectContext] != nil)
 	{
-		[options setObject: [self persistentObjectContext]
-		            forKey: kETTemplateOptionPersistentObjectContext];
+		options[kETTemplateOptionPersistentObjectContext] = [self persistentObjectContext];
 	}
 	if (repo != nil)
 	{
-		[options setObject: repo forKey: kETTemplateOptionModelDescriptionRepository];
+		options[kETTemplateOptionModelDescriptionRepository] = repo;
 	}
 	if ([representedObject isCollection] && [(id <ETCollection>)representedObject isKeyed])
 	{
-		[options setObject: [self insertionKeyForCollection: representedObject]
-		            forKey: kETTemplateOptionKeyValuePairKey];
+		options[kETTemplateOptionKeyValuePairKey] = [self insertionKeyForCollection: representedObject];
 	}
 	if (representedObject != nil && [[self content] usesRepresentedObjectAsProvider])
 	{
-		[options setObject: representedObject forKey: kETTemplateOptionParentRepresentedObject];
+		options[kETTemplateOptionParentRepresentedObject] = representedObject;
 	}
 
 	return [options copy];
@@ -1151,7 +1149,7 @@ too slow given that the method tends to be invoked repeatedly.
 
 		if ([aUTI conformsToType: targetType])
 		{
-            ETUTITuple *UTITuple = [_allowedDropTypes objectForKey: target];
+            ETUTITuple *UTITuple = _allowedDropTypes[target];
 
 			[matchedDropTypes addObjectsFromArray: [UTITuple content]];
 		}
@@ -1165,7 +1163,7 @@ too slow given that the method tends to be invoked repeatedly.
 	NILARG_EXCEPTION_TEST(targetUTI);
 	NILARG_EXCEPTION_TEST(UTIs);
 
-	ETUTITuple *UTITuples = [_allowedDropTypes objectForKey: [targetUTI stringValue]];
+	ETUTITuple *UTITuples = _allowedDropTypes[[targetUTI stringValue]];
 
     if (UTITuples == nil)
     {
@@ -1178,8 +1176,7 @@ too slow given that the method tends to be invoked repeatedly.
                          withObjects: A(UTITuples)
                         mutationKind: ETCollectionMutationKindReplacement];
 
-    [_allowedDropTypes setObject: UTITuples
-                          forKey: [targetUTI stringValue]];
+    _allowedDropTypes[[targetUTI stringValue]] = UTITuples;
 
     [self didChangeValueForProperty: @"allowedDropTypes"
                           atIndexes: [NSIndexSet indexSet]
@@ -1302,7 +1299,7 @@ controller subclass. */
 	if ([_editedItems containsObject: editedItem] == NO)
 		return nil;
 
-	return [[self allEditedProperties] objectAtIndex: [_editedItems indexOfObject: editedItem]];
+	return [self allEditedProperties][[_editedItems indexOfObject: editedItem]];
 }
 
 /** <override-never />

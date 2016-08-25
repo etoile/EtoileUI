@@ -372,7 +372,7 @@ the NSControl or NSTextField. */
 	ETAssert(_editedItem != nil);
 
 	NSInteger movement =
-		[[[aNotification userInfo] objectForKey: @"NSTextMovement"] unsignedIntegerValue];
+		[[aNotification userInfo][@"NSTextMovement"] unsignedIntegerValue];
 
 	[self endEditingItem: _editedItem];
 

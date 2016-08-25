@@ -1093,7 +1093,7 @@ registered for the property.
 is registered for the property.*/
 - (ETItemValueTransformer *) valueTransformerForProperty: (NSString *)key
 {
-	ETItemValueTransformer *transformer = [[self valueForVariableStorageKey: @"valueTransformers"] objectForKey: key];
+	ETItemValueTransformer *transformer = [self valueForVariableStorageKey: @"valueTransformers"][key];
 	ETAssert(transformer == nil || [transformer isKindOfClass: [ETItemValueTransformer class]]);
 	return transformer;
 }
@@ -1118,7 +1118,7 @@ See also -valueTransformerForProperty:. */
 	                     withObjects: A(aValueTransformer)
 	                    mutationKind: ETCollectionMutationKindInsertion];
 
-	[transformers setObject: aValueTransformer forKey: key];
+	transformers[key] = aValueTransformer;
 
 	[self didChangeValueForProperty: @"valueTransformers"
 	                      atIndexes: [NSIndexSet indexSet]
@@ -1800,30 +1800,29 @@ If the given style is nil, the style group becomes empty. */
 	}
 	else
 	{
-		[_defaultValues setObject: aValue forKey: key];
+		_defaultValues[key] = aValue;
 	}
 }
 
 - (id) defaultValueForProperty: (NSString *)key
 {
-	return [_defaultValues objectForKey: key];
+	return _defaultValues[key];
 }
 
 - (void) setInitialValue: (id)aValue forProperty: (NSString *)key
 {
-	[_defaultValues setObject: (aValue != nil ? aValue : [NSNull null])
-	                   forKey: key];
+	_defaultValues[key] = (aValue != nil ? aValue : [NSNull null]);
 }
 
 - (id) initialValueForProperty: (NSString *)key
 {
-	id value = [_defaultValues objectForKey: key];
+	id value = _defaultValues[key];
 	return ([value isEqual: [NSNull null]] ? nil : value);
 }
 
 - (id) removeInitialValueForProperty: (NSString *)key
 {
-	id value = [_defaultValues objectForKey: key];
+	id value = _defaultValues[key];
 	[_defaultValues removeObjectForKey: key];
 	return value;
 }

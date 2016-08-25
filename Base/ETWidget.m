@@ -206,7 +206,7 @@
 	else
 	{
 		[self willChangeValueForProperty: @"minValue"];
-		[self setValue: [NSNumber numberWithDouble: aValue] forVariableStorageKey: @"minValue"];
+		[self setValue: @(aValue) forVariableStorageKey: @"minValue"];
 		[self didChangeValueForProperty: @"minValue"];
 	}
 }
@@ -232,7 +232,7 @@
 	else
 	{
 		[self willChangeValueForProperty: @"maxValue"];
-		[self setValue: [NSNumber numberWithDouble: aValue] forVariableStorageKey: @"maxValue"];
+		[self setValue: @(aValue) forVariableStorageKey: @"maxValue"];
 		[self didChangeValueForProperty: @"maxValue"];
 	}
 }

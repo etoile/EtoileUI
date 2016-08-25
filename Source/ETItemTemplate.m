@@ -149,7 +149,7 @@ description repository, raises an NSInternalInconsistencyException. */
 		return nil;
 
 	ETModelDescriptionRepository *repo =
-		[options objectForKey: kETTemplateOptionModelDescriptionRepository];
+		options[kETTemplateOptionModelDescriptionRepository];
 	ETEntityDescription *entity = [repo descriptionForName: [self entityName]];
 
 	if (entity == nil)
@@ -223,7 +223,7 @@ when -usesRepresentedObjectAsProvider on the controller content returns NO. */
 
 	NSParameterAssert([(NSObject *)aParentCollection isMutableCollection]);
 	Class viewpointTraitClass = [[[newObject class] ifResponds] mutableViewpointClass];
-	NSString *pairKey = [options objectForKey: kETTemplateOptionKeyValuePairKey];
+	NSString *pairKey = options[kETTemplateOptionKeyValuePairKey];
 
 	// TODO: Implement -viewpointClassForObject:, NSDictionary returns
 	// ETKeyValuePair and ETCollectionViewpoint returns either ETKeyValuePair
@@ -290,7 +290,7 @@ See also -newItemWithRepresentedObject:options:. */
 		newInstance = [newInstance init];
 	}
 
-	id parentObject = [options objectForKey: kETTemplateOptionParentRepresentedObject];
+	id parentObject = options[kETTemplateOptionParentRepresentedObject];
 	id value = [self mutableObjectForRepresentedObject: newInstance
 									   ofParentCollection: parentObject options: options];
 
@@ -324,7 +324,7 @@ See also -newItemWithRepresentedObject:options:. */
 	else
 	{
 		// TODO: Return compound document UTI
-		return [NSArray array];
+		return @[];
 	}
 }
 
@@ -375,7 +375,7 @@ Can be overriden in a subclass to implement a web browser for example. */
 	if (nil != customName)
 		return customName;*/
 
-	NSUInteger nbOfVisibleDocs = [[options objectForKey: kETTemplateOptionNumberOfUntitledDocuments] unsignedIntegerValue];
+	NSUInteger nbOfVisibleDocs = [options[kETTemplateOptionNumberOfUntitledDocuments] unsignedIntegerValue];
 
 	if (nbOfVisibleDocs == 0)
 		return [self baseName];
@@ -417,7 +417,7 @@ NSString * const kETTemplateOptionParentRepresentedObject = @"kETTemplateOptionP
 - (instancetype) initWithURL: (NSURL *)aURL options: (NSDictionary *)options
 {
 	id <COPersistentObjectContext> context =
-		[options objectForKey: kETTemplateOptionPersistentObjectContext];
+		options[kETTemplateOptionPersistentObjectContext];
 	
 	if (context == nil)
 	{

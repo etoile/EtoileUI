@@ -299,7 +299,7 @@ the given size. */
 An NSInvalidArgumentException will be raised if you pass nil. */
 - (ETLayoutItemGroup *) itemGroupWithItem: (ETLayoutItem *)item
 {
-	return [self itemGroupWithItems: [NSArray arrayWithObject: item]];
+	return [self itemGroupWithItems: @[item]];
 }
 
 /** Returns a new layout item group which contains the given items as children. */ 
@@ -1006,8 +1006,8 @@ and a stepper on the right side. */
 
 - (ETLayoutItem *) popUpMenu
 {
-	return [self popUpMenuWithItemTitles: [NSArray array]
-		representedObjects: [NSArray array] target: nil action: NULL];
+	return [self popUpMenuWithItemTitles: @[]
+		representedObjects: @[] target: nil action: NULL];
 }
 
 // TODO: -popUpMenuWithTitleXXX should return an ETLayoutItemGroup whose layout 
@@ -1033,7 +1033,7 @@ to set no represented object on a menu entry. */
 
 	for (int i = 0; i < [popUpView numberOfItems] && i < [entryModels count]; i++)
 	{
-		id repObject = [entryModels objectAtIndex: i];
+		id repObject = entryModels[i];
 
 		if ([repObject isEqual: [NSNull null]])
 		{

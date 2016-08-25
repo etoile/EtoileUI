@@ -64,7 +64,7 @@ method is called by ETTableLayout when rows are dragged). */
 	/* We need to put something on the pasteboard otherwise AppKit won't 
 	   allow the drag */
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
-	[pboard declareTypes: [NSArray arrayWithObject: ETLayoutItemPboardType] owner: nil];
+	[pboard declareTypes: @[ETLayoutItemPboardType] owner: nil];
 	
 	// TODO: Implements pasteboard compatibility to integrate with 
 	// non-native Etoile code
@@ -132,8 +132,8 @@ selection, we don't put the selected items on the pickboard. */
 
 	for (int i = 0; i < [proposedPickedObjects count]; i++)
 	{
-		ETLayoutItem *draggedItem = [pickedItems objectAtIndex: i];
-		id pickedObject = [proposedPickedObjects objectAtIndex: i];
+		ETLayoutItem *draggedItem = pickedItems[i];
+		id pickedObject = proposedPickedObjects[i];
 		// TODO: Support hint among metadata
 		//id hint = [self pickedHintForItem: item];
 		
@@ -168,10 +168,10 @@ selection, we don't put the selected items on the pickboard. */
 	                                shouldRemoveNow: shouldRemoveNow];
 	NSUInteger pickIndex = [[item parentItem] indexOfItem: item];
 	NSDictionary *metadata =
-		D([NSNumber numberWithUnsignedInteger: pickIndex], kETPickMetadataPickIndex,
-		  [NSNumber numberWithBool: wasUsedAsRepObject], kETPickMetadataWasUsedAsRepresentedObject,
+		D(@(pickIndex), kETPickMetadataPickIndex,
+		  @(wasUsedAsRepObject), kETPickMetadataWasUsedAsRepresentedObject,
 		  draggedItems, kETPickMetadataDraggedItems,
-		  [NSNumber numberWithBool: wereItemsRemoved], kETPickMetadataWereItemsRemoved);
+		  @(wereItemsRemoved), kETPickMetadataWereItemsRemoved);
 
 	[pboard pushObject: pushedObject metadata: metadata];
 	return YES;

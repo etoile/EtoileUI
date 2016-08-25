@@ -606,7 +606,7 @@ returned nil. */
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
 	ETLayoutItem *draggedItem =
-		[[metadata objectForKey: kETPickMetadataDraggedItems] objectForKey: draggedObject];
+		metadata[kETPickMetadataDraggedItems][draggedObject];
 	
 	return draggedItem;
 }
@@ -811,7 +811,7 @@ Both methods called -handleDragEnd:forItem: on the drop target item. */
 	/* (2) If the dragged items have been removed at pick time, the operation 
 	   is not a move or doesn't concern a UI item, there is nothing to do and adjust */
 	
-	BOOL wereItemsRemoved = [[metadata objectForKey: kETPickMetadataWereItemsRemoved] boolValue];
+	BOOL wereItemsRemoved = [metadata[kETPickMetadataWereItemsRemoved] boolValue];
 
 	if (wereItemsRemoved || [droppedObject isLayoutItem] == NO)
 		return index;
@@ -824,7 +824,7 @@ Both methods called -handleDragEnd:forItem: on the drop target item. */
 	/* (3) If the dragged items are still visible where the pick occurred, the 
 	   insertion index must be computed */
 
-	NSMapTable *draggedItems = [metadata objectForKey: kETPickMetadataDraggedItems];
+	NSMapTable *draggedItems = metadata[kETPickMetadataDraggedItems];
 	ETAssert(draggedItems != nil);
 	/* Find the item at the insertion index but adjusted to compensate the 
 	   dragged item bremoval. Some dragged items can belong to the item group 
@@ -954,7 +954,7 @@ argument exception is raised. */
 
 	if (sameSourceItemForSourceAndDestination)
 	{
-		NSMapTable *draggedItems = [metadata objectForKey: kETPickMetadataDraggedItems];
+		NSMapTable *draggedItems = metadata[kETPickMetadataDraggedItems];
 		BOOL isDrag = (draggedItems != nil);
 
 		if (isDrag)

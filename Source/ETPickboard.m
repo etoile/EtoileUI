@@ -156,7 +156,7 @@ If boxed is NO, returns nil when the pickboard is empty. */
 
 	if ([self isEmpty])
 	{
-		return (boxed ? [ETPickCollection pickCollectionWithCollection: [NSArray array]] : nil);
+		return (boxed ? [ETPickCollection pickCollectionWithCollection: @[]] : nil);
 	}
 
 	// NOTE: pickedObject is represented by topItem in the pickboard. Take note 
@@ -176,7 +176,7 @@ If boxed is NO, returns nil when the pickboard is empty. */
 		pickedObject, pickRefs);
 
 	[self removeItemAtIndex: 0];
-	[_pickedObjects removeObjectForKey: [pickRefs objectAtIndex: 0]];
+	[_pickedObjects removeObjectForKey: pickRefs[0]];
 
 	if (boxed && [pickedObject isKindOfClass: [ETPickCollection class]] == NO)
 	{
@@ -230,7 +230,7 @@ returns an ETLayoutItem. */
 
 	NSString *pickRef = [NSString stringWithFormat: @"%d", ++_pickboardRef];
 
-	[_pickedObjects setObject: object forKey: pickRef];
+	_pickedObjects[pickRef] = object;
 
 	[self insertItem: [self pickboardItemWithObject: object metadata: metadata] 
 	         atIndex: index];
@@ -278,7 +278,7 @@ by ref in the pickboard. */
 		
 	}
 
-	id object = [_pickedObjects objectForKey: ref];
+	id object = _pickedObjects[ref];
 
 	if (object == nil)
 	{
@@ -299,7 +299,7 @@ target pickboard returns a reference making later retrieval more
 convenient. */
 - (id) objectForPickboardRef: (ETPickboardRef *)ref
 {
-	return [_pickedObjects objectForKey: ref];
+	return _pickedObjects[ref];
 }
 
 /** Returns all picked objects still on the pickboard. */
@@ -328,7 +328,7 @@ If boxed is NO, returns nil when the pickboard is empty. */
 {
 	if ([self isEmpty])
 	{
-		return (boxed ? [ETPickCollection pickCollectionWithCollection: [NSArray array]] : nil);
+		return (boxed ? [ETPickCollection pickCollectionWithCollection: @[]] : nil);
 	}
 
 	id firstObject = [[self firstItem] representedObject];

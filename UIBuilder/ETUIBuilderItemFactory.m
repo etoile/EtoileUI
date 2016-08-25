@@ -286,7 +286,7 @@
 {
 	NSArray *choices = A(_(@"Browser"), _(@"Inspector"), _(@"Browser and Inspector"));
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
-		                                 representedObjects: [NSArray array]
+		                                 representedObjects: @[]
 		                                             target: aController 
 		                                             action: @selector(changePresentationViewFromPopUp:)];
 
@@ -500,7 +500,7 @@
 	// NOTE: We use -valueForKey: to support using @"self" as a key
 	if ([anObject valueForKey: anAspectName] == nil)
 	{
-		return [NSArray array];
+		return @[];
 	}
 	if ([anAspectName isEqual: @"valueTransformers"])
 	{
