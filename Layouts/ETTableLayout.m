@@ -587,14 +587,17 @@ See [(ETColumnFragment)] protocol to customize the returned column. */
           heightOfRow: (NSInteger)row
 {
 	ETLayoutItemGroup *parent = [[self itemAtRow: row] parentItem];
-	
-	if (parent != [self layoutContext]
+	CGFloat rowHeight = [tableView rowHeight];
+
+	if (parent != nil
+	 && parent != [self layoutContext]
 	 && [parent itemScaleFactor] != [[self layoutContext] itemScaleFactor])
 	{
-		return DEFAULT_ROW_HEIGHT * [parent itemScaleFactor];
+		rowHeight = DEFAULT_ROW_HEIGHT * [parent itemScaleFactor];
 	}
 	
-	return [tableView rowHeight];
+	ETAssert(rowHeight >= 1);
+	return rowHeight;
 }
 
 - (BOOL) tableView: (NSTableView *)tableView isGroupRow: (NSInteger)rowIndex
