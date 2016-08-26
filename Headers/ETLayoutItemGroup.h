@@ -158,7 +158,6 @@
 @property (nonatomic, readonly) NSArray *visibleItems;
 @property (nonatomic, copy) NSArray *exposedItems;
 @property (nonatomic, readonly) NSSize visibleContentSize;
-//@property (nonatomic, getter=isScrollable, readwrite) BOOL scrollable;
 
 /** @taskunit Framework Private */
 
