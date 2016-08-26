@@ -238,7 +238,7 @@ For a copy, -attachedTool is copied. */
 /** @taskunit Layout Size Control and Feedback */
 
 @property (nonatomic) NSSize layoutSize;
-@property (nonatomic, getter=isContentSizeLayout, readonly) BOOL contentSizeLayout;
+@property (nonatomic, readonly) BOOL isContentSizeLayout;
 @property (nonatomic, getter=isAllContentVisible, readonly) BOOL allContentVisible;
 @property (nonatomic, readonly, strong) id<ETComputableLayout> positionalLayout;
 
