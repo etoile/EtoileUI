@@ -116,8 +116,8 @@ receiver is not observed.
 	/* Add keys for values affected by a represented object change
 	   TODO: We probably can remove that once our model object (e.g. COObject, 
 	   COFile etc.) correctly override -observableKeyPaths. */
-	[affectedKeys addObjectsFromArray: A(kETDisplayNameProperty, kETValueProperty, 
-		kETIconProperty, kETSubjectProperty)];
+	[affectedKeys addObjectsFromArray: @[kETDisplayNameProperty, kETValueProperty, 
+		kETIconProperty, kETSubjectProperty]];
 	[affectedKeys unionSet: [oldObject observableKeyPaths]];
 	[affectedKeys unionSet: [newObject observableKeyPaths]];
 	if (nil == oldObject || nil == newObject)

@@ -44,7 +44,7 @@
 	[[templateItem coverStyle] setLabelMargin: 50];
 
 	[layout setTemplateItem: templateItem];
-	[layout setTemplateKeys: A(@"autoresizingMask", @"coverStyle", @"view")];
+	[layout setTemplateKeys: @[@"autoresizingMask", @"coverStyle", @"view"]];
 	
 	// The initializer updated the layout previously, and -setTemplate:
 	// and -setTemplateKeys: don't call -renderAndInvalidateDisplay.

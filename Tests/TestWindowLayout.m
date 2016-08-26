@@ -85,7 +85,7 @@
 
 - (void) checkSwitchBackToWindowLayoutFromLayout: (ETLayout *)aLayout
 {
-	[windowGroup addItems: A(item, itemGroup)];
+	[windowGroup addItems: @[item, itemGroup]];
 
 	NSWindow *itemWindow = [[item windowItem] window];
 	NSWindow *itemGroupWindow = [[itemGroup windowItem] window];

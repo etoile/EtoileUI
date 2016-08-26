@@ -40,14 +40,14 @@
 	
 	[decoratorItem setPersistent: YES];
 
-	NSArray *derivedProperties = A(usesWidgetView, flipped, decoratedItem,
+	NSArray *derivedProperties = @[usesWidgetView, flipped, decoratedItem,
 		firstDecoratedItem, lastDecoratorItem, decorationRect, enclosingItem,
-		nextResponder);
+		nextResponder];
 
 	[[derivedProperties mappedCollection] setDerived: YES];
 	[[derivedProperties mappedCollection] setReadOnly: YES];
 
-	[entity setPropertyDescriptions: [A(supervisorView, decoratorItem)
+	[entity setPropertyDescriptions: [@[supervisorView, decoratorItem]
 		arrayByAddingObjectsFromArray: derivedProperties]];
 
 	return entity;

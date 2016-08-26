@@ -185,7 +185,7 @@ See also -[NSObject descriptionWithOptions:]. */
 {
 	NSString *childKey = (usesArrangedItems ? @"arrangedItems" : @"items");
 	return [self descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
-		A(aProperty), kETDescriptionOptionValuesForKeyPaths, childKey, kETDescriptionOptionTraversalKey, nil]];
+		@[aProperty], kETDescriptionOptionValuesForKeyPaths, childKey, kETDescriptionOptionTraversalKey, nil]];
 }
 
 /* Manipulating Layout Item Tree */

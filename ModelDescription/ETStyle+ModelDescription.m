@@ -43,7 +43,7 @@
 	ETPropertyDescription *isShared = [ETPropertyDescription descriptionWithName: @"isShared" type: (id)@"BOOL"];
 	[isShared setPersistent: YES];
 
-	[entity setUIBuilderPropertyNames: A([isShared name])];
+	[entity setUIBuilderPropertyNames: @[[isShared name]]];
 
 	[entity addPropertyDescription: isShared];
 
@@ -70,10 +70,10 @@
 	ETPropertyDescription *firstStyle = [ETPropertyDescription descriptionWithName: @"firstStyle" type: (id)@"ETStyle"];
 	ETPropertyDescription *lastStyle = [ETPropertyDescription descriptionWithName: @"lastStyle" type: (id)@"ETStyle"];
 
-	[entity setUIBuilderPropertyNames:  A([styles name])];
+	[entity setUIBuilderPropertyNames:  @[[styles name]]];
 
 	[styles setPersistent: YES];
-	[entity setPropertyDescriptions: A(styles, firstStyle, lastStyle)];
+	[entity setPropertyDescriptions: @[styles, firstStyle, lastStyle]];
 
 	return entity;
 }
@@ -96,17 +96,17 @@
 	ETPropertyDescription *labelPosition = [ETPropertyDescription descriptionWithName: @"labelPosition" type: (id)@"NSUInteger"];
 	[labelPosition setRole: [ETMultiOptionsRole new]];
 	[[labelPosition role] setAllowedOptions:
-	 	[D(@(ETLabelPositionNone), _(@"None"),
-		   @(ETLabelPositionContentAspect), _(@"Based on Item Content Aspect"),
-		   @(ETLabelPositionCentered), _(@"Centered"),
-		   @(ETLabelPositionInsideLeft), _(@"Inside Left"),
-		   @(ETLabelPositionOutsideLeft), _(@"Outside Left"),
-		   @(ETLabelPositionInsideTop), _(@"Inside Top"),
-		   @(ETLabelPositionOutsideTop), _(@"Outside Top"),
-		   @(ETLabelPositionInsideRight), _(@"Inside Right"),
-		   @(ETLabelPositionOutsideRight), _(@"Outside Right"),
-		   @(ETLabelPositionInsideBottom), _(@"Inside Bottom"),
-		   @(ETLabelPositionOutsideBottom), _(@"Outside Bottom")) arrayRepresentation]];
+	 	[@{ _(@"None"): @(ETLabelPositionNone),
+		    _(@"Based on Item Content Aspect"): @(ETLabelPositionContentAspect),
+		    _(@"Centered"): @(ETLabelPositionCentered),
+		    _(@"Inside Left"): @(ETLabelPositionInsideLeft),
+		    _(@"Outside Left"): @(ETLabelPositionOutsideLeft),
+		    _(@"Inside Top"): @(ETLabelPositionInsideTop),
+		    _(@"Outside Top"): @(ETLabelPositionOutsideTop),
+		    _(@"Inside Right"): @(ETLabelPositionInsideRight),
+		    _(@"Outside Right"): @(ETLabelPositionOutsideRight),
+		    _(@"Inside Bottom"): @(ETLabelPositionInsideBottom),
+		    _(@"Outside Bottom"): @(ETLabelPositionOutsideBottom) } arrayRepresentation]];
 	ETPropertyDescription *labelMargin = [ETPropertyDescription descriptionWithName: @"labelMargin" type: (id)@"CGFloat"];
 	ETPropertyDescription *labelAttributes = [ETPropertyDescription descriptionWithName: @"labelAttributes" type: (id)@"NSObject"];
 	[labelAttributes setKeyed: YES];
@@ -119,12 +119,12 @@
 	ETPropertyDescription *edgeInset = [ETPropertyDescription descriptionWithName: @"edgeInset" type: (id)@"CGFloat"];
 
 	// FIXME: Make labelAttributes and selectedLabelAttributes persistent
-	NSArray *transientProperties = A(labelAttributes, selectedLabelAttributes);
-	NSArray *persistentProperties = A(labelPosition, labelMargin, maxLabelSize,
-		maxImageSize, edgeInset);
+	NSArray *transientProperties = @[labelAttributes, selectedLabelAttributes];
+	NSArray *persistentProperties = @[labelPosition, labelMargin, maxLabelSize,
+		maxImageSize, edgeInset];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(edgeInset, labelPosition,
-		labelMargin, maxLabelSize, maxImageSize) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[edgeInset, labelPosition,
+		labelMargin, maxLabelSize, maxImageSize] mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:
@@ -163,11 +163,11 @@
 	ETPropertyDescription *alpha = [ETPropertyDescription descriptionWithName: @"alphaValue" type: (id)@"CGFloat"];
 	ETPropertyDescription *hidden = [ETPropertyDescription descriptionWithName: @"hidden" type: (id)@"BOOL"];
 
-	NSArray *transientProperties = A(bounds, pathResizeSel);
-	NSArray *persistentProperties = A(path, pathResizeSelName, fillColor, strokeColor, alpha, hidden);
+	NSArray *transientProperties = @[bounds, pathResizeSel];
+	NSArray *persistentProperties = @[path, pathResizeSelName, fillColor, strokeColor, alpha, hidden];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(path, fillColor, strokeColor,
-		alpha) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[path, fillColor, strokeColor,
+		alpha] mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];
@@ -194,10 +194,10 @@
 	[tintColor setValueTransformerName: @"COColorToHTMLString"];
 	[tintColor setPersistentTypeName: @"NSString"];
 
-	[entity setUIBuilderPropertyNames: A([tintColor name])];
+	[entity setUIBuilderPropertyNames: @[[tintColor name]]];
 	
 	[tintColor setPersistent: YES];
-	[entity setPropertyDescriptions: A(tintColor)];
+	[entity setPropertyDescriptions: @[tintColor]];
 	
 	return entity;
 }

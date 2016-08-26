@@ -180,7 +180,7 @@ If boxed is NO, returns nil when the pickboard is empty. */
 
 	if (boxed && [pickedObject isKindOfClass: [ETPickCollection class]] == NO)
 	{
-		pickedObject = [ETPickCollection pickCollectionWithCollection: A(pickedObject)];
+		pickedObject = [ETPickCollection pickCollectionWithCollection: @[pickedObject]];
 	}
 	return pickedObject;
 }
@@ -335,7 +335,7 @@ If boxed is NO, returns nil when the pickboard is empty. */
 
 	if (boxed == YES && [firstObject isKindOfClass: [ETPickCollection class]] == NO)
 	{
-		firstObject = [ETPickCollection pickCollectionWithCollection: A(firstObject)];
+		firstObject = [ETPickCollection pickCollectionWithCollection: @[firstObject]];
 	}
 	return firstObject;
 }

@@ -46,12 +46,12 @@ the receiver is set as the application's delegate in the nib. */
 	// FIXME: Move into an EtoileUI plist loaded by ETUTI
 	[ETUTI registerTypeWithString: @"org.etoile-project.objc.class.NSImage"
 	                  description: @"Objective-C Class"
-	             supertypeStrings: A(@"public.image")
+	             supertypeStrings: @[@"public.image"]
 	                     typeTags: nil];
 
 	[self setAutomaticallyRearrangesObjects: YES]; /* Enable automatic sorting */
-	[self setAllowedPickTypes: A([ETUTI typeWithString: @"public.image"])];
-	[self setAllowedDropTypes: A([ETUTI typeWithString: @"public.image"])
+	[self setAllowedPickTypes: @[[ETUTI typeWithString: @"public.image"]]];
+	[self setAllowedDropTypes: @[[ETUTI typeWithString: @"public.image"]]
 	            forTargetType: [ETUTI typeWithClass: [ETLayoutItemGroup class]]];
 
 	[[ETPickboard localPickboard] showPickPalette]; /* Just to show it */
@@ -357,7 +357,7 @@ protocol methods. */
 
 - (NSArray *) displayedItemPropertiesInItemGroup: (ETLayoutItemGroup *)baseItem
 {
-	return A(@"icon", @"name", @"size", @"type", @"modificationDate");
+	return @[@"icon", @"name", @"size", @"type", @"modificationDate"];
 }
 
 @end
@@ -368,7 +368,7 @@ protocol methods. */
 - (NSArray *) propertyNames
 {
 	return [[super propertyNames]
-		arrayByAddingObjectsFromArray: A(@"name", @"size", @"type", @"modificationDate")];
+		arrayByAddingObjectsFromArray: @[@"name", @"size", @"type", @"modificationDate"]];
 }
 
 /* -[ETBasicItemStyle imageForItem:] returns -icon and not -image by default, 

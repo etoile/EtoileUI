@@ -47,7 +47,7 @@
 	[valueTransformers setValueTransformerName: @"ETItemValueTransformerToString"];
 	[valueTransformers setPersistentTypeName: @"NSString"];
 	[valueTransformers setShowsItemDetails: YES];
-	[valueTransformers setDetailedPropertyNames: A(@"name", @"transformCode", @"reverseTransformCode")];
+	[valueTransformers setDetailedPropertyNames: @[@"name", @"transformCode", @"reverseTransformCode"]];
 	ETPropertyDescription *valueKey = [ETPropertyDescription descriptionWithName: @"valueKey" type: (id)@"NSString"];
 	[valueKey setDerived: YES];
 	ETPropertyDescription *value = [ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
@@ -74,15 +74,14 @@
 	ETPropertyDescription *contentAspect = [ETPropertyDescription descriptionWithName: @"contentAspect" type: (id)@"NSUInteger"];
 	[contentAspect setRole: [ETMultiOptionsRole new]];
 	[[contentAspect role] setAllowedOptions:
-	 [D(@(ETContentAspectNone), _(@"None"),
-		@(ETContentAspectComputed), _(@"Computed by Cover Style"),
-		@(ETContentAspectCentered), _(@"Centered"),
-		@(ETContentAspectScaleToFit), _(@"Scale To Fit"),
-		@(ETContentAspectScaleToFill), _(@"Scale to Fill"),
-		@(ETContentAspectScaleToFillHorizontally), _(@"Scale To Fill Horizontally"),
-		@(ETContentAspectScaleToFillVertically), _(@"Scale to Fill Vertically"),
-		@(ETContentAspectStretchToFill), _(@"Stretch to Fill"))
-			arrayRepresentation]];
+	 [@{ _(@"None"): @(ETContentAspectNone),
+		 _(@"Computed by Cover Style"): @(ETContentAspectComputed),
+		 _(@"Centered"): @(ETContentAspectCentered),
+		 _(@"Scale To Fit"): @(ETContentAspectScaleToFit),
+		 _(@"Scale to Fill"): @(ETContentAspectScaleToFill),
+		 _(@"Scale To Fill Horizontally"): @(ETContentAspectScaleToFillHorizontally),
+		 _(@"Scale to Fill Vertically"): @(ETContentAspectScaleToFillVertically),
+		 _(@"Stretch to Fill"): @(ETContentAspectStretchToFill) } arrayRepresentation]];
 	ETPropertyDescription *boundingBox = [ETPropertyDescription descriptionWithName: @"boundingBox" type: (id)@"NSRect"];
 	// TODO: What should we do with _defaultValues?
 	ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
@@ -162,30 +161,30 @@
 	[UIBuilderAction setDisplayName: @"Action"];
 	ETPropertyDescription *attachedTool = [ETPropertyDescription descriptionWithName: @"attachedTool" type: (id)@"ETTool"];
 
-	NSArray *persistentProperties = A(identifier, name, image, icon, representedObjectKey, 
+	NSArray *persistentProperties = @[identifier, name, image, icon, representedObjectKey, 
 		representedAttribute, representedOrderedAttribute, representedUnorderedAttribute,
 		representedRelationship, representedOrderedRelationship, representedUnorderedRelationship,
 		valueTransformers, view, styleGroup, coverStyle,
 		actionHandler, action, persistentTarget, persistentTargetOwner,
 		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
 		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
-		exposed, hidden, subtype, scrollable);
+		exposed, hidden, subtype, scrollable];
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 
 	// to redeclare these properties as persistent if no view is used).
-	NSArray *derivedProperties = A(parentItem, hostItem, controllerItem, sourceItem,
+	NSArray *derivedProperties = @[parentItem, hostItem, controllerItem, sourceItem,
 		isMetaItem, repObject, valueKey, value, visible, style, frame, x, y,
-		width, height, target, hasVerticalScroller, hasHorizontalScroller);
+		width, height, target, hasVerticalScroller, hasHorizontalScroller];
 	NSArray *transientProperties = [derivedProperties arrayByAddingObjectsFromArray:
-		A(title, objectValue, formatter, minValue, maxValue, pickMetadata,
-		UIBuilderAction, attachedTool)];
+		@[title, objectValue, formatter, minValue, maxValue, pickMetadata,
+		UIBuilderAction, attachedTool]];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(identifier, name, 
+	[entity setUIBuilderPropertyNames: (id)[[@[identifier, name, 
 		image, icon, valueKey, target, UIBuilderAction, 
 		frame, position, anchorPoint, autoresizing, contentAspect,
 		flipped, selected, selectable, visible, scrollable, hasVerticalScroller,
-		hasHorizontalScroller) mappedCollection] name]];
+		hasHorizontalScroller] mappedCollection] name]];
 
 	[[derivedProperties mappedCollection] setDerived: YES];
 	[[persistentProperties mappedCollection] setPersistent: YES];
@@ -287,12 +286,12 @@
 	   -[ETController didLoadObjectGraph] or later on -[ETLayoutItem reload].
 	   This explains why we don't persist the arranged items. */
 
-	NSArray *persistentProperties = A(items, layout, source, delegate, controller,
-		doubleAction, shouldMutateRepObject, itemScaleFactor, wasViewHidden);
-	NSArray *transientProperties = A(doubleClickedItem);
+	NSArray *persistentProperties = @[items, layout, source, delegate, controller,
+		doubleAction, shouldMutateRepObject, itemScaleFactor, wasViewHidden];
+	NSArray *transientProperties = @[doubleClickedItem];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(delegate, doubleAction,
-		shouldMutateRepObject, itemScaleFactor) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[delegate, doubleAction,
+		shouldMutateRepObject, itemScaleFactor] mappedCollection] name]];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: [persistentProperties arrayByAddingObjectsFromArray: transientProperties]];

@@ -38,9 +38,9 @@
 	ETPropertyDescription *value =
 		[ETPropertyDescription descriptionWithName: @"value" type: (id)@"NSObject"];
 
-	NSArray *transientProperties = A(name, repObject, value);
+	NSArray *transientProperties = @[name, repObject, value];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(name) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[name] mappedCollection] name]];
 
 	[entity setPropertyDescriptions: transientProperties];
 
@@ -70,9 +70,9 @@
 	// and override -checkConstraints:.
 	[content setMultivalued: YES];
 	
-	NSArray *transientProperties = A(content);
+	NSArray *transientProperties = @[content];
 	
-	[entity setUIBuilderPropertyNames: (id)[[A(content) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[content] mappedCollection] name]];
 	
 	[entity setPropertyDescriptions: transientProperties];
 	
@@ -98,9 +98,9 @@
 	   transient because we persist it as a property list (it is not a COObject). */
 	ETPropertyDescription *contentKeyPath = [ETPropertyDescription descriptionWithName: @"contentKeyPath" type: (id)@"NSString"];
 	
-	NSArray *transientProperties = A(contentKeyPath);
+	NSArray *transientProperties = @[contentKeyPath];
 	
-	[entity setUIBuilderPropertyNames: (id)[[A(contentKeyPath) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[contentKeyPath] mappedCollection] name]];
 	
 	[entity setPropertyDescriptions: transientProperties];
 	

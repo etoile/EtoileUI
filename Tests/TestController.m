@@ -338,10 +338,10 @@
 	id item1 = [itemFactory itemWithRepresentedObject: @"a"];
 	id item2 = [itemFactory itemWithRepresentedObject: @"b"];
 	id item3 = [itemFactory itemWithRepresentedObject: @"c"];
-	NSArray *initialItems = A(item3, item1, item2);
+	NSArray *initialItems = @[item3, item1, item2];
 
 	[content addItems: initialItems];
-	[controller setSortDescriptors: A([self descriptorWithKey: kETRepresentedObjectProperty])];
+	[controller setSortDescriptors: @[[self descriptorWithKey: kETRepresentedObjectProperty]]];
 
 	UKObjectsEqual(A(item1, item2, item3), [content arrangedItems]);
 	UKObjectsEqual(initialItems, [content items]);
@@ -351,7 +351,7 @@
 	//UKTrue([content hasNewContent]);
 	
 	[controller setSortDescriptors: 
-		A([[[controller sortDescriptors] firstObject] reversedSortDescriptor])];
+		@[[[[controller sortDescriptors] firstObject] reversedSortDescriptor]]];
 
 	UKObjectsEqual(A(item3, item2, item1), [content arrangedItems]);
 	UKObjectsEqual(initialItems, [content items]);
@@ -379,14 +379,14 @@
 	id item121 = [itemFactory itemWithRepresentedObject: [NSNumber numberWithInt: 8]];
 	id item122 = [itemFactory itemGroupWithRepresentedObject: [NSNumber numberWithInt: 9]];
 
-	NSArray *initialItems = A(item3, item1, item2);
-	NSArray *initialCapitalItems = A(item12, item11, item13);
-	NSArray *initialNumberItems = A(item121, item122);
+	NSArray *initialItems = @[item3, item1, item2];
+	NSArray *initialCapitalItems = @[item12, item11, item13];
+	NSArray *initialNumberItems = @[item121, item122];
 
 	[item12 addItems: initialNumberItems];
 	[item3 addItems: initialCapitalItems];
 	[content addItems: initialItems];
-	[controller setSortDescriptors: A([self descriptorWithKey: kETRepresentedObjectProperty])];
+	[controller setSortDescriptors: @[[self descriptorWithKey: kETRepresentedObjectProperty]]];
 
 	UKObjectsEqual(A(item1, item2, item3), [content arrangedItems]);
 	UKObjectsEqual(initialItems, [content items]);
@@ -405,7 +405,7 @@
 	// FIXME: UKTrue([item12 hasNewContent]);
 	
 	[controller setSortDescriptors: 
-		A([[[controller sortDescriptors] firstObject] reversedSortDescriptor])];
+		@[[[[controller sortDescriptors] firstObject] reversedSortDescriptor]]];
 
 	UKObjectsEqual(A(item3, item2, item1), [content arrangedItems]);
 	UKObjectsEqual(initialItems, [content items]);
@@ -447,7 +447,7 @@
 	id item1 = [itemFactory itemWithRepresentedObject: @"a"];
 	id item2 = [itemFactory itemWithRepresentedObject: @"b"];
 	id item3 = [itemFactory itemWithRepresentedObject: @"c"];
-	NSArray *initialItems = A(item3, item1, item2);
+	NSArray *initialItems = @[item3, item1, item2];
 
 	[content addItems: initialItems];
 	[controller setFilterPredicate: 
@@ -488,9 +488,9 @@
 	id item121 = [itemFactory itemWithRepresentedObject: [NSNumber numberWithInt: 8]];
 	id item122 = [itemFactory itemGroupWithRepresentedObject: [NSNumber numberWithInt: 9]];
 
-	NSArray *initialItems = A(item3, item1, item2);
-	NSArray *initialCapitalItems = A(item12, item11, item13);
-	NSArray *initialNumberItems = A(item121, item122);
+	NSArray *initialItems = @[item3, item1, item2];
+	NSArray *initialCapitalItems = @[item12, item11, item13];
+	NSArray *initialNumberItems = @[item121, item122];
 
 	[item12 addItems: initialNumberItems];
 	[item3 addItems: initialCapitalItems];

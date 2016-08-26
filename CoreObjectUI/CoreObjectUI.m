@@ -130,14 +130,13 @@
 	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	// FIXME: [[itemGroup layout] setSeparatorTemplateItem: [self flexibleSpaceSeparator]];
 	[itemGroup addItems: 
-		A([self barElementFromItem: undoItem withLabel: _(@"Undo")],
-		[self barElementFromItem: moveBackItem withLabel: _(@"Move Back To")],
-		[self barElementFromItem: moveForwardItem withLabel: _(@"Move Forward To")],
-		[self barElementFromItem: restoreItem withLabel: _(@"Restore To")],
-		[self barElementFromItem: openItem withLabel: _(@"Open")],
-		[self barElementFromItem: showDetailsItem withLabel: _(@"Show Details")],
-		[self barElementFromItem: searchFieldItem withLabel: _(@"Search")]
-		)];
+		@[[self barElementFromItem: undoItem withLabel: _(@"Undo")],
+		  [self barElementFromItem: moveBackItem withLabel: _(@"Move Back To")],
+		  [self barElementFromItem: moveForwardItem withLabel: _(@"Move Forward To")],
+		  [self barElementFromItem: restoreItem withLabel: _(@"Restore To")],
+		  [self barElementFromItem: openItem withLabel: _(@"Open")],
+		  [self barElementFromItem: showDetailsItem withLabel: _(@"Show Details")],
+		  [self barElementFromItem: searchFieldItem withLabel: _(@"Search")]]];
 
 	return itemGroup;
 }
@@ -157,7 +156,7 @@
 	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]];
 
 	[layout setContentFont: [NSFont controlContentFontOfSize: [NSFont smallSystemFontSize]]];
-	[layout setDisplayedProperties: A(@"icon", @"UUID", @"localizedTypeDescription", @"localizedShortDescription", @"date")];
+	[layout setDisplayedProperties: @[@"icon", @"UUID", @"localizedTypeDescription", @"localizedShortDescription", @"date"]];
 	[layout setDisplayName: @"Revision Number" forProperty: @"revisionNumber"];
 	[layout setDisplayName: @"Revision UUID" forProperty: @"UUID"];
 	[layout setDisplayName: @"Date" forProperty: @"date"];
@@ -196,7 +195,7 @@
 	ETController *controller = [[ETHistoryBrowserController alloc] initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 	ETLayoutItemGroup *topBar = [self historyBrowserTopBarWithController: controller];
 	ETLayoutItemGroup *trackView = [self historyBrowserTrackViewWithRepresentedObject: aTrack controller: controller];
-	ETLayoutItemGroup *browser = [self itemGroupWithItems: A(topBar, trackView)];
+	ETLayoutItemGroup *browser = [self itemGroupWithItems: @[topBar, trackView]];
 	
 	[browser setName: (aTitle != nil ? aTitle : [self titleForTrack: aTrack])];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];

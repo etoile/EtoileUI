@@ -172,7 +172,7 @@ time. For example:
 
 	[editor setIdentifier: @"rectEditor"];
 	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [editor objectGraphContext]]];
-	[editor addItems: A(pointEditor, sizeEditor)];
+	[editor addItems: @[pointEditor, sizeEditor]];
 
 	return editor;
 }
@@ -215,8 +215,8 @@ time. For example:
 
 - (void) registerDefaultFormatters
 {
-	NSArray *numberTypeNames = A(@"NSNumber", @"NSInteger", @"NSUInteger",
-		@"CGFloat", @"double", @"BOOL", @"Boolean", @"Number");
+	NSArray *numberTypeNames = @[@"NSNumber", @"NSInteger", @"NSUInteger",
+		@"CGFloat", @"double", @"BOOL", @"Boolean", @"Number"];
 
 	[self setFormatter: [ETObjectValueFormatter new]
 	           forType: [_repository descriptionForName: @"Object"]];
@@ -672,7 +672,7 @@ See also -setRenderedPropertyNames:. */
 	BOOL isKeyedCollection = [[browser representedObject] isKeyed];
 	BOOL isMutableCollection = [[browser representedObject] isMutableCollection];
 	
-	[[browser layout] setDisplayedProperties: A(@"value")];
+	[[browser layout] setDisplayedProperties: @[@"value"]];
 	[[browser layout] setDisplayName: @"Value" forProperty: @"value"];
 	[[browser layout] setEditable: isMutableCollection forProperty: @"value"];
 
@@ -736,7 +736,7 @@ See also -setRenderedPropertyNames:. */
 	if (isKeyedCollection)
 	{
 		NSArray *properties = [[browser layout] displayedProperties];
-		[[browser layout] setDisplayedProperties: [A(@"key") arrayByAddingObjectsFromArray: properties]];
+		[[browser layout] setDisplayedProperties: [@[@"key"] arrayByAddingObjectsFromArray: properties]];
 		[[browser layout] setDisplayName: @"Key" forProperty: @"key"];
 		[[browser layout] setEditable: isMutableCollection forProperty: @"key"];
 	}

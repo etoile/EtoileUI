@@ -103,7 +103,7 @@ revert it or bring back the basic inspector. */
 		inspector = [[ETInspector alloc] init]; // FIXME: Leak
 
 	ETDebugLog(@"inspect %@", self);
-	[inspector setInspectedObjects: A(self)];
+	[inspector setInspectedObjects: @[self]];
 	[[inspector panel] makeKeyAndOrderFront: self];
 #endif
 }

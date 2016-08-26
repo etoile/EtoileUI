@@ -34,7 +34,7 @@
 		[layoutObject setDisplayName: @"Name" forProperty: @"displayName"];
 		[layoutObject setDisplayName: @"Description" forProperty: @"description"];
 		[layoutObject setDisplayedProperties: 
-			A(@"className", @"stringValue", @"description", @"displayName")];
+			@[@"className", @"stringValue", @"description", @"displayName"]];
 	}
 
 	[layoutObject setAttachedTool: [self toolWithMultipleAndEmptySelectionAllowed]];
@@ -93,7 +93,7 @@
 
 	[removeButtonItem sizeToFit];
 
-	[toolbar addItems: A(addButtonItem, removeButtonItem)];
+	[toolbar addItems: @[addButtonItem, removeButtonItem]];
 	[toolbar setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[toolbar layout] setItemMargin: 12];
 	[toolbar setAutoresizingMask: ETAutoresizingFlexibleWidth];
@@ -108,7 +108,7 @@
 	ETController *controller = AUTORELEASE([[MarkupEditorController alloc] init]);
 	ETLayoutItemGroup *toolbar = [self toolbarWithWidth: width controller: controller];
 	ETLayoutItemGroup *editorView = [self editorViewWithSize: NSMakeSize(width, height - [toolbar height]) controller: controller];
-	ETLayoutItemGroup *editor = [self itemGroupWithItems: A(toolbar, editorView)];
+	ETLayoutItemGroup *editor = [self itemGroupWithItems: @[toolbar, editorView]];
 
 	[editor setController: controller];
 	[editor setSize: NSMakeSize(width, height)];

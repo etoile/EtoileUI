@@ -163,7 +163,7 @@ To do so, -canReload checks -isMutating. */
 
     [self willChangeValueForProperty: @"items"
                            atIndexes: [self insertionIndexesForIndex: index]
-                         withObjects: A(item)
+                         withObjects: @[item]
                         mutationKind: ETCollectionMutationKindInsertion];
 	_mutating = YES;
 
@@ -184,7 +184,7 @@ To do so, -canReload checks -isMutating. */
 	_mutating = NO;
     [self didChangeValueForProperty: @"items"
                           atIndexes: [self insertionIndexesForIndex: index]
-                        withObjects: A(item)
+                        withObjects: @[item]
                        mutationKind: ETCollectionMutationKindInsertion];
 	[self didAttachItem: item];
 }
@@ -255,7 +255,7 @@ To do so, -canReload checks -isMutating. */
 
     [self willChangeValueForProperty: @"items"
                            atIndexes: indexes
-                         withObjects: A(item)
+                         withObjects: @[item]
                         mutationKind: ETCollectionMutationKindRemoval];
 	_mutating = YES;
 
@@ -278,7 +278,7 @@ To do so, -canReload checks -isMutating. */
 	_mutating = NO;
     [self didChangeValueForProperty: @"items"
                           atIndexes: indexes
-                        withObjects: A(item)
+                        withObjects: @[item]
                        mutationKind: ETCollectionMutationKindRemoval];
 	[self didDetachItem: item];
 }

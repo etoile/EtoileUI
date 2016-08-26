@@ -185,7 +185,7 @@
 		id item1 = [[ETLayoutItem alloc]
 			initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]];
 
-		[item addItems: A(item0, item1)];
+		[item addItems: @[item0, item1]];
 
 		/* Required to get the item deallocated */
 		[[ETLayoutExecutor sharedInstance] removeItem: item];

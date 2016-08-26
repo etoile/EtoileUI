@@ -95,7 +95,7 @@
 	CGFloat height = [item height] + [textItem height];
 	NSSize contentSize = NSMakeSize(width, height);
 
-	[itemGroup addItems: A(item, textItem)];
+	[itemGroup addItems: @[item, textItem]];
 	
 	[[ETLayoutExecutor sharedInstance] execute];
 

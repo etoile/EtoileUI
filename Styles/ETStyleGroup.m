@@ -49,7 +49,7 @@
 /** Initializes and returns a style group that only contains a single style. */
 - (instancetype) initWithStyle: (ETStyle *)aStyle objectGraphContext: (COObjectGraphContext *)aContext
 {
-	return [self initWithCollection: A(aStyle) objectGraphContext: aContext];
+	return [self initWithCollection: @[aStyle] objectGraphContext: aContext];
 }
 
 /** <init />Initializes and returns a style group that contains all the styles 

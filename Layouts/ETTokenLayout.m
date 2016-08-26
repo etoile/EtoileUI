@@ -55,7 +55,7 @@ Initializes and returns a new token layout. */
 	   initial state. See -setUpTemplateElementWithNewValue:forKey:inItem:
 	   View must also be restored after Content Aspect, otherwise the view 
 	   geometry computation occurs two times when the items are restored. */
-	[self setTemplateKeys: A(@"icon", @"coverStyle", @"actionHandler", @"contentAspect", @"view")];
+	[self setTemplateKeys: @[@"icon", @"coverStyle", @"actionHandler", @"contentAspect", @"view"]];
 
 	[[self positionalLayout] setBorderMargin: 2];
 	[[self positionalLayout] setItemMargin: 4];
@@ -200,7 +200,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 + (NSDictionary *) standardLabelAttributes
 {
-	return D([NSFont labelFontOfSize: 13], NSFontAttributeName);
+	return @{ NSFontAttributeName: [NSFont labelFontOfSize: 13] };
 }
 
 + (NSDictionary *) defaultSelectedLabelAttributes

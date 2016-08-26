@@ -157,7 +157,7 @@ Can be overriden to return multiple types if the application can view or edit
 more than a single content type. */
 - (NSArray *) supportedTypes
 {
-	return A([self currentObjectType]);
+	return @[[self currentObjectType]];
 }
 
 /** Returns the UTI that describes the content at the given URL.

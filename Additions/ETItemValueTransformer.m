@@ -38,10 +38,10 @@
 		[ETPropertyDescription descriptionWithName: @"reverseTransformCode" type: (id)@"NSString"];
 	[reverseTransformCode setDisplayName: @"Reverse Transform Block"];
 
-	NSArray *persistentProperties = A(name, transformCode, reverseTransformCode);
+	NSArray *persistentProperties = @[name, transformCode, reverseTransformCode];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(name, transformCode,
-		reverseTransformCode) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[name, transformCode,
+		reverseTransformCode] mappedCollection] name]];
 
 	[entity setPropertyDescriptions: persistentProperties];
 

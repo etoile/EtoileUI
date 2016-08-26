@@ -121,7 +121,7 @@ the given application object. */
 - (id) renderApplication: (NSApplication *)app
 {
 	NSMutableArray *items = [NSMutableArray array];
-	NSArray *pasteboards = A([NSPasteboard generalPasteboard]);
+	NSArray *pasteboards = @[[NSPasteboard generalPasteboard]];
 
 	[items addObjectsFromArray: [self renderWindows: [app windows]]];
 	[items addObjectsFromArray: [self renderPasteboards: pasteboards]];

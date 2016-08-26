@@ -27,7 +27,7 @@ The returned attributes only include the label font supplied by NSFont with a
 small system font size. */
 + (NSDictionary *) standardLabelAttributes
 {
-	return D([NSFont labelFontOfSize: [NSFont smallSystemFontSize]], NSFontAttributeName);
+	return @{ NSFontAttributeName: [NSFont labelFontOfSize: [NSFont smallSystemFontSize]] };
 }
 
 /** Returns a new autoreleased style that draws the item icon and its name as 

@@ -31,15 +31,15 @@
 {
 	SUPERINIT;
 	_name = @"John";
-	_emails = D(@"john@etoile.com", @"Work", @"john@nowhere.org", @"Home");
-	_groupNames = A(@"Somebody", @"Nobody");
+	_emails = @{ @"Work": @"john@etoile.com", @"Home": @"john@nowhere.org" };
+	_groupNames = @[@"Somebody", @"Nobody"];
 	return self;
 }
 
 - (NSArray *) propertyNames
 {
 	return [[super propertyNames]
-			arrayByAddingObjectsFromArray: A(@"name", @"emails", @"groupNames")];
+			arrayByAddingObjectsFromArray: @[@"name", @"emails", @"groupNames"]];
 }
 
 @end

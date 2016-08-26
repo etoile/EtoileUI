@@ -69,8 +69,8 @@ the receiver is set as the application's delegate in the nib. */
 	ETUTI *myFolderUTI = [ETUTI typeWithString: myFolderUTIString];
 
 	controller = AUTORELEASE([[ETController alloc] initWithObjectGraphContext: [mainViewItem objectGraphContext]]);
-	[controller setAllowedPickTypes: A(myFileUTI, myFolderUTI)];
-	[controller setAllowedDropTypes: A(myFileUTI, myFolderUTI) 
+	[controller setAllowedPickTypes: @[myFileUTI, myFolderUTI]];
+	[controller setAllowedDropTypes: @[myFileUTI, myFolderUTI] 
 	                  forTargetType: myFolderUTI];
 
 	/* Set the start path */

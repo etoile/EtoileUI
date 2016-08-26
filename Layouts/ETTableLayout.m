@@ -106,7 +106,7 @@
 		_propertyColumns[colId] = column;
 	}
 	/* Set up a list view using a single column without identifier */
-	[tv registerForDraggedTypes: A(ETLayoutItemPboardType)];
+	[tv registerForDraggedTypes: @[ETLayoutItemPboardType]];
 
 	// NOTE: When a table view is archived/unarchived on GNUstep, a nil data 
 	// source or delegate in the initial instance becomes the table view itself 

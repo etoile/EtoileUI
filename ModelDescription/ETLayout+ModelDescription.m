@@ -80,11 +80,11 @@
 
 	// TODO: Declare the numerous derived (implicitly transient) properties we have 
 
-	NSArray *transientProperties = A(contextItem, layerItem, layoutSize);
-	NSArray *persistentProperties = A(attachedTool, oldProposedLayoutSize,
-		dropIndicator);
+	NSArray *transientProperties = @[contextItem, layerItem, layoutSize];
+	NSArray *persistentProperties = @[attachedTool, oldProposedLayoutSize,
+		dropIndicator];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(dropIndicator) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[dropIndicator] mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: 
@@ -120,17 +120,17 @@
 		[ETPropertyDescription descriptionWithName: @"itemSizeConstraintStyle" type: (id)@"NSUInteger"];
 	[itemSizeConstraintStyle setRole: [ETMultiOptionsRole new]];
 	[[itemSizeConstraintStyle role] setAllowedOptions:
-	 	[D(@(ETSizeConstraintStyleNone), _(@"None"),
-		   @(ETSizeConstraintStyleVertical), _(@"Vertical"),
-		   @(ETSizeConstraintStyleHorizontal), _(@"Horizontal"),
-		   @(ETSizeConstraintStyleVerticalHorizontal), _(@"Vertical and Horizontal")) arrayRepresentation]];
+	 	[@{ _(@"None"): @(ETSizeConstraintStyleNone),
+		    _(@"Vertical"): @(ETSizeConstraintStyleVertical),
+		    _(@"Horizontal"): @(ETSizeConstraintStyleHorizontal),
+		    _(@"Vertical and Horizontal"): @(ETSizeConstraintStyleVerticalHorizontal) } arrayRepresentation]];
 
-	NSArray *transientProperties = A(contextLayout);
-	NSArray *persistentProperties = A(isContentSizeLayout,
-		constrainedItemSize, itemSizeConstraintStyle);
+	NSArray *transientProperties = @[contextLayout];
+	NSArray *persistentProperties = @[isContentSizeLayout,
+		constrainedItemSize, itemSizeConstraintStyle];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(isContentSizeLayout, constrainedItemSize,
-		itemSizeConstraintStyle) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[isContentSizeLayout, constrainedItemSize,
+		itemSizeConstraintStyle] mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions: 
@@ -157,7 +157,7 @@
         [ETPropertyDescription descriptionWithName: @"autoresizesItems" type: (id)@"BOOL"];
 	[autoresizesItems setPersistent: YES];
 
-    [entity setPropertyDescriptions: A(autoresizesItems)];
+    [entity setPropertyDescriptions: @[autoresizesItems]];
     
     return entity;
 }
@@ -196,13 +196,13 @@
 		[ETPropertyDescription descriptionWithName: @"separatorItemEndMargin" type: (id)@"CGFloat"];
 	
 	NSArray *transientProperties = @[];
-	NSArray *persistentProperties = A(borderMargin, itemMargin, autoresizesItemToFill,
+	NSArray *persistentProperties = @[borderMargin, itemMargin, autoresizesItemToFill,
 		horizontalAlignment, horizontalAligmentGuide, computesItemRectFromBoundingBox,
-		usesAlignmentHint, separatorTemplateItem, separatorItemEndMargin);
+		usesAlignmentHint, separatorTemplateItem, separatorItemEndMargin];
 	
-	[entity setUIBuilderPropertyNames: (id)[[A(borderMargin, itemMargin,
+	[entity setUIBuilderPropertyNames: (id)[[@[borderMargin, itemMargin,
 		autoresizesItemToFill, horizontalAlignment, horizontalAligmentGuide,
-		separatorTemplateItem, separatorItemEndMargin) mappedCollection] name]];
+		separatorTemplateItem, separatorItemEndMargin] mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:
@@ -243,9 +243,9 @@
 		[ETPropertyDescription descriptionWithName: @"widgetViewClass" type: (id)@"NSObject"];
 	[widgetViewClass setReadOnly: YES];
 
-	NSArray *transientProperties = A(nibName, selectionIndexPaths,
-		doubleClickedItem, widgetViewClass);
-	NSArray *persistentProperties = A(layoutView);
+	NSArray *transientProperties = @[nibName, selectionIndexPaths,
+		doubleClickedItem, widgetViewClass];
+	NSArray *persistentProperties = @[layoutView];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:
@@ -306,10 +306,10 @@
 	[contentFont setValueTransformerName: @"COObjectToArchivedData"];
 	[contentFont setPersistentTypeName: @"NSData"];
 
-	// FIXME: NSArray *transientProperties = A(displayedProperties, editableProperties,
-	//	formatters, styles);
-	NSArray *transientProperties = A(displayedProperties, formatters);
-	NSArray *persistentProperties = A(propertyColumns, sortable, contentFont);
+	// FIXME: NSArray *transientProperties = @[displayedProperties, editableProperties,
+	//	formatters, styles];
+	NSArray *transientProperties = @[displayedProperties, formatters];
+	NSArray *persistentProperties = @[propertyColumns, sortable, contentFont];
 	
 	[entity setUIBuilderPropertyNames: (id)[[transientProperties mappedCollection] name]];
 
@@ -379,9 +379,9 @@ so -propertyColumns is never used unless the user inspects the object. */
 	[renderedItems setMultivalued: YES];
 	[renderedItems setOrdered: NO];
 
-	NSArray *persistentProperties = A(positionalLayout, templateItem,
-		templateKeys, localBindings);
-	NSArray *transientProperties = A(renderedItems);
+	NSArray *persistentProperties = @[positionalLayout, templateItem,
+		templateKeys, localBindings];
+	NSArray *transientProperties = @[renderedItems];
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	
@@ -412,8 +412,8 @@ so -propertyColumns is never used unless the user inspects the object. */
 		[ETPropertyDescription descriptionWithName: @"itemLabelFont" type: (id)@"NSFont"];
 	[itemLabelFont setDerived: YES];
 	
-	NSArray *persistentProperties = A(alignment);
-	NSArray *transientProperties = A(itemLabelFont);
+	NSArray *persistentProperties = @[alignment];
+	NSArray *transientProperties = @[itemLabelFont];
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	
@@ -447,7 +447,7 @@ so -propertyColumns is never used unless the user inspects the object. */
 	ETPropertyDescription *minIconSize =
 		[ETPropertyDescription descriptionWithName: @"minIconSize" type: (id)@"NSSize"];
 
-	NSArray *persistentProperties = A(itemLabelFont, iconSizeForScaleFactorUnit, minIconSize);
+	NSArray *persistentProperties = @[itemLabelFont, iconSizeForScaleFactorUnit, minIconSize];
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	
@@ -480,7 +480,7 @@ so -propertyColumns is never used unless the user inspects the object. */
 	ETPropertyDescription *maxTokenWidth =
 		[ETPropertyDescription descriptionWithName: @"maxTokenWidth" type: (id)@"CGFloat"];
 
-	NSArray *persistentProperties = A(editedProperty, itemLabelFont, maxTokenWidth);
+	NSArray *persistentProperties = @[editedProperty, itemLabelFont, maxTokenWidth];
 	
 	[entity setUIBuilderPropertyNames: (id)[[persistentProperties mappedCollection] name]];
 	

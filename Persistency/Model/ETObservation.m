@@ -41,8 +41,8 @@
     ETPropertyDescription *selectorName =
         [ETPropertyDescription descriptionWithName: @"selectorName" typeName: @"NSString"];
 
-    NSArray *persistentProperties = A(object, name, selectorName);
-    NSArray *transientProperties = A(selector);
+    NSArray *persistentProperties = @[object, name, selectorName];
+    NSArray *transientProperties = @[selector];
 
     [[persistentProperties mappedCollection] setPersistent: YES];
 

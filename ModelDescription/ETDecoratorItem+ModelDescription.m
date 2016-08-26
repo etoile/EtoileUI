@@ -59,7 +59,7 @@
 		[ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
 	[flipped setDerived: YES];
 
-	[entity setPropertyDescriptions: A(decoratedItem)];
+	[entity setPropertyDescriptions: @[decoratedItem]];
 
 	return entity;
 }
@@ -88,8 +88,8 @@
 		[ETPropertyDescription descriptionWithName: @"oldDecoratedItemAutoresizingMask" type: (id)@"NSUInteger"];
 
 	NSArray *persistentProperties =
-		A(ensuresContentFillsVisibleArea, oldDecoratedItemAutoresizingMask);
-	NSArray *transientProperties = A(hasVerticalScroller, hasHorizontalScroller);
+		@[ensuresContentFillsVisibleArea, oldDecoratedItemAutoresizingMask];
+	NSArray *transientProperties = @[hasVerticalScroller, hasHorizontalScroller];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 
@@ -128,7 +128,7 @@
 
 	[titleBarView setPersistent: YES];
 
-	[entity setPropertyDescriptions: A(titleBarView, titleBarHeight, expanded)];
+	[entity setPropertyDescriptions: @[titleBarView, titleBarHeight, expanded]];
 
 	return entity;
 }
@@ -185,10 +185,10 @@
 	ETPropertyDescription *activeFieldEditorItem =
 		[ETPropertyDescription descriptionWithName: @"activeFieldEditorItem" type: (id)@"ETLayoutItem"];
 
-	NSArray *persistentProperties = A(itemWindow, shouldKeepWindowFrame,
-		oldDecoratedItemAutoresizingMask, flipped);
-	NSArray *transientProperties = A(isUntitled, usesCustomWindowTitle,
-		titleBarHeight, focusedItem, editedItem, activeFieldEditorItem);
+	NSArray *persistentProperties = @[itemWindow, shouldKeepWindowFrame,
+		oldDecoratedItemAutoresizingMask, flipped];
+	NSArray *transientProperties = @[isUntitled, usesCustomWindowTitle,
+		titleBarHeight, focusedItem, editedItem, activeFieldEditorItem];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	

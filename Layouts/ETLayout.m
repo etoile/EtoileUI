@@ -56,12 +56,12 @@ See also NSObject(ETAspectRegistration). */
 {
 	layoutPrototypes = [NSMutableSet set];
 
-	NSArray *skippedClasses = A(NSClassFromString(@"ETWidgetLayout"),  
+	NSArray *skippedClasses = @[NSClassFromString(@"ETWidgetLayout"),
 		NSClassFromString(@"ETWindowLayout"), 
 		NSClassFromString(@"ETTemplateItemLayout"),
 		NSClassFromString(@"ETComputedLayout"),
 		NSClassFromString(@"ETFormLayout"),
-		NSClassFromString(@"ETTextEditorLayout"));
+		NSClassFromString(@"ETTextEditorLayout")];
 	NSArray *subclasses = [[self allSubclasses] arrayByRemovingObjectsInArray: skippedClasses];
 
 	for (Class subclass in subclasses)

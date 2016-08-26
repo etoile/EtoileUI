@@ -68,7 +68,7 @@ Raises an exception if the bundle or the Nib itself cannot be found. */
     if ([self isNibLoaded] == YES)
         return YES;
     
-    NSDictionary* nibContext = D(anOwner, NSNibOwner, _topLevelObjects, NSNibTopLevelObjects);
+    NSDictionary* nibContext = @{ NSNibOwner: anOwner, NSNibTopLevelObjects: _topLevelObjects };
 
     NSAssert1([self nibBundle] != nil, @"Failed finding bundle for NibOwner %@", self);
 

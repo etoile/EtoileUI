@@ -54,7 +54,7 @@ Initializes and returns a new icon layout. */
 	   View must also be restored after Content Aspect, otherwise the view 
 	   geometry computation occurs two times when the items are restored. */
 	// FIXME: When View comes before Content Aspect an assertion is raised.
-	[self setTemplateKeys: A(@"icon", @"coverStyle", @"actionHandler", @"contentAspect", @"view")];
+	[self setTemplateKeys: @[@"icon", @"coverStyle", @"actionHandler", @"contentAspect", @"view"]];
 
 	return self;
 }
@@ -214,7 +214,7 @@ The resizing isn't delegated to the positional layout unlike in ETTemplateItemLa
 
 + (NSDictionary *) standardLabelAttributes
 {
-	return D([NSFont labelFontOfSize: 12], NSFontAttributeName);
+	return @{ NSFontAttributeName: [NSFont labelFontOfSize: 12] };
 }
 
 - (instancetype) init

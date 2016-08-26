@@ -86,12 +86,12 @@
 	[firstSectionItem setLayout: [self makeFormLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[firstSectionItem setIdentifier: @"section1"];
 
-	[secondSectionItem addItems: A(sliderItem, buttonItem)];
+	[secondSectionItem addItems: @[sliderItem, buttonItem]];
 	[secondSectionItem setAutoresizingMask: ETAutoresizingFlexibleWidth];
 	[secondSectionItem setLayout: [self makeFormLayoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	[secondSectionItem setIdentifier: @"section2"];
 
-	[itemGroup addItems: A(firstSectionItem, secondSectionItem)];
+	[itemGroup addItems: @[firstSectionItem, secondSectionItem]];
 
 	[itemGroup setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	//[[itemGroup layout] setBorderMargin: 10];
@@ -219,7 +219,7 @@
 	[runningTimeRole setMaximum: 2010];
 	[runningTime setRole: runningTimeRole];
 
-	[entity setPropertyDescriptions: A(title, runningTime)];
+	[entity setPropertyDescriptions: @[title, runningTime]];
 
 	return entity;
 }
@@ -278,7 +278,7 @@
 	ETRelationshipRole *moviesRole = AUTORELEASE([[ETRelationshipRole alloc] init]);
 	[movies setRole: moviesRole];
 	
-	[entity setPropertyDescriptions: A(name, movies)];
+	[entity setPropertyDescriptions: @[name, movies]];
 	
 	return entity;
 }
@@ -287,7 +287,7 @@
 {
 	MovieCollection *collection = [[MovieCollection new] autorelease];
 	[collection setName: @"Random American Movies"];
-	[collection setMovies: A([Movie randomMovie], [Movie randomMovie])];
+	[collection setMovies: @[[Movie randomMovie], [Movie randomMovie]]];
 	return collection;
 }
 

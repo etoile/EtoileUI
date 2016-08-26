@@ -1115,14 +1115,14 @@ See also -valueTransformerForProperty:. */
 	
 	[self willChangeValueForProperty: @"valueTransformers"
 	                       atIndexes: [NSIndexSet indexSet]
-	                     withObjects: A(aValueTransformer)
+	                     withObjects: @[aValueTransformer]
 	                    mutationKind: ETCollectionMutationKindInsertion];
 
 	transformers[key] = aValueTransformer;
 
 	[self didChangeValueForProperty: @"valueTransformers"
 	                      atIndexes: [NSIndexSet indexSet]
-	                    withObjects: A(aValueTransformer)
+	                    withObjects: @[aValueTransformer]
 	                   mutationKind: ETCollectionMutationKindInsertion];
 }
 

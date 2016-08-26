@@ -468,7 +468,7 @@ resulting fragment in the array. */
 	ETLineFragment *line = [self layoutFragmentWithSubsetOfItems: items];
 	
 	if (line != nil)
-		return A(line);
+		return @[line];
 
 	return @[];
 }

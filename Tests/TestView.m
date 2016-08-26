@@ -20,8 +20,8 @@
 - (void) testPopUpCopyDoesNotEncodeRepresentedObjectsAndTarget
 {
 	ETLayoutItem *popUpItem = [[ETLayoutItemFactory factory]
-		popUpMenuWithItemTitles: A(@"A", @"B", @"C")
-		     representedObjects: A([NSNull null], self)
+		popUpMenuWithItemTitles: @[@"A", @"B", @"C"]
+		     representedObjects: @[[NSNull null], self]
 		                 target: self
 	                     action: @selector(paste:)];
 	NSPopUpButton *popUpCopy = [[popUpItem view] copy];

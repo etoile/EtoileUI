@@ -35,7 +35,7 @@
 
     item = [self basicItemWithRect: NSMakeRect(10, 10, 50, 50)];
     buttonItem = [itemFactory button];
-	itemGroup = [itemFactory itemGroupWithItems: A(item, buttonItem)];
+	itemGroup = [itemFactory itemGroupWithItems: @[item, buttonItem]];
 
     [itemGroup setShouldMutateRepresentedObject: YES];
     [itemGroup setLayout: layout];

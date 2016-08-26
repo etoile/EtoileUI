@@ -69,8 +69,8 @@
 	// TODO: Figure out a nice way to restore the layout as is because
 	// displayed properties are lost on layout changes (happens only if the
 	// user wants to customize the inspector UI).
-	[layout setDisplayedProperties: A(kETIconProperty, kETIdentifierProperty,
-		@"UIBuilderAction", kETTargetProperty, @"UIBuilderModel", @"UIBuilderController")];
+	[layout setDisplayedProperties: @[kETIconProperty, kETIdentifierProperty,
+		@"UIBuilderAction", kETTargetProperty, @"UIBuilderModel", @"UIBuilderController"]];
 
 	/* Actions are stored as strings in ETLayoutItem variable storage. So we
 	   don't need to use a custom property unlike for expressing targets as
@@ -165,7 +165,7 @@
 	ETLayoutItemGroup *editorBody = [self editorBodyWithEditedItem: anObject controller: aController];
 	ETLayoutItemGroup *editor = [self itemGroupWithSize: [self defaultEditorSize]];
 
-	[editor addItems: A(topBar, editorBody)];
+	[editor addItems: @[topBar, editorBody]];
 	[editor setIdentifier: @"editor"];
 	[editor setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
@@ -175,7 +175,7 @@
 	[aController setDocumentContentItem: anObject];
 
 	/*ETLog(@"\n%@\n", [editor descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
-		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
+		@[@"frame", @"autoresizingMask"], kETDescriptionOptionValuesForKeyPaths,
 		@"items", kETDescriptionOptionTraversalKey, nil]]);*/
 
 	return editor;
@@ -210,18 +210,18 @@
 	[[leftItemGroup layout] setIsContentSizeLayout: YES];
 
 	[leftItemGroup addItems:
-		A([self barElementFromItem: runItem withLabel: _(@"Test")],
-		  [self barElementFromItem: exitItem withLabel: _(@"Stop UI Editing")])];	
+		@[[self barElementFromItem: runItem withLabel: _(@"Test")],
+		  [self barElementFromItem: exitItem withLabel: _(@"Stop UI Editing")]]];
 
 	[rightItemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[rightItemGroup layout] setIsContentSizeLayout: YES];
 
 	[rightItemGroup addItems:
-	 	A([self barElementFromItem: viewItem withLabel: _(@"View")],
+	 	@[[self barElementFromItem: viewItem withLabel: _(@"View")],
 		  [self barElementFromItem: repoItem withLabel: _(@"Aspect Repository")],
-		  [self barElementFromItem: searchItem withLabel: _(@"Filter")])];
+		  [self barElementFromItem: searchItem withLabel: _(@"Filter")]]];
 
-	[itemGroup addItems: A(leftItemGroup, rightItemGroup)];
+	[itemGroup addItems: @[leftItemGroup, rightItemGroup]];
 
 	return itemGroup;
 }
@@ -238,7 +238,7 @@
 	[body setIdentifier: @"editorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[body setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
-	[body addItems: A(picker, contentArea, inspectorBody)];
+	[body addItems: @[picker, contentArea, inspectorBody]];
 
 	return body;
 }
@@ -267,7 +267,7 @@
 	ETLayoutItemGroup *body = [self inspectorBodyWithObject: anObject controller: aController];
 	ETLayoutItemGroup *inspector = [self itemGroupWithSize: [self defaultInspectorSize]];
 
-	[inspector addItems: A(topBar, body)];
+	[inspector addItems: @[topBar, body]];
 	[inspector setIdentifier: @"inspector"];
 	[inspector setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[inspector setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
@@ -276,7 +276,7 @@
 	[aController setPersistentObjectContext: _editingContext];
 
 	/*ETLog(@"\n%@\n", [inspector descriptionWithOptions: [NSMutableDictionary dictionaryWithObjectsAndKeys:
-		A(@"frame", @"autoresizingMask"), kETDescriptionOptionValuesForKeyPaths,
+		@[@"frame", @"autoresizingMask"], kETDescriptionOptionValuesForKeyPaths,
 		@"items", kETDescriptionOptionTraversalKey, nil]]);*/
 
 	return inspector;
@@ -284,7 +284,7 @@
 
 - (ETLayoutItem *) viewPopUpWithController: (id)aController
 {
-	NSArray *choices = A(_(@"Browser"), _(@"Inspector"), _(@"Browser and Inspector"));
+	NSArray *choices = @[_(@"Browser"), _(@"Inspector"), _(@"Browser and Inspector")];
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
 		                                 representedObjects: @[]
 		                                             target: aController 
@@ -302,7 +302,7 @@
 	NSArray *repos = [[[ETAspectRepository mainRepository]
 		aspectCategoryNamed: _(@"Aspect Repository")] aspects];
 
-	return [A([ETAspectRepository mainRepository]) arrayByAddingObjectsFromArray: repos];
+	return [@[[ETAspectRepository mainRepository]] arrayByAddingObjectsFromArray: repos];
 }
 
 - (ETLayoutItem *) aspectRepositoryPopUpWithController: (id)aController
@@ -345,13 +345,13 @@
 	[[rightItemGroup layout] setIsContentSizeLayout: YES];
 
 	[rightItemGroup addItems:
-	 	A([self barElementFromItem: viewItem withLabel: _(@"View")],
+	 	@[[self barElementFromItem: viewItem withLabel: _(@"View")],
 		  [self barElementFromItem: repoItem withLabel: _(@"Aspect Repository")],
-		  [self barElementFromItem: searchItem withLabel: _(@"Filter")])];
+		  [self barElementFromItem: searchItem withLabel: _(@"Filter")]]];
 
 	[itemGroup addItems:
-		A([self barElementFromItem: inspectItem withLabel: _(@"Inspect")],
-		  rightItemGroup)];
+		@[[self barElementFromItem: inspectItem withLabel: _(@"Inspect")],
+		  rightItemGroup]];
 
 	/*[rightItemGroup updateLayoutRecursively: NO];
 	[itemGroup updateLayoutRecursively: NO];*/
@@ -372,7 +372,7 @@
 	[body setIdentifier: @"inspectorBody"];
 	[body setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[body setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
-	[body addItems: A(browser, basicInspector)];
+	[body addItems: @[browser, basicInspector]];
 
 	return body;
 }
@@ -427,7 +427,7 @@
 	[itemGroup setIdentifier: @"basicInspector"];
 	[itemGroup setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[itemGroup setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
-	[itemGroup addItems: A(header, pane)];
+	[itemGroup addItems: @[header, pane]];
 
 	[aController setAspectInspectorItem: itemGroup];
 	[aController setItemFactory: self];
@@ -438,10 +438,10 @@
 - (ETLayoutItem *) aspectPopUpWithController: (id)aController
                           selectedAspectName: (NSString *)anAspectName
 {
-	NSArray *choices = A(_(@"Overview"), _(@"Widget"), _(@"Value Transformers"), 
+	NSArray *choices = @[_(@"Overview"), _(@"Widget"), _(@"Value Transformers"),
 		_(@"Represented Object"), _(@"Controller"),  _(@"Layout"),
-		_(@"Cover Style"), _(@"Style Group"), _(@"Action Handler"), _(@"Tool"));
-	NSArray *representedProperties = A(@"self", @"widget", @"valueTransformers", @"representedObject", @"controller", @"layout", @"coverStyle", @"styleGroup", @"actionHandler", @"attachedTool");
+		_(@"Cover Style"), _(@"Style Group"), _(@"Action Handler"), _(@"Tool")];
+	NSArray *representedProperties = @[@"self", @"widget", @"valueTransformers", @"representedObject", @"controller", @"layout", @"coverStyle", @"styleGroup", @"actionHandler", @"attachedTool"];
 	ETLayoutItem *popUpItem = [self popUpMenuWithItemTitles: choices
 		                                 representedObjects: representedProperties
 		                                             target: aController 
@@ -490,7 +490,7 @@
 	// TODO: Remove -setSize: and just uses -setIsContentSizeLayout:
 	//[[formLayout positionalLayout] setIsContentSizeLayout: YES];
 	[itemGroup setLayout: formLayout];
-	[itemGroup addItems: A(aspectPopUpItem, typeFieldItem)];
+	[itemGroup addItems: @[aspectPopUpItem, typeFieldItem]];
 
 	return itemGroup;
 }
@@ -504,11 +504,11 @@
 	}
 	if ([anAspectName isEqual: @"valueTransformers"])
 	{
-		return A(@"valueTransformers");
+		return @[@"valueTransformers"];
 	}
 	else if ([anAspectName isEqual: @"widget"])
 	{
-		return A(@"title", @"objectValue",  @"minValue", @"maxValue", @"formatter");
+		return @[@"title", @"objectValue",  @"minValue", @"maxValue", @"formatter"];
 	}
 	else if ([anAspectName isEqual: @"representedObject"])
 	{
@@ -639,7 +639,7 @@
 	[picker setActionHandler:
 	 	[ETAspectTemplateActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
 
-	[controller setAllowedPickTypes: A([ETUTI typeWithClass: [NSObject class]])];
+	[controller setAllowedPickTypes: @[[ETUTI typeWithClass: [NSObject class]]]];
 
 	[picker setSize: NSMakeSize(300, [self defaultEditorBodySize].height)];
 	[picker setController: controller];
@@ -647,7 +647,7 @@
 	[picker setSource: picker];
 	[picker setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[picker layout] setAttachedTool: [self pickerTool]];
-	[[picker layout] setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty)];
+	[[picker layout] setDisplayedProperties: @[kETIconProperty, kETDisplayNameProperty]];
 	[picker setHasVerticalScroller: YES];
 	[picker reloadAndUpdateLayout];
 

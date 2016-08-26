@@ -78,7 +78,7 @@
 	[templates setKeyed: YES];
 	// TODO: Display 'key' as 'Target UTI' or 'UTI'
 	[templates setShowsItemDetails: YES];
-	[templates setDetailedPropertyNames: A(@"item", @"objectClass", @"entityName")];
+	[templates setDetailedPropertyNames: @[@"item", @"objectClass", @"entityName"]];
 	ETPropertyDescription *currentObjectType =
 		[ETPropertyDescription descriptionWithName: @"currentObjectType" type: (id)@"ETUTI"];
     [currentObjectType setValueTransformerName: @"ETUTIToString"];
@@ -103,7 +103,7 @@
 	[sortDescriptors setOrdered: YES];
     [sortDescriptors setValueTransformerName: @"COObjectToArchivedData"];
     [sortDescriptors setPersistentTypeName: @"NSData"];
-	[sortDescriptors setDetailedPropertyNames: A(@"key", @"ascending", @"selectorString")];
+	[sortDescriptors setDetailedPropertyNames: @[@"key", @"ascending", @"selectorString"]];
 	ETPropertyDescription *filterPredicate =
 		[ETPropertyDescription descriptionWithName: @"filterPredicate" type: (id)@"NSPredicate"];
     [filterPredicate setValueTransformerName: @"ETPredicateToString"];
@@ -116,14 +116,14 @@
 	[allowedPickTypes setOrdered: YES];
     [allowedPickTypes setValueTransformerName: @"ETUTIToString"];
     [allowedPickTypes setPersistentTypeName: @"NSString"];
-	[allowedPickTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
+	[allowedPickTypes setDetailedPropertyNames: @[@"stringValue", @"classValue"]];
 	ETPropertyDescription *allowedDropTypes =
 		[ETPropertyDescription descriptionWithName: @"allowedDropTypes" type: (id)@"ETUTITuple"];
 	[allowedDropTypes setMultivalued: YES];
 	[allowedDropTypes setOrdered: NO];
     [allowedDropTypes setKeyed: YES];
 	// TODO: Display 'key' as 'Target UTI'
-	[allowedDropTypes setDetailedPropertyNames: A(@"stringValue", @"classValue")];
+	[allowedDropTypes setDetailedPropertyNames: @[@"stringValue", @"classValue"]];
 
 	/* Transient Properties */
 
@@ -172,19 +172,19 @@
     [editedProperties setOrdered: YES];
     [editedProperties setReadOnly: YES];
 
-	NSArray *transientProperties = A(content, nibMainContent, builder, persistentObjectContext,
+	NSArray *transientProperties = @[content, nibMainContent, builder, persistentObjectContext,
         currentGroupType, nextResponder, defaultOptions, canMutate, isContentMutable,
 		insertionIndex, insertionIndexPath, additionIndexPath, isEditing,
-        editedItems, editedProperties);
-	NSArray *persistentProperties = A(observations, templates, currentObjectType,
+        editedItems, editedProperties];
+	NSArray *persistentProperties = @[observations, templates, currentObjectType,
         initialFocusedItem, persistentObjectContextUUID, clearsFilterPredicate,
         selectsInsertedObjects, sortDescriptors, filterPredicate,
-        automaticallyRearranges, allowedPickTypes, allowedDropTypes);
+        automaticallyRearranges, allowedPickTypes, allowedDropTypes];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(templates, currentObjectType,
+	[entity setUIBuilderPropertyNames: (id)[[@[templates, currentObjectType,
 		currentGroupType, persistentObjectContext, clearsFilterPredicate,
 		selectsInsertedObjects, sortDescriptors, filterPredicate,
-		automaticallyRearranges, allowedPickTypes, allowedDropTypes) mappedCollection] name]];
+		automaticallyRearranges, allowedPickTypes, allowedDropTypes] mappedCollection] name]];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:
@@ -289,10 +289,10 @@
 	[supportedTypes setOrdered: YES];
 	[supportedTypes setReadOnly: YES];
 	
-	NSArray *transientProperties = A(contentItem, baseName, supportedTypes);
-	NSArray *persistentProperties =  A(objectClass, entityName, item);
+	NSArray *transientProperties = @[contentItem, baseName, supportedTypes];
+	NSArray *persistentProperties =  @[objectClass, entityName, item];
 	
-	[entity setUIBuilderPropertyNames: (id)[[A(objectClass, entityName, item) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[objectClass, entityName, item] mappedCollection] name]];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 	[entity setPropertyDescriptions:

@@ -32,7 +32,7 @@
     [content setValueTransformerName: @"ETUTIToString"];
     [content setPersistentTypeName: @"NSString"];
 
-	[collection setPropertyDescriptions: A(content)];
+	[collection setPropertyDescriptions: @[content]];
 
 	return collection;
 }

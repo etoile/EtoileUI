@@ -111,7 +111,7 @@
 	ETLayoutItem *buttonItem = [itemFactory buttonWithImage: [self appImage] 
 	                                                 target: self 
 	                                                 action: @selector(bing:)];
-	ETLayoutItem *popUpItem = [itemFactory popUpMenuWithItemTitles: A(@"Tap", @"Tip", @"Top") 
+	ETLayoutItem *popUpItem = [itemFactory popUpMenuWithItemTitles: @[@"Tap", @"Tip", @"Top"] 
 	                                            representedObjects: nil 
 	                                                        target: nil
 	                                                        action: NULL];

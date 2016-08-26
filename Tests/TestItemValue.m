@@ -330,7 +330,7 @@
 
 - (void) testItemGroupValueForItemSubject
 {
-	ETLayoutItemGroup *otherItemGroup = [itemFactory itemGroupWithItems: A(item)];
+	ETLayoutItemGroup *otherItemGroup = [itemFactory itemGroupWithItems: @[item]];
 
 	[itemGroup setSource: itemGroup];
 	[itemGroup setRepresentedObject: otherItemGroup];

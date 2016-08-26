@@ -468,14 +468,14 @@ See -newItemWithURL:ofType:options and ETItemTemplate. */
 {
     [self willChangeValueForProperty: @"templates"
                            atIndexes: [NSIndexSet indexSet]
-                         withObjects: A(aTemplate)
+                         withObjects: @[aTemplate]
                         mutationKind: ETCollectionMutationKindReplacement];
 
 	_templates[[aUTI stringValue]] = aTemplate;
 
     [self didChangeValueForProperty: @"templates"
                           atIndexes: [NSIndexSet indexSet]
-                        withObjects: A(aTemplate)
+                        withObjects: @[aTemplate]
                        mutationKind: ETCollectionMutationKindReplacement];
 }
 
@@ -987,7 +987,7 @@ the content rather than -[ETLayoutItemGroup insertObject:atIndex:].  */
 
 	if ([self selectsInsertedObjects])
 	{
-		[[self content] setSelectionIndexPaths: A(selectionIndexPath)];
+		[[self content] setSelectionIndexPaths: @[selectionIndexPath]];
 	}
 }
 
@@ -1173,14 +1173,14 @@ too slow given that the method tends to be invoked repeatedly.
 
     [self willChangeValueForProperty: @"allowedDropTypes"
                            atIndexes: [NSIndexSet indexSet]
-                         withObjects: A(UTITuples)
+                         withObjects: @[UTITuples]
                         mutationKind: ETCollectionMutationKindReplacement];
 
     _allowedDropTypes[[targetUTI stringValue]] = UTITuples;
 
     [self didChangeValueForProperty: @"allowedDropTypes"
                           atIndexes: [NSIndexSet indexSet]
-                        withObjects: A(UTITuples)
+                        withObjects: @[UTITuples]
                        mutationKind: ETCollectionMutationKindReplacement];
 }
 

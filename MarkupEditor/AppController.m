@@ -15,9 +15,9 @@
 - (NSArray *) supportedTypes
 {
 #ifdef GNUSTEP
-	return A([ETUTI typeWithFileExtension: @"plist"];
+	return @[[ETUTI typeWithFileExtension: @"plist"]];
 #else
-	return A([ETUTI typeWithFileExtension: @"plist"], [ETUTI typeWithFileExtension: @"xml"]);
+	return @[[ETUTI typeWithFileExtension: @"plist"], [ETUTI typeWithFileExtension: @"xml"]];
 #endif
 }
 
@@ -28,8 +28,8 @@
 	[ETLayout registerLayout: [itemFactory editorLayout]];
 
 	// TODO: plist and svg should be included in EtoileFoundation UTIDefinitions.plist surely
-	[ETUTI registerTypeWithString: @"com.apple.property-list" description: @"Property List" supertypeStrings: [NSArray array] typeTags: D(A(@"plist"), kETUTITagClassFileExtension)];
-	//[ETUTI registerTypeWithString: @"public.svg-image" description: @"Scalable Vector Graphics" supertypeStrings: A(@"public.image", @"public.xml") typeTags: D(A(@"svg"), kETUTITagClassFileExtension)];
+	[ETUTI registerTypeWithString: @"com.apple.property-list" description: @"Property List" supertypeStrings: [NSArray array] typeTags: @{ kETUTITagClassFileExtension: @[@"plist"] }];
+	//[ETUTI registerTypeWithString: @"public.svg-image" description: @"Scalable Vector Graphics" supertypeStrings: @[@"public.image", @"public.xml"] typeTags: @{ kETUTITagClassFileExtension: @[@"svg"] }];
 										 
 	[self setTemplate: [PListItemTemplate templateWithItem: [itemFactory editor] objectClass: [NSMutableDictionary class]]
 	          forType: [ETUTI typeWithFileExtension: @"plist"]];
@@ -62,7 +62,7 @@
 - (void) showEditorLayoutExample
 {
 	MarkupEditorItemFactory *itemFactory = [MarkupEditorItemFactory factory];
-	ETLayoutItemGroup *item = [itemFactory itemGroupWithRepresentedObject: A(A(@"A", A(@"B")), A(@"C", @"D"))];
+	ETLayoutItemGroup *item = [itemFactory itemGroupWithRepresentedObject: @[@[@"A", @[@"B"]], @[@"C", @"D"]]];
 
 	[item setName: @"Editor Layout as a Pluggable Aspect Example"];
 	[item setSource: item];

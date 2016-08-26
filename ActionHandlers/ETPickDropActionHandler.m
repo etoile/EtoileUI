@@ -82,7 +82,7 @@ selection, we don't put the selected items on the pickboard. */
 {
 	NSArray *selectedItems = [[item parentItem] selectedItemsInLayout];
 	BOOL isPickingSelection = ([selectedItems count] > 1 && [selectedItems containsObject: item]);
-	return (isPickingSelection ? selectedItems : A(item));
+	return (isPickingSelection ? selectedItems : @[item]);
 }
 
 - (BOOL) removePickedItems: (NSArray *)pickedItems
@@ -168,10 +168,10 @@ selection, we don't put the selected items on the pickboard. */
 	                                shouldRemoveNow: shouldRemoveNow];
 	NSUInteger pickIndex = [[item parentItem] indexOfItem: item];
 	NSDictionary *metadata =
-		D(@(pickIndex), kETPickMetadataPickIndex,
-		  @(wasUsedAsRepObject), kETPickMetadataWasUsedAsRepresentedObject,
-		  draggedItems, kETPickMetadataDraggedItems,
-		  @(wereItemsRemoved), kETPickMetadataWereItemsRemoved);
+		@{ kETPickMetadataPickIndex: @(pickIndex),
+		   kETPickMetadataWasUsedAsRepresentedObject: @(wasUsedAsRepObject),
+		   kETPickMetadataDraggedItems: draggedItems,
+		   kETPickMetadataWereItemsRemoved: @(wereItemsRemoved) };
 
 	[pboard pushObject: pushedObject metadata: metadata];
 	return YES;

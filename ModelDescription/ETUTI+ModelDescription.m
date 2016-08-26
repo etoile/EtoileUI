@@ -50,10 +50,10 @@
 	[allSubtypes setMultivalued: YES];
 	[allSubtypes setOrdered: YES];
 
-	NSArray *transientProperties = A(stringValue, classValue, fileExtensions,
-		MIMETypes, typeDescription, supertypes, allSupertypes, subtypes, allSubtypes);
+	NSArray *transientProperties = @[stringValue, classValue, fileExtensions,
+		MIMETypes, typeDescription, supertypes, allSupertypes, subtypes, allSubtypes];
 
-	[entity setUIBuilderPropertyNames: (id)[[A(stringValue, classValue) mappedCollection] name]];
+	[entity setUIBuilderPropertyNames: (id)[[@[stringValue, classValue] mappedCollection] name]];
 
 	[entity setPropertyDescriptions: transientProperties];
 

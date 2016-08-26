@@ -43,7 +43,7 @@
 
 	/* NSSortDescriptor is persistent, but the properties are declared transient 
 	   because we use keyed archiving to persist it (it is not a COObject). */
-	NSArray *transientProperties = A(ascending, key, selectorString);
+	NSArray *transientProperties = @[ascending, key, selectorString];
 
 	[entity setUIBuilderPropertyNames: (id)[[transientProperties mappedCollection] name]];
 

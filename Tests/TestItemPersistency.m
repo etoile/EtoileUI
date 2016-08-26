@@ -85,7 +85,7 @@
         [COObjectGraphContext objectGraphContext]];
 
     item = [itemFactory item];
-    itemGroup = [itemFactory itemGroupWithItems: A(item)];
+    itemGroup = [itemFactory itemGroupWithItems: @[item]];
 
     //[itemGroup setFrame: NSMakeRect(50, 20, 400, 300)];
     [itemGroup setShouldMutateRepresentedObject: YES];
@@ -280,7 +280,7 @@
 	                                                 target: [sliderItem view]
 	                                                 action: @selector(print:)];
 	
-    [itemGroup addItems: A(sliderItem, buttonItem)];
+    [itemGroup addItems: @[sliderItem, buttonItem]];
 
 	[[sliderItem view] setAction: @selector(close:)];
 	[[sliderItem view] setTarget: itemGroup];

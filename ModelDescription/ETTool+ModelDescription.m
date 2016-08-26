@@ -47,8 +47,8 @@
 	ETPropertyDescription *cursorName =
 		[ETPropertyDescription descriptionWithName: @"cursorName" type: (id)@"NSString"];
 
-	NSArray *transientProperties = A(layoutOwner);
-	NSArray *persistentProperties = A(cursorName);
+	NSArray *transientProperties = @[layoutOwner];
+	NSArray *persistentProperties = @[cursorName];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 
@@ -78,7 +78,7 @@
 		[ETPropertyDescription descriptionWithName: @"shouldProduceTranslateActions" type: (id)@"BOOL"];
 	[shouldProduceTranslate setPersistent: YES];
 
-	[entity setPropertyDescriptions: A(movedItem, shouldProduceTranslate)];
+	[entity setPropertyDescriptions: @[movedItem, shouldProduceTranslate]];
 
 	return entity;
 }
@@ -110,9 +110,9 @@
 	ETPropertyDescription *actionHandlerPrototype =
 		[ETPropertyDescription descriptionWithName: @"actionHandlerPrototype" type: (id)@"ETActionHandler"];
 
-	NSArray *transientProperties = A(actionHandlerPrototype);
-	NSArray *persistentProperties = A(selectionAreaItem, multipleSelectionAllowed,
-		emptySelectionAllowed, removesItemsAtPickTime, forcesItemPick);
+	NSArray *transientProperties = @[actionHandlerPrototype];
+	NSArray *persistentProperties = @[selectionAreaItem, multipleSelectionAllowed,
+		emptySelectionAllowed, removesItemsAtPickTime, forcesItemPick];
 
 	[[persistentProperties mappedCollection] setPersistent: YES];
 
@@ -170,7 +170,7 @@
 	ETPropertyDescription *paintMode =
 		[ETPropertyDescription descriptionWithName: @"paintMode" type: (id)@"NSUInteger"];
 
-	NSArray *persistentProperties = A(fillColor, strokeColor, paintMode);
+	NSArray *persistentProperties = @[fillColor, strokeColor, paintMode];
 	
 	[[persistentProperties mappedCollection] setPersistent: YES];
 

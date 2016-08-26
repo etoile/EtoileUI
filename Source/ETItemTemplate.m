@@ -315,11 +315,11 @@ See also -newItemWithRepresentedObject:options:. */
 {
 	if ([self objectClass] != nil)
 	{
-		return A([ETUTI typeWithClass: [self objectClass]]);	
+		return @[[ETUTI typeWithClass: [self objectClass]]];	
 	}
 	else if ([[self item] representedObject] != nil)
 	{
-		return A([[[self item] representedObject] UTI]);
+		return @[[[[self item] representedObject] UTI]];
 	}
 	else
 	{

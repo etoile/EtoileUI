@@ -104,7 +104,7 @@ The concrete window class used is [ETFullScreenWindow]. */
 	}
 	[_itemWindow setDelegate: (id)self];
 	[_itemWindow setAcceptsMouseMovedEvents: YES];
-	[_itemWindow registerForDraggedTypes: A(ETLayoutItemPboardType)];
+	[_itemWindow registerForDraggedTypes: @[ETLayoutItemPboardType]];
 	_usesCustomWindowTitle = ([self isUntitled] == NO);
 	
 	ETDebugLog(@"Init item %@ with window %@ %@ at %@", self, [_itemWindow title],

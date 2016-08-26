@@ -230,7 +230,7 @@
 		[NSSortDescriptor sortDescriptorWithKey: @"creationDate" ascending: NO selector: @selector(compare:)];
 	NSPredicate *predicate = [NSPredicate predicateWithFormat: @"URL.absoluteString CONTAINS 'etoile-project.org'"];
 
-	[controller setSortDescriptors: A(sortDescriptor1, sortDescriptor2)];
+	[controller setSortDescriptors: @[sortDescriptor1, sortDescriptor2]];
 	[controller setFilterPredicate: predicate];
 
     [self checkWithExistingAndNewRootObject: itemGroup
@@ -249,8 +249,8 @@
 
 - (void) testPickAndDropTypes
 {
-	[controller setAllowedPickTypes: A([self URLType])];
-	[controller setAllowedDropTypes: A([self URLType]) forTargetType: [controller currentGroupType]];
+	[controller setAllowedPickTypes: @[[self URLType]]];
+	[controller setAllowedDropTypes: @[[self URLType]] forTargetType: [controller currentGroupType]];
 
     [self checkWithExistingAndNewRootObject: itemGroup
                                     inBlock: ^(ETLayoutItemGroup *newItemGroup, BOOL isNew, BOOL isCopy)

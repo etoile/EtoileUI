@@ -432,7 +432,7 @@ The returned collection editor has a flexible width and a fixed height. */
 	// FIXME: Set a better identifiers perhap and use a constant
 	[buttonBar setIdentifier: @"bar"];
 	[buttonBar setAutoresizingMask: ETAutoresizingFlexibleWidth];
-	[buttonBar addItems: A(plusButton, minusButton)];
+	[buttonBar addItems: @[plusButton, minusButton]];
 
 	[browser setIdentifier: @"browser"];
 	[browser setAutoresizingMask: ETAutoresizingFlexibleWidth];
@@ -446,7 +446,7 @@ The returned collection editor has a flexible width and a fixed height. */
 	[editor setIdentifier: @"collectionEditor"];
 	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 
-	[editor addItems: A(browser, buttonBar)];
+	[editor addItems: @[browser, buttonBar]];
 
 	return editor;
 }
@@ -964,7 +964,7 @@ and a stepper on the right side. */
 
 	[editor setLayout: [ETLineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[editor layout] setComputesItemRectFromBoundingBox: YES];
-	[editor addItems: A(firstPicker, secondPicker)];
+	[editor addItems: @[firstPicker, secondPicker]];
 	[editor updateLayout];
 
 	return editor;

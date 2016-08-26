@@ -44,7 +44,7 @@
 {
 	ETOutlineLayout *layout = [ETOutlineLayout layoutWithObjectGraphContext: nil];
 	
-	[layout setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty, kETValueProperty)];
+	[layout setDisplayedProperties: @[kETIconProperty, kETDisplayNameProperty, kETValueProperty]];
 	[[layout columnForProperty: kETDisplayNameProperty] setWidth: 250];
 	[[layout columnForProperty: kETValueProperty] setWidth: 250];
 	
@@ -106,7 +106,7 @@
 	ETLayoutItemGroup *bottomBar = [itemFactory horizontalBarWithSize: barSize];
 
 	
-	[bottomBar addItems: A(buttonItem)];
+	[bottomBar addItems: @[buttonItem]];
 	[[bottomBar layout] setBorderMargin: barBorderMargin];
 
 	NSSize size = NSMakeSize([entityItem width], [entityItem height] + barSize.height);
@@ -115,7 +115,7 @@
 	ETAssert([entityItem autoresizingMask] & ETAutoresizingFlexibleWidth);
 	ETAssert([bottomBar autoresizingMask] & ETAutoresizingFlexibleWidth);
 
-	[editorItem addItems: A(entityItem, bottomBar)];
+	[editorItem addItems: @[entityItem, bottomBar]];
 	[editorItem setLayout: [ETColumnLayout layoutWithObjectGraphContext: [itemFactory objectGraphContext]]];
 	// FIXME: Implement horizontal alignment support
 	[[editorItem layout] setHorizontalAlignment: ETLayoutHorizontalAlignmentRight];

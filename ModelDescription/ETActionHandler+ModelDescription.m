@@ -33,9 +33,9 @@
 	// TODO: Remove (turn this property into a persistent one)
 	[fieldEditorItem setReadOnly: YES];
 
-	[entity setUIBuilderPropertyNames: A([fieldEditorItem name])];
+	[entity setUIBuilderPropertyNames: @[[fieldEditorItem name]]];
 
-	[entity setPropertyDescriptions: A(fieldEditorItem)];
+	[entity setPropertyDescriptions: @[fieldEditorItem]];
 
 	return entity;
 }
@@ -57,10 +57,10 @@
 	ETPropertyDescription *editedProperty =
 		[ETPropertyDescription descriptionWithName: @"editedProperty" type: (id)@"NSString"];
 
-	[entity setUIBuilderPropertyNames: A([editedProperty name])];
+	[entity setUIBuilderPropertyNames: @[[editedProperty name]]];
 
 	[editedProperty setPersistent: YES];
-	[entity setPropertyDescriptions: A(editedProperty)];
+	[entity setPropertyDescriptions: @[editedProperty]];
 
 	return entity;
 }

@@ -47,7 +47,7 @@
 	[picker setActionHandler:
 	 	[ETAspectTemplateActionHandler sharedInstanceForObjectGraphContext: [self objectGraphContext]]];
 
-	[controller setAllowedPickTypes: A([ETUTI typeWithClass: [NSObject class]])];
+	[controller setAllowedPickTypes: @[[ETUTI typeWithClass: [NSObject class]]]];
 
 	// TODO: Retrieve the size as ETUIBuilderItemFactory does it
 	[picker setSize: NSMakeSize(300, 400)];
@@ -56,7 +56,7 @@
 	[picker setSource: picker];
 	[picker setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[[picker layout] setAttachedTool: [self pickerTool]];
-	[[picker layout] setDisplayedProperties: A(kETIconProperty, kETDisplayNameProperty)];
+	[[picker layout] setDisplayedProperties: @[kETIconProperty, kETDisplayNameProperty]];
 	[picker setHasVerticalScroller: YES];
 	[picker reloadAndUpdateLayout];
 

@@ -40,7 +40,7 @@ ETTemplateItemLayout *chatLayout = [ETTemplateItemLayout layoutWithObjectGraphCo
 [item setCoverStyle: nil]
 [item setStyle: [ETSpeechBubbleStyle styleWithObjectGraphContext: someContext]];
 [chatLayout setTemplateItem: item];
-[chatLayout setTemplateKeys: A(kETCoverStyleProperty, kETStyleProperty)];
+[chatLayout setTemplateKeys: @[kETCoverStyleProperty, kETStyleProperty]];
 [chatLayout setPositionalLayout: [ETColumnLayout layoutWithObjectGraphContext: someContext];
 [[chatLayout positionalLayout] setItemMargin: 15];
 

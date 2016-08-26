@@ -114,7 +114,7 @@
 	NSRect textFieldFrame = NSMakeRect(20, 40, 100, 200);
 
 	[textFieldItem setFrame: textFieldFrame];
-	[itemGroup addItems: A(item, textFieldItem)];
+	[itemGroup addItems: @[item, textFieldItem]];
 	[itemGroup updateLayout];
 
 	UKRectsEqual(itemFrame, [item frame]);
@@ -143,7 +143,7 @@
 	
 	[textFieldItem setFrame: textFieldFrame];
 
-	[itemGroup addItems: A(item, textFieldItem)];
+	[itemGroup addItems: @[item, textFieldItem]];
 	/* -updateLayout results in no autoresizing because of the new content (the 
 	   old layout size is ignored) */
 	[itemGroup updateLayout];
@@ -183,7 +183,7 @@
 	CGFloat length = [item width] + [textFieldItem width] + [textViewItem width];
 	CGFloat separatorWidth = (([itemGroup width] - length) / 2);
 
-	[itemGroup addItems: A(item, textFieldItem, textViewItem)];
+	[itemGroup addItems: @[item, textFieldItem, textViewItem]];
 	[itemGroup updateLayout];
 	
 	UKIntsEqual(0, [item x]);
@@ -219,7 +219,7 @@
 	[textFieldItem setFrame: textFieldFrame];
 	[textViewItem setFrame: textViewFrame];
 
-	[itemGroup addItems: A(item, textFieldItem, textViewItem, otherItem)];
+	[itemGroup addItems: @[item, textFieldItem, textViewItem, otherItem]];
 	[itemGroup updateLayout];
 	
 	CGFloat rigidWidth = [textFieldItem width] + [otherItem width];
@@ -289,7 +289,7 @@
 	[textFieldItem setFrame: textFieldFrame];
 	[textViewItem setFrame: textViewFrame];
 
-	[itemGroup addItems: A(item, textFieldItem, textViewItem, otherItem)];
+	[itemGroup addItems: @[item, textFieldItem, textViewItem, otherItem]];
 	[itemGroup updateLayout];
 	
 	CGFloat rigidHeight = [textFieldItem height] + [otherItem height];
@@ -347,7 +347,7 @@
 	NSRect itemFrame = [item frame];
 
 	[item setAutoresizingMask: ETAutoresizingFlexibleWidth];	
-	[itemGroup addItems: A(item)];
+	[itemGroup addItems: @[item]];
 	
 	[itemGroup setWidth: [itemGroup width] + 100];
 

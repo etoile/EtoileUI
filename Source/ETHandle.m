@@ -420,14 +420,14 @@ NSString *kETManipulatedObjectProperty = @"manipulatedObject";
            manipulatedObject: (id)aTarget
           objectGraphContext: (COObjectGraphContext *)aContext
 {
-	NSArray *handles = A(HANDLE(ETTopLeftHandleActionHandler), 
+	NSArray *handles = @[HANDLE(ETTopLeftHandleActionHandler),
                          HANDLE(ETTopRightHandleActionHandler),
                          HANDLE(ETBottomRightHandleActionHandler),
                          HANDLE(ETBottomLeftHandleActionHandler),
 						 HANDLE(ETLeftHandleActionHandler), 
                          HANDLE(ETRightHandleActionHandler),
                          HANDLE(ETTopHandleActionHandler),
-                         HANDLE(ETBottomHandleActionHandler));
+                         HANDLE(ETBottomHandleActionHandler)];
 
 	/* Pass a nil cover style to suppress the default item style */
 	self = [super initWithView: nil coverStyle: nil actionHandler: aHandler objectGraphContext: aContext];

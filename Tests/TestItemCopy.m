@@ -90,7 +90,7 @@
 		[rootObjectProperties arrayByAddingObjectsFromArray: coreObjectProperties];
 	
 	return [excludedProperties arrayByRemovingObjectsInArray:
-		A(kETNameProperty, kETDisplayNameProperty, kETIdentifierProperty, kETIconProperty)];
+		@[kETNameProperty, kETDisplayNameProperty, kETIdentifierProperty, kETIconProperty]];
 }
 
 - (NSArray *) checkablePropertiesForItem: (ETUIItem *)anItem
@@ -146,12 +146,12 @@
 
 - (NSArray *) identicalItemProperties
 {
-	return A(@"shouldSyncSupervisorView");
+	return @[@"shouldSyncSupervisorView"];
 }
 
 - (NSArray *) nonIdenticalItemProperties
 {
-	return A(@"shouldSyncSupervisorView");
+	return @[@"shouldSyncSupervisorView"];
 }
 
 - (void) testBasicItemCopy
@@ -238,13 +238,13 @@
 - (NSArray *) defaultNilItemGroupProperties
 {
 	return [[self defaultNilItemProperties] arrayByAddingObjectsFromArray:
-		A(kETDelegateProperty, kETSourceProperty, kETDoubleClickedItemProperty, @"doubleAction")];
+		@[kETDelegateProperty, kETSourceProperty, kETDoubleClickedItemProperty, @"doubleAction"]];
 }
 
 - (NSArray *) nonEqualItemGroupProperties
 {
 	return [[self nonEqualItemProperties] arrayByAddingObjectsFromArray:
-		A(@"items", kETControllerProperty, kETDelegateProperty, kETTargetProperty)];
+		@[@"items", kETControllerProperty, kETDelegateProperty, kETTargetProperty]];
 }
 
 - (void) testBasicItemGroupCopy
@@ -318,18 +318,18 @@
 
 	NSArray *properties = [self checkablePropertiesForItem: itemGroup];
 	NSArray *nilProperties = [[self basicNilItemProperties] 
-		arrayByAddingObjectsFromArray: A(kETDoubleClickedItemProperty,  @"doubleAction")];
+		arrayByAddingObjectsFromArray: @[kETDoubleClickedItemProperty,  @"doubleAction"]];
 	NSArray *nonIdenticalProperties = [self nonIdenticalItemProperties];
 	NSArray *nonEqualOrIdenticalProperties = [[self nonEqualItemGroupProperties] 
 		arrayByAddingObjectsFromArray: nonIdenticalProperties];
 	NSArray *equalProperties = [properties arrayByRemovingObjectsInArray: 
 		[nonEqualOrIdenticalProperties arrayByAddingObjectsFromArray: nilProperties]];
 
-	equalProperties = [equalProperties arrayByRemovingObjectsInArray: A(kETSourceProperty)];
+	equalProperties = [equalProperties arrayByRemovingObjectsInArray: @[kETSourceProperty]];
 	// FIXME: -hasVerticallScroller automatically creates a cached scrollable
 	// area item and is called -[ETWidgetLayout syncLayoutViewWithItem:].
 	// -hasVerticalScroller should just return NO in this case.
-	equalProperties = [equalProperties arrayByRemovingObjectsInArray: A(@"cachedScrollViewDecoratorItem")];
+	equalProperties = [equalProperties arrayByRemovingObjectsInArray: @[@"cachedScrollViewDecoratorItem"]];
 
 	for (NSString *property in equalProperties)
 	{
@@ -477,7 +477,7 @@
 		[ETPaneLayout masterDetailLayoutWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	/* We set icons to prevent warnings by -visitedItemProxyForItem: */
-	[[A(item, item1, itemGroup1) mappedCollection] setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
+	[[@[item, item1, itemGroup1] mappedCollection] setIcon: [NSImage imageNamed: @"NSApplicationIcon"]];
 
 	[item setName: @"Ubiquity"];
 	[item1 setName: @"Hilarity"];

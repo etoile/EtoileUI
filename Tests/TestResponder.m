@@ -85,7 +85,7 @@
 	[item setActionHandler: [ETFirstResponderActionHandler sharedInstanceForObjectGraphContext: [item objectGraphContext]]];
 	[item setDecoratorItem: scrollableAreaItem];
 
-	mainItem = [itemFactory itemGroupWithItems: A(item)];
+	mainItem = [itemFactory itemGroupWithItems: @[item]];
 	controller = [[ETController alloc] initWithObjectGraphContext: [itemFactory objectGraphContext]];
 
 	[mainItem setController: controller];

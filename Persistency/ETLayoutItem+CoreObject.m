@@ -619,10 +619,10 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	/* Setter required to set up the KVO observation */
 	[self setRepresentedObject: object];
 	
-	[_deserializationState removeObjectsForKeys: A(@"representedObjectKey",
+	[_deserializationState removeObjectsForKeys: @[@"representedObjectKey",
 		representedAttributeKey, representedRelationshipKey,
 		representedOrderedAttributeKey, representedOrderedRelationshipKey,
-		representedUnorderedAttributeKey, representedUnorderedRelationshipKey)];
+		representedUnorderedAttributeKey, representedUnorderedRelationshipKey]];
 }
 
 #pragma mark Loading Notifications
