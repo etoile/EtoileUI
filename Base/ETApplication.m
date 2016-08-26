@@ -277,6 +277,9 @@ launching notifications. */
 	[self _buildLayoutItemTree];
 }
 
+/* For the app delegate to be retained by ARC */
+static id delegate = nil;
+
 /* If ETPrincipalControllerClass key is present in the bundle info plist, 
 tries to instantiate the class with the specified name and sets it as the 
 application delegate. The delegate will receive -applicationWillFinishLaunching: 
@@ -300,7 +303,7 @@ The main controller is never released. */
 		return;
 	}
 	
-	id delegate = [delegateClass alloc];
+	delegate = [delegateClass alloc];
 
 	if ([delegate respondsToSelector: @selector(initWithObjectGraphContext:)])
 	{
