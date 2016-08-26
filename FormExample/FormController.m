@@ -285,7 +285,7 @@
 
 + (id) randomCollection
 {
-	MovieCollection *collection = [[MovieCollection new] autorelease];
+	MovieCollection *collection = [MovieCollection new];
 	[collection setName: @"Random American Movies"];
 	[collection setMovies: @[[Movie randomMovie], [Movie randomMovie]]];
 	return collection;
