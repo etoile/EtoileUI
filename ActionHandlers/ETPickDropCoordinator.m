@@ -605,8 +605,8 @@ returned nil. */
 {
 	id draggedObject = [[ETPickboard localPickboard] firstObject];
 	NSDictionary *metadata = [[ETPickboard localPickboard] firstObjectMetadata];
-	ETLayoutItem *draggedItem =
-		metadata[kETPickMetadataDraggedItems][draggedObject];
+	NSMapTable *draggedItems = metadata[kETPickMetadataDraggedItems];
+	ETLayoutItem *draggedItem = [draggedItems objectForKey: draggedObject];
 	
 	return draggedItem;
 }
