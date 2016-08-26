@@ -76,12 +76,7 @@ be smaller or equal to the frame height. */
 
 - (instancetype) initWithCoder: (NSCoder *)coder
 {
-	self = [super initWithCoder: coder];
-	if (self == nil)
-		return nil;
-
-	[self doesNotRecognizeSelector: _cmd];
-	return self;
+	return [super initWithCoder: coder];
 }
 
 /** Returns YES to indicate that the receiver is a widget (or control in AppKit
