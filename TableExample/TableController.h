@@ -13,6 +13,7 @@
 #import <AppKit/AppKit.h>
 #import <EtoileUI/EtoileUI.h>
 #import <EtoileUI/ETUIItemIntegration.h>
+#import <EtoileUI/ETView.h>
 
 @interface TableController : NSObject
 {
