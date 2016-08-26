@@ -45,15 +45,15 @@
 	[[itemFactory windowGroup] addItem: collageItem];
 	
 	/* Clone the collage item */
-	//[[itemFactory windowGroup] addItem: [[self collageItem] copy]];
+	[[itemFactory windowGroup] addItem: [[self collageItem] copy]];
 
 	/* Put a simple slider in a window */
 	[[itemFactory windowGroup] addItem: [itemFactory horizontalSlider]];
 
 	/* Open an inspector that allows us to easily switch the tool and the 
 	   layout in use */
-	[[itemFactory windowGroup] setController: AUTORELEASE([[ETController alloc]
-		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]])];
+	[[itemFactory windowGroup] setController: [[ETController alloc]
+		initWithObjectGraphContext: [ETUIObject defaultTransientObjectGraphContext]]];
 	[[itemFactory windowGroup] inspectUI: nil];
 }
 
