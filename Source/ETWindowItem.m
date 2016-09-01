@@ -422,6 +422,12 @@ and make the necessary adjustments. */
 	[[item supervisorView] setAutoresizingMask: _oldDecoratedItemAutoresizingMask];
 }
 
+- (void) didChangeGeometryConstraintsOfItem: (ETLayoutItem *)item
+{
+	_itemWindow.minSize = item.minSize;
+	_itemWindow.maxSize = item.maxSize;
+}
+
 /** Returns nil. */
 - (ETView *) supervisorView
 {

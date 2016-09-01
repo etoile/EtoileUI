@@ -120,6 +120,8 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	ETAutoresizing _autoresizingMask;
 	ETContentAspect _contentAspect;
 	NSRect _boundingBox;
+	NSSize _minSize;
+	NSSize _maxSize;
 
 	BOOL _flipped;
 	BOOL _selected;
@@ -297,6 +299,23 @@ If a host item is set, returns -hostItem. */
 @property (nonatomic) CGFloat y;
 @property (nonatomic) CGFloat height;
 @property (nonatomic) CGFloat width;
+
+/** The minimum size for the outer geometry. 
+
+When no decorators are set, will be enforced by -[ETLayoutItem setContentBounds:] 
+and any other methods updating the content bounds.
+
+When decorators are set, will be enforced by the outmost decorator (not yet
+implemented). */
+@property (nonatomic) NSSize minSize;
+/** The maximum size for the outer geometry.
+
+When no decorators are set, will be enforced by -[ETLayoutItem setContentBounds:] 
+and any other methods updating the content bounds.
+
+When decorators are set, will be enforced by the outmost decorator (not yet
+implemented). */
+@property (nonatomic) NSSize maxSize;
 
 /** @taskunit Adjusting Hit Test and Display Area */
 

@@ -200,6 +200,8 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	_autoresizingMask = NSViewNotSizable;
 	_contentAspect = ETContentAspectStretchToFill;
 	_boundingBox = ETNullRect;
+	_minSize = NSZeroSize;
+	_maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
 
 	NSRect frame = (nil != view ? [view frame] : [[self class] defaultItemRect]);
 	/* We must have a valid frame to use -setDefaultFrame:, otherwise this 
@@ -2345,6 +2347,53 @@ See also -setFrame:. */
 	[self setSize: NSMakeSize(width, [self height])];
 }
 
+- (NSSize)minSize
+{
+	return _minSize;
+}
+
+- (void) setMinSize: (NSSize)size
+{
+	[self willChangeValueForProperty: @"minSize"];
+	_minSize = size;
+	[self didChangeGeometryConstraints];
+	[self didChangeValueForProperty: @"minSize"];
+}
+
+- (NSSize)maxSize
+{
+	return _maxSize;
+}
+
+- (void) setMaxSize: (NSSize)size
+{
+	[self willChangeValueForProperty: @"maxSize"];
+	_maxSize = size;
+	[self didChangeGeometryConstraints];
+	[self didChangeValueForProperty: @"maxSize"];
+}
+
+- (void) didChangeGeometryConstraints
+{
+	ETUIItem *item = self;
+	
+	// Apply constraints to the last decorator and reset other item constraints
+	while (item != nil)
+	{
+		[item didChangeGeometryConstraintsOfItem: self];
+		item = item.decoratorItem;
+	}
+	// Update content bounds when min or max sizes are set without any decorators
+	self.contentBounds = _contentBounds;
+
+	// For outermost decoration rect udpates, when content bounds are untouched
+	[self setNeedsLayoutUpdate];
+	if (_decoratorItem == nil)
+	{
+		[self.parentItem setNeedsLayoutUpdate];
+	}
+}
+
 /** Returns the content bounds associated with the receiver. */
 - (NSRect) contentBounds
 {
@@ -2390,18 +2439,20 @@ the receiver has no decorator.  */
 - (void) setContentBounds: (NSRect)rect
 {
 	NSParameterAssert(rect.size.width >= 0 && rect.size.height >= 0);
+	
+	BOOL hasDecorator = (_decoratorItem != nil);
+	NSRect constrainedRect = (hasDecorator ? rect :
+		ETMakeRect(rect.origin, ETConstrainedSizeFromSize(rect.size, _minSize, _maxSize)));
 
 	/* Prevent damage notifications for CoreObject during object loading */
-	if (NSEqualRects(_contentBounds, rect))
+	if (NSEqualRects(_contentBounds, constrainedRect))
 		return;
 
 	[self willChangeValueForEmbeddingProperty: kETContentBoundsProperty];
-	_contentBounds = rect;
+	_contentBounds = constrainedRect;
 
 	if ([self shouldSyncSupervisorViewGeometry])
 	{
-		BOOL hasDecorator = (_decoratorItem != nil);
-		
 		_isSyncingSupervisorViewGeometry = YES;
 		if (hasDecorator)
 		{

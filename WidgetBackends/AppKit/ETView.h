@@ -64,6 +64,11 @@ next EtoileUI release. */
 
 @property (nonatomic, readonly, copy) NSArray *propertyNames;
 
+/* Geometry Constraints */
+
+@property (nonatomic) NSSize minSize;
+@property (nonatomic) NSSize maxSize;
+
 /* Basic Accessors */
 
 // TODO: Rename -layoutItem to -item. Will be done separately because it is a 

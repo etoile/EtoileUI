@@ -157,6 +157,17 @@ static inline NSPoint ETSumPointAndSize(NSPoint aPoint, NSSize aSize)
 
 extern NSRect ETUnionRectWithObjectsAndSelector(NSArray *itemArray, SEL rectSelector);
 
+
+static inline NSSize ETConstrainedSizeFromSize(NSSize size, NSSize minSize, NSSize maxSize)
+{
+	assert(minSize.width <= maxSize.width && minSize.height <= maxSize.height);
+
+	CGFloat constrainedWidth = MIN(MAX(size.width, minSize.width), maxSize.width);
+	CGFloat constrainedHeight = MIN(MAX(size.height, minSize.height), maxSize.height);
+	
+	return NSMakeSize(constrainedWidth, constrainedHeight);
+}
+
 extern void ETAutoresize(CGFloat *position,
 				         CGFloat *size,
                          BOOL minMarginFlexible,

@@ -10,6 +10,7 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import "ETView.h"
 #import "ETDecoratorItem.h"
+#import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Private.h"
 #import "ETUIItemIntegration.h"
@@ -58,10 +59,13 @@ See also -[ETUIItem supervisorView]. */
 	if (nil == self)
 		return nil;
 
+	_minSize = NSZeroSize;
+	_maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
 	/* For a leaf item, autoresizesSubviews is NO, unless a view is set.
 	   For a group item, autoresizesSubviews is NO, unless a layout view is set.
 	   We update the view autoresizing policy in -setContentView:isTemporary:. */
 	[self setAutoresizesSubviews: NO];
+
 	return self;
 }
 
@@ -432,18 +436,24 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 - (void) setFrame: (NSRect)frame
 {
 	CHECKSIZE(frame.size)
-	[super setFrame: frame];
+
+	/* When we have a decorator on the item, we can constraint the size since 
+	   UIItem will have reset our min and max sizes to their default values. */
+	NSRect constrainedFrame = ETMakeRect(frame.origin,
+		ETConstrainedSizeFromSize(frame.size, self.minSize, self.maxSize));
+
+	[super setFrame: constrainedFrame];
 
 	if ([item shouldSyncSupervisorViewGeometry] == NO)
 		return;
 
 	if ([item decoratorItem] == nil)
 	{
-		[(ETLayoutItem *)item setFrame: frame];
+		[(ETLayoutItem *)item setFrame: constrainedFrame];
 	}
 	else
 	{
-		[(ETLayoutItem *)item setContentSize: frame.size];
+		[(ETLayoutItem *)item setContentSize: constrainedFrame.size];
 	}
 	[self updateLayoutForLiveResize];
 }

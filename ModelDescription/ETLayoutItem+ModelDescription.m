@@ -67,6 +67,8 @@
 	ETPropertyDescription *contentBounds = [ETPropertyDescription descriptionWithName: @"contentBounds" type: (id)@"NSRect"];
 	ETPropertyDescription *position = [ETPropertyDescription descriptionWithName: @"position" type: (id)@"NSPoint"];
 	ETPropertyDescription *anchorPoint = [ETPropertyDescription descriptionWithName: @"anchorPoint" type: (id)@"NSPoint"];
+	ETPropertyDescription *minSize = [ETPropertyDescription descriptionWithName: @"minSize" typeName: @"NSSize"];
+	ETPropertyDescription *maxSize = [ETPropertyDescription descriptionWithName: @"maxSize" typeName: @"NSSize"];
 	ETPropertyDescription *persistentFrame = [ETPropertyDescription descriptionWithName: @"persistentFrame" type: (id)@"NSRect"];
 	// TODO: Enable when truly supported
 	//ETPropertyDescription *transform = [ETPropertyDescription descriptionWithName: @"transform" type: (id)@"NSAffineTransform"];
@@ -166,9 +168,9 @@
 		representedRelationship, representedOrderedRelationship, representedUnorderedRelationship,
 		valueTransformers, view, styleGroup, coverStyle,
 		actionHandler, action, persistentTarget, persistentTargetOwner,
-		contentBounds, position, anchorPoint, persistentFrame, autoresizing,
-		contentAspect, boundingBox, defaultFrame, flipped, selected, selectable,
-		exposed, hidden, subtype, scrollable];
+		contentBounds, position, anchorPoint, minSize, maxSize, persistentFrame,
+		autoresizing, contentAspect, boundingBox, defaultFrame, flipped, selected,
+		selectable, exposed, hidden, subtype, scrollable];
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
 	// override the entity description bound to ETLayoutItem (making possible 

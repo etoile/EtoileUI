@@ -64,6 +64,10 @@ You must never subclass ETUIItem. ETUIItem ivars must be considered private. */
 
 + (NSRect) defaultItemRect;
 
+/** @taskunit Geometry Constraints */
+
+- (void) didChangeGeometryConstraintsOfItem: (ETLayoutItem *)item;
+
 /** @taskunit Supervisor View and View */
 
 @property (nonatomic, readonly) BOOL usesWidgetView;

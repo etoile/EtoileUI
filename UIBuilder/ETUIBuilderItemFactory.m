@@ -269,6 +269,8 @@
 
 	[inspector addItems: @[topBar, body]];
 	[inspector setIdentifier: @"inspector"];
+	// FIXME: The min width should be smaller e.g. 400.
+	[inspector setMinSize: NSMakeSize(550, 0)];
 	[inspector setAutoresizingMask: ETAutoresizingFlexibleWidth | ETAutoresizingFlexibleHeight];
 	[inspector setLayout: [ETColumnLayout layoutWithObjectGraphContext: [self objectGraphContext]]];
 	[inspector setController: aController];

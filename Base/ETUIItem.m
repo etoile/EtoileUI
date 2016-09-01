@@ -81,6 +81,21 @@ Default implementation returns YES. */
 	return YES;
 }
 
+- (void) didChangeGeometryConstraintsOfItem: (ETLayoutItem *)item
+{
+	if (_decoratorItem == nil)
+	{
+		supervisorView.minSize = item.minSize;
+		supervisorView.maxSize = item.maxSize;
+	}
+	else
+	{
+		// NOTE: See -[ETView setFrame:] implementation that requires this.
+		supervisorView.minSize = NSZeroSize;
+		supervisorView.maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
+	}
+}
+
 /* Returns the supervisor view associated with the receiver. The supervisor view 
 is a wrapper view around the receiver view (see -[ETLayoutItem view]). 
 
@@ -516,11 +531,18 @@ Returns the candidate focused item of the enclosing item. */
 
 - (void)didAddDecoratorItem: (ETDecoratorItem *)aDecorator
 {
+	ETLayoutItem *layoutItem =
+		(ETLayoutItem *)([self.firstDecoratedItem isLayoutItem] ? self.firstDecoratedItem : nil);
 	ETDecoratorItem *decorator = aDecorator;
 	
 	while (decorator != nil)
 	{
+		if (layoutItem != nil)
+		{
+			[decorator didChangeGeometryConstraintsOfItem: layoutItem];
+		}
 		[decorator didDecorateItem: self];
+
 		decorator = [decorator decoratorItem];
 	}
 }
