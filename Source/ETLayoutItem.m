@@ -58,7 +58,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @implementation ETLayoutItem
 
-@dynamic hostItem;
+@dynamic boundingInsets, hostItem;
 
 static BOOL showsBoundingBox = NO;
 static BOOL showsFrame = NO;
@@ -199,7 +199,7 @@ See also -setView:, -setCoverStyle: and -setActionHandler:.  */
 	 /* Will be overriden by -setView: when the view is not nil */
 	_autoresizingMask = NSViewNotSizable;
 	_contentAspect = ETContentAspectStretchToFill;
-	_boundingBox = ETNullRect;
+	_boundingInsetsRect = NSMakeRect(0, 0, 0, 0);
 	_minSize = NSZeroSize;
 	_maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
 
@@ -2571,18 +2571,42 @@ The returned rect is expressed in the receiver content coordinate space. */
 	return visibleContentBounds;
 }
 
+- (ETEdgeInsets) boundingInsets
+{
+	return ETEdgeInsetsMake(_boundingInsetsRect.origin.x, _boundingInsetsRect.origin.y,
+	                        _boundingInsetsRect.size.width, _boundingInsetsRect.size.height);
+}
+
+- (void) setBoundingInsets: (ETEdgeInsets)insets
+{
+	NSRect rectInsets = NSMakeRect(insets.left, insets.top, insets.right, insets.bottom);
+
+	/* Prevent damage notifications for CoreObject during object loading.
+	   For -[ETFreeLayout didLoadObjectGraph], -[ETHandleGroup setBoundingBox:]  
+	   will call -setBoundingBox: on manipulated persistent items. */
+	if (NSEqualRects(_boundingInsetsRect, rectInsets))
+		return;
+
+	[self willChangeValueForProperty: @"boundingInsets"];
+	[self willChangeValueForProperty: @"boundingInsetsRect"];
+
+	_boundingInsetsRect = rectInsets;
+
+	[self setNeedsLayoutUpdate];
+	if (_decoratorItem == nil)
+	{
+		[[self parentItem] setNeedsLayoutUpdate];
+	}
+
+	[self didChangeValueForProperty: @"boundingInsetsRect"];
+	[self didChangeValueForProperty: @"boundingInsets"];
+}
 /** Returns the rect that fully encloses the receiver and represents the maximal 
 extent on which hit test is done and redisplay requested. This rect is expressed 
-in the receiver content coordinate space.
-
-You must be cautious with the bounding box, since its value is subject to be 
-overwritten by the layout in use. See -setBoundingBox:. */
+in the receiver content coordinate space. */
 - (NSRect) boundingBox
 {
-	if (ETIsNullRect(_boundingBox))
-		return [self bounds];
-
-	return _boundingBox;
+	return ETRectInset(self.bounds, self.boundingInsets);
 }
 
 /** Sets the rect that fully encloses the receiver and represents the maximal 
@@ -2606,19 +2630,8 @@ the receiver has no decorator. */
 	// NOTE: NSContainsRect returns NO if the width or height are 0
 	NSParameterAssert(NSContainsRect(extent, bounds) || bounds.size.width == 0 || bounds.size.height == 0);
 
-	/* Prevent damage notifications for CoreObject during object loading.
-	   For -[ETFreeLayout didLoadObjectGraph], -[ETHandleGroup setBoundingBox:]  
-	   will call -setBoundingBox: on manipulated persistent items. */
-	if (NSEqualRects(_boundingBox, extent))
-		return;
-
 	[self willChangeValueForProperty: kETBoundingBoxProperty];
-	_boundingBox = extent;
-	[self setNeedsLayoutUpdate];
-	if (_decoratorItem == nil)
-	{
-		[[self parentItem] setNeedsLayoutUpdate];
-	}
+	self.boundingInsets = ETEdgeInsetsFromRectDifference(bounds, extent);
 	[self didChangeValueForProperty: kETBoundingBoxProperty];
 }
 

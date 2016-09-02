@@ -23,6 +23,7 @@
 #import "ETLayoutItemFactory.h"
 #import "ETUIStateRestoration.h"
 #import "ETUIItemIntegration.h"
+#import "ETUIMetamodel.h"
 #import "ETView.h"
 #import "ETWidget.h"
 #import "ETWindowItem.h"
@@ -239,6 +240,7 @@ See also -finishLaunching which is called after -run is invoked. */
 	@autoreleasepool
 	{
 		[NSView _setUpEtoileUITraits];
+		ETPrepareUIMetamodel([ETModelDescriptionRepository mainRepository]);
 		[self _registerAdditionalImages];
 		[self _registerAllAspects];
 		//RECREATE_AUTORELEASE_POOL(pool);

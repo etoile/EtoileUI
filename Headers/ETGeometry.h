@@ -175,3 +175,39 @@ extern void ETAutoresize(CGFloat *position,
                          BOOL maxMarginFlexible,
                          CGFloat newContainerSize,
                          CGFloat oldContainerSize);
+
+/** Returns new edget insets with the given values. */
+static inline ETEdgeInsets ETEdgeInsetsMake(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right)
+{
+	return (ETEdgeInsets){ top, left, bottom, right };
+}
+
+/** Returns whether two edge insets are identical. */
+static inline BOOL ETEdgeInsetsEqual(ETEdgeInsets insets, ETEdgeInsets otherInsets)
+{
+	return insets.left == otherInsets.left
+	    && insets.top == otherInsets.top
+		&& insets.right == otherInsets.right
+	    && insets.bottom == otherInsets.bottom;
+}
+
+/** Returns a new rect by insetting the argument rect by the edge insets. */
+static inline NSRect ETRectInset(NSRect rect, ETEdgeInsets insets)
+{
+	return NSMakeRect(rect.origin.x - insets.left,
+	                  rect.origin.y - insets.top,
+	                  rect.size.width + insets.left + insets.right,
+	                  rect.size.height + insets.top + insets.bottom);
+}
+
+/** Returns the edge insets to compute the destination rect with ETRectInset(source). */
+static inline ETEdgeInsets ETEdgeInsetsFromRectDifference(NSRect source, NSRect destination)
+{
+	CGFloat left = source.origin.x - destination.origin.x;
+	CGFloat top = source.origin.y - destination.origin.y;
+
+	return ETEdgeInsetsMake(left,
+	                        top,
+							destination.size.width - source.size.width - left,
+							destination.size.height - source.size.height - top);
+}

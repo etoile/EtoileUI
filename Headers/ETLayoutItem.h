@@ -12,6 +12,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <EtoileUI/ETGeometryTypes.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETFragment.h>
 #import <EtoileUI/ETUIItem.h>
@@ -119,7 +120,7 @@ and centers it. A strech is a scale that doesn't preserve the content proportion
 	NSAffineTransform *_transform;
 	ETAutoresizing _autoresizingMask;
 	ETContentAspect _contentAspect;
-	NSRect _boundingBox;
+	NSRect _boundingInsetsRect;
 	NSSize _minSize;
 	NSSize _maxSize;
 
@@ -319,6 +320,8 @@ implemented). */
 
 /** @taskunit Adjusting Hit Test and Display Area */
 
+/** The edget insets used to compute the bounding box from the receiver bounds. */
+@property (nonatomic) ETEdgeInsets boundingInsets;
 @property (nonatomic) NSRect boundingBox;
 
 /** @taskunit Inner Geometry  */

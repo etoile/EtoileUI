@@ -42,6 +42,27 @@
 	return self;
 }
 
+- (void) testBoundingBox
+{
+	NSRect rect = NSMakeRect(0, 0, 500, 200);
+
+	item.size = rect.size;
+
+	UKRectsEqual(rect, item.boundingBox);
+
+	item.boundingBox = NSInsetRect(rect, -10, -20);
+	
+	NSRect insetBox = NSMakeRect(-10, -20, 500 + 10 * 2, 200 + 20 * 2);
+
+	UKRectsEqual(insetBox, item.boundingBox);
+	UKRectsEqual(rect, item.contentBounds);
+
+	UKIntsEqual(10, item.boundingInsets.left);
+	UKIntsEqual(20, item.boundingInsets.top);
+	UKIntsEqual(10, item.boundingInsets.right);
+	UKIntsEqual(20, item.boundingInsets.bottom);
+}
+
 - (void) testNewSupervisorViewWithItemAndFrame
 {
 	UKIntsEqual(ETAutoresizingNone, [item autoresizingMask]);

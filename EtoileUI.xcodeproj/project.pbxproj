@@ -89,6 +89,10 @@
 		6037760616BD846900B7EEB5 /* ETLayoutItem+UIBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6037760816BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
 		6037760916BD846900B7EEB5 /* ETLayoutItem+UIBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */; };
+		603CD3CC1D79A12B008640D3 /* ETGeometryTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 603CD3CB1D79A12B008640D3 /* ETGeometryTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		603CD3E61D79B976008640D3 /* ETUIMetamodel.h in Headers */ = {isa = PBXBuildFile; fileRef = 603CD3E41D79B976008640D3 /* ETUIMetamodel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		603CD3E81D79B976008640D3 /* ETUIMetamodel.m in Sources */ = {isa = PBXBuildFile; fileRef = 603CD3E51D79B976008640D3 /* ETUIMetamodel.m */; };
+		603CD3E91D79B976008640D3 /* ETUIMetamodel.m in Sources */ = {isa = PBXBuildFile; fileRef = 603CD3E51D79B976008640D3 /* ETUIMetamodel.m */; };
 		603D7D0A13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */; };
 		603D7D0B13D363BA007AABE2 /* ETActionHandler+ModelDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */; };
 		6043D089174BE66C002103CC /* ETItemValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6043D085174BE66C002103CC /* ETItemValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -974,6 +978,9 @@
 		6037760416BD846600B7EEB5 /* ETLayoutItem+UIBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItem+UIBuilder.h"; path = "UIBuilder/ETLayoutItem+UIBuilder.h"; sourceTree = "<group>"; };
 		6037760516BD846700B7EEB5 /* ETLayoutItem+UIBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETLayoutItem+UIBuilder.m"; path = "UIBuilder/ETLayoutItem+UIBuilder.m"; sourceTree = "<group>"; };
 		6037769216BE7BA900B7EEB5 /* TestWindowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestWindowLayout.m; path = Tests/TestWindowLayout.m; sourceTree = "<group>"; };
+		603CD3CB1D79A12B008640D3 /* ETGeometryTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETGeometryTypes.h; path = Headers/ETGeometryTypes.h; sourceTree = "<group>"; };
+		603CD3E41D79B976008640D3 /* ETUIMetamodel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUIMetamodel.h; path = ModelDescription/ETUIMetamodel.h; sourceTree = "<group>"; };
+		603CD3E51D79B976008640D3 /* ETUIMetamodel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUIMetamodel.m; path = ModelDescription/ETUIMetamodel.m; sourceTree = "<group>"; };
 		603D7D0913D363BA007AABE2 /* ETActionHandler+ModelDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ETActionHandler+ModelDescription.m"; path = "ModelDescription/ETActionHandler+ModelDescription.m"; sourceTree = "<group>"; };
 		6043D085174BE66C002103CC /* ETItemValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETItemValueTransformer.h; path = Additions/ETItemValueTransformer.h; sourceTree = "<group>"; };
 		6043D086174BE66C002103CC /* ETItemValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETItemValueTransformer.m; path = Additions/ETItemValueTransformer.m; sourceTree = "<group>"; };
@@ -1621,6 +1628,8 @@
 		601296B013C7495000980F16 /* Model Descriptions */ = {
 			isa = PBXGroup;
 			children = (
+				603CD3E41D79B976008640D3 /* ETUIMetamodel.h */,
+				603CD3E51D79B976008640D3 /* ETUIMetamodel.m */,
 				60A6583A13B0D71D000A6EB6 /* ETUIItem+ModelDescription.m */,
 				601296D313C74C6100980F16 /* ETDecoratorItem+ModelDescription.m */,
 				601296AD13C7491100980F16 /* ETLayoutItem+ModelDescription.m */,
@@ -1961,6 +1970,7 @@
 				609097980CAEBC32009CAD27 /* NSObject+EtoileUI.m */,
 				60311D610CFB9A84001A699E /* NSWindow+Etoile.h */,
 				60311D620CFB9A84001A699E /* NSWindow+Etoile.m */,
+				603CD3CB1D79A12B008640D3 /* ETGeometryTypes.h */,
 				607F5F000F005A8E00A8CD0C /* ETGeometry.h */,
 				607F5F060F005C5100A8CD0C /* ETGeometry.m */,
 				609F46840B41FDAF00AD2209 /* ETLineFragment.h */,
@@ -2334,6 +2344,7 @@
 				602E08371A06F13E00FB8FF4 /* ETTintStyle.h in Headers */,
 				608A5DC010231D0B0086F4B3 /* ETLayoutItem+KVO.h in Headers */,
 				608A5E931023216F0086F4B3 /* EtoileUIProperties.h in Headers */,
+				603CD3CC1D79A12B008640D3 /* ETGeometryTypes.h in Headers */,
 				66B74127103CB008008AF5B1 /* ETTitleBarItem.h in Headers */,
 				6627F70A127E758A00E06946 /* ETItemTemplate.h in Headers */,
 				6627F70B127E758A00E06946 /* ETDocumentController.h in Headers */,
@@ -2371,6 +2382,7 @@
 				60BBFE1118645684006A495E /* ETUIItem.h in Headers */,
 				60BBFE1518645684006A495E /* ETUIObject.h in Headers */,
 				60BBFE1918645684006A495E /* ETUIStateRestoration.h in Headers */,
+				603CD3E61D79B976008640D3 /* ETUIMetamodel.h in Headers */,
 				60BBFE1D18645684006A495E /* ETWidget.h in Headers */,
 				60BBFE2318645708006A495E /* ETEventProcessor.h in Headers */,
 				60BBFE2F186457C1006A495E /* ETActionHandler.h in Headers */,
@@ -3189,6 +3201,7 @@
 				60D289DD1A2323100026A253 /* TestTemplateItemLayoutPersistency.m in Sources */,
 				60C4F5891742406A00AA10F8 /* ETUIBuilderController.m in Sources */,
 				60D30285194BCB04006BA5A9 /* TestItemCopy.m in Sources */,
+				603CD3E91D79B976008640D3 /* ETUIMetamodel.m in Sources */,
 				605270851966B34D00B280A4 /* TestFreeLayoutPersistency.m in Sources */,
 				6063FD5F1744CD9B00E4350E /* ETNumberPicker.m in Sources */,
 				6043D08D174C2C35002103CC /* ETObjectValueFormatter.m in Sources */,
@@ -3447,6 +3460,7 @@
 				60BBFE4D18646980006A495E /* ETShape.m in Sources */,
 				60BBFE5118646980006A495E /* ETStyle.m in Sources */,
 				60BBFE5518646980006A495E /* ETStyleGroup.m in Sources */,
+				603CD3E81D79B976008640D3 /* ETUIMetamodel.m in Sources */,
 				60BBFE8318646A10006A495E /* ETBrowserLayout.m in Sources */,
 				60BBFE8718646A10006A495E /* ETColumnLayout.m in Sources */,
 				60BBFE8F18646A10006A495E /* ETComputedLayout.m in Sources */,

@@ -84,7 +84,7 @@
 		 _(@"Scale To Fill Horizontally"): @(ETContentAspectScaleToFillHorizontally),
 		 _(@"Scale to Fill Vertically"): @(ETContentAspectScaleToFillVertically),
 		 _(@"Stretch to Fill"): @(ETContentAspectStretchToFill) } arrayRepresentation]];
-	ETPropertyDescription *boundingBox = [ETPropertyDescription descriptionWithName: @"boundingBox" type: (id)@"NSRect"];
+	ETPropertyDescription *boundingInsetsRect = [ETPropertyDescription descriptionWithName: @"boundingInsetsRect" typeName: @"NSRect"];
 	// TODO: What should we do with _defaultValues?
 	ETPropertyDescription *defaultFrame = [ETPropertyDescription descriptionWithName: @"defaultFrame" type: (id)@"NSRect"];
 	ETPropertyDescription *flipped = [ETPropertyDescription descriptionWithName: @"flipped" type: (id)@"BOOL"];
@@ -137,6 +137,8 @@
 	ETPropertyDescription *x = [ETPropertyDescription descriptionWithName: @"x" type: (id)@"CGFloat"];
 	ETPropertyDescription *y = [ETPropertyDescription descriptionWithName: @"y" type: (id)@"CGFloat"];
 	ETPropertyDescription *width = [ETPropertyDescription descriptionWithName: @"width" type: (id)@"CGFloat"];
+	ETPropertyDescription *boundingBox = [ETPropertyDescription descriptionWithName: @"boundingBox" type: (id)@"NSRect"];
+	ETPropertyDescription *boundingInsets = [ETPropertyDescription descriptionWithName: @"boundingInsets" typeName: @"ETEdgeInsets"];
 	ETPropertyDescription *height = [ETPropertyDescription descriptionWithName: @"height" type: (id)@"CGFloat"];
 	ETPropertyDescription *target = [ETPropertyDescription descriptionWithName: @"target" type: (id)@"NSObject"];
 	ETPropertyDescription *hasVerticalScroller = [ETPropertyDescription descriptionWithName: @"hasVerticalScroller" type: (id)@"BOOL"];
@@ -169,7 +171,7 @@
 		valueTransformers, view, styleGroup, coverStyle,
 		actionHandler, action, persistentTarget, persistentTargetOwner,
 		contentBounds, position, anchorPoint, minSize, maxSize, persistentFrame,
-		autoresizing, contentAspect, boundingBox, defaultFrame, flipped, selected,
+		autoresizing, contentAspect, boundingInsetsRect, defaultFrame, flipped, selected,
 		selectable, exposed, hidden, subtype, scrollable];
 	// TODO: title, objectValue, formatter, minValue and maxValue should
 	// be declared among the persistent properties or we should support to
@@ -177,7 +179,7 @@
 	// to redeclare these properties as persistent if no view is used).
 	NSArray *derivedProperties = @[parentItem, hostItem, controllerItem, sourceItem,
 		isMetaItem, repObject, valueKey, value, visible, style, frame, x, y,
-		width, height, target, hasVerticalScroller, hasHorizontalScroller];
+		width, height, boundingInsets, boundingBox, target, hasVerticalScroller, hasHorizontalScroller];
 	NSArray *transientProperties = [derivedProperties arrayByAddingObjectsFromArray:
 		@[title, objectValue, formatter, minValue, maxValue, pickMetadata,
 		UIBuilderAction, attachedTool]];

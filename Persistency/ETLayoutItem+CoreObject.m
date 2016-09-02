@@ -182,18 +182,6 @@ and loading notifications will access or update the initial values directly. */
 	_contentBounds = [aValue rectValue];
 }
 
-/* Required otherwise the bounds returned by -boundingBox might be serialized 
-since -serializedValueForProperty: doesn't use the direct ivar access. */
-- (id) serializedBoundingBox
-{
-	return [NSValue valueWithRect: _boundingBox];
-}
-
-- (void) setSerializedBoundingBox: (id)aBoundingBox
-{
-	_boundingBox = [aBoundingBox rectValue];
-}
-
 #pragma mark Target/Action Persistency Support
 #pragma mark -
 
