@@ -110,6 +110,25 @@ In the rare case where more control is required, you might want to reimplement
 
 - (void) prepareFlexibleItem: (ETLayoutItem *)anItem;
 - (BOOL) isFlexibleItem: (ETLayoutItem *)anItem;
+/** <override-dummy />
+Returns the size of each flexible item by splitting the remaining space among
+the given number of flexible items in the current layout size.
+
+If the current layout size is bigger than the max allowed size, then the
+item width or height should be set to zero or to a minimum value. There is no 
+space remaining to be divided among of the flexible items, so they should hidden 
+or shrinked as much as possible.
+
+If the current layout size is smaller than the max allowed size, then the 
+available width or height should be distributed between items according to a 
+strategy specific to each subclass.
+
+Any subclass implementation must subtract the item bouding insets from the 
+returned size. For example, a line layout would return 
+<code>item.width - (item.boundingInsets.left + item.boundingInsets.right)</code>.
+
+See also -setOrigin:forItem: which takes in account the bounding insets to 
+update the item position. */
 - (NSSize) sizeOfFlexibleItem: (ETLayoutItem *)anItem
          forCurrentLayoutSize: (NSSize)aLayoutSize 
         numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems

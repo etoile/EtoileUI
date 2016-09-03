@@ -105,7 +105,10 @@ static const CGFloat undeterminedWidth = 10;
         numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems
                 inMaxAreaSize: (NSSize)maxSize 
 {
-	return NSMakeSize([anItem width], (maxSize.height - aLayoutSize.height) / nbOfFlexibleItems);
+	CGFloat boundingHeight = (maxSize.height - aLayoutSize.height) / nbOfFlexibleItems;
+	ETEdgeInsets insets = anItem.boundingInsets;
+
+	return NSMakeSize([anItem width], boundingHeight - insets.top - insets.bottom);
 }
 
 - (void) adjustSeparatorItem: (ETLayoutItem *)separator 

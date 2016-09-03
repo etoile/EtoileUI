@@ -104,7 +104,10 @@ given layout area size. */
         numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems
                 inMaxAreaSize: (NSSize)maxSize 
 {
-	return NSMakeSize((maxSize.width - aLayoutSize.width) / nbOfFlexibleItems, [anItem height]);
+	CGFloat boundingWidth = (maxSize.width - aLayoutSize.width) / nbOfFlexibleItems;
+	ETEdgeInsets insets = anItem.boundingInsets;
+
+	return NSMakeSize(boundingWidth - insets.left - insets.right, [anItem height]);
 }
 
 - (void) adjustSeparatorItem: (ETLayoutItem *)separator forLayoutSize: (NSSize)newLayoutSize

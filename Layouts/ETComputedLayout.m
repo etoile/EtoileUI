@@ -630,6 +630,9 @@ usually requires to know other element sizes that the receiver computes. */
 
 }
 
+
+// NOTE We could provide -setSize:forItem: symetric to -setOrigin:forItem:, but
+// subclassing is easier when this method copes with bounding insets itself.
 - (NSSize) sizeOfFlexibleItem: (ETLayoutItem *)anItem
          forCurrentLayoutSize: (NSSize)aLayoutSize 
         numberOfFlexibleItems: (NSUInteger)nbOfFlexibleItems
