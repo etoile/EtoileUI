@@ -31,7 +31,7 @@ It is not advised to subclass ETLineFragment. In any case, the ivars must be
 considered private. */
 @interface ETLineFragment : NSObject <ETFragment>
 {
-	id <ETLayoutFragmentOwner>_owner;
+	id <ETLayoutFragmentOwner> __weak _owner;
 	NSMutableArray *_fragments;
 	NSPoint _origin;
 	CGFloat _fragmentMargin;
