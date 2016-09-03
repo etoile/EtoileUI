@@ -197,6 +197,45 @@
 	UKSizesEqual(separatorSize, [[[[itemGroup layout] layerItem] lastItem] size]);
 }
 
+- (void) testThreeFlexibleItemsInLineLayout
+{
+	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
+
+	ETLayoutItem *item = [itemFactory item];
+	ETLayoutItem *textFieldItem = [itemFactory textField];
+	ETLayoutItem *textViewItem = [itemFactory textView];
+	
+	item.autoresizingMask = ETAutoresizingFlexibleWidth;
+	textFieldItem.autoresizingMask = ETAutoresizingFlexibleWidth;
+	textViewItem.autoresizingMask = ETAutoresizingFlexibleWidth;
+
+	[itemGroup addItems: @[item, textFieldItem, textViewItem]];
+	[itemGroup updateLayout];
+
+	CGFloat itemWidth = itemGroup.width / 3;
+	
+	UKIntsEqual(0, item.x);
+	UKIntsEqual(itemWidth, textFieldItem.x);
+	UKIntsEqual(itemWidth * 2, textViewItem.x);
+
+	UKIntsEqual(itemWidth, item.width);
+	UKIntsEqual(itemWidth, textFieldItem.width);
+	UKIntsEqual(itemWidth, textViewItem.width);
+	
+	itemGroup.width += 300;
+	[itemGroup updateLayout];
+	
+	CGFloat updatedItemWidth = itemWidth + (300 / 3);
+	
+	UKIntsEqual(0, item.x);
+	UKIntsEqual(updatedItemWidth, textFieldItem.x);
+	UKIntsEqual(updatedItemWidth * 2, textViewItem.x);
+
+	UKIntsEqual(updatedItemWidth, item.width);
+	UKIntsEqual(updatedItemWidth, textFieldItem.width);
+	UKIntsEqual(updatedItemWidth, textViewItem.width);
+}
+
 - (void) testLineLayout
 {
 	[itemGroup setLayout: [ETLineLayout layoutWithObjectGraphContext: [itemGroup objectGraphContext]]];
