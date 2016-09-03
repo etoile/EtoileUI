@@ -953,11 +953,13 @@ and a stepper on the right side. */
 	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
 	[firstPicker setCoverStyle: coverStyle];
 	[firstPicker setBoundingBox: [self boundingBoxForItem: firstPicker]];
+	firstPicker.autoresizingMask = ETAutoresizingFlexibleWidth;
 
 	[secondPicker setName: _(@"2")];
 	[coverStyle setLabelPosition: ETLabelPositionOutsideBottom];
 	[secondPicker setCoverStyle: coverStyle];
 	[secondPicker setBoundingBox: [self boundingBoxForItem: secondPicker]];
+	secondPicker.autoresizingMask = ETAutoresizingFlexibleWidth;
 
 	NSSize size = NSMakeSize(aWidth, [firstPicker boundingBox].size.height);
 	ETLayoutItemGroup *editor = [self itemGroupWithSize: size];

@@ -470,6 +470,7 @@
 	 	[aController typeObjectForAspectName: anAspectName ofObject: anObject]];
 	[typeField setName: _(@"Type")];
 	[typeField setIdentifier: @"typeField"];
+	typeField.width = _renderer.itemSize.width;
 
 	return typeField;
 }
@@ -539,7 +540,9 @@
 
 - (ETModelDescriptionRenderer *) newRenderer
 {
-	return [ETModelDescriptionRenderer new];
+	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer new];
+	renderer.itemSize = NSMakeSize(200, [renderer itemSize].height);
+	return renderer;
 }
 
 - (ETModelDescriptionRenderer *) newValueTransformerRenderer
