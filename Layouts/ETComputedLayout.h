@@ -108,7 +108,6 @@ In the rare case where more control is required, you might want to reimplement
 
 /** @taskunit Flexible Items */
 
-- (void) prepareFlexibleItem: (ETLayoutItem *)anItem;
 - (BOOL) isFlexibleItem: (ETLayoutItem *)anItem;
 /** <override-dummy />
 Returns the size of each flexible item by splitting the remaining space among

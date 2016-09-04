@@ -60,8 +60,9 @@ its owner in the protocol methods.
 Any computed layout can be used transparently in this owner role.
 See ETLineFragment (layout fragment) and ETComputedLayout (layout fragment owner). */
 @protocol ETLayoutFragmentOwner
-- (NSRect) rectForItem: (id)anItem;
-- (void) setOrigin: (NSPoint)newOrigin forItem: (id)anItem;
+- (NSRect) rectForItem: (id <ETFragment>)anItem;
+- (void) setOrigin: (NSPoint)newOrigin forItem: (id <ETFragment>)anItem;
+- (BOOL) isFlexibleItem: (id <ETFragment>)anItem;
 @end
 
 

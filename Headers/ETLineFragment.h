@@ -29,6 +29,7 @@ ETLineFragment is not designed to be subclassed. */
 	CGFloat _maxWidth;
 	CGFloat _maxHeight;
 	BOOL _flipped;
+	BOOL _skipsFlexibleFragments;
 }
 
 + (id) horizontalLineWithOwner: (id <ETLayoutFragmentOwner>)anOwner
@@ -39,7 +40,12 @@ ETLineFragment is not designed to be subclassed. */
                    maxHeight: (CGFloat)aHeight
                    isFlipped: (BOOL)isFlipped;
 
+/** Whether fragments which returns YES to -[ETLayoutFragmentOwner isFlexibleItem:] 
+should be treated as having a zero length. */
+@property (nonatomic, assign) BOOL skipsFlexibleFragments;
+
 - (NSArray *) fillWithItems: (NSArray *)fragments;
+
 @property (nonatomic, readonly) NSArray *items;
 @property (nonatomic, readonly) CGFloat itemMargin;
 

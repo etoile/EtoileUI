@@ -306,22 +306,6 @@ bounding box). */
 	}
 }
 
-- (void) prepareFlexibleItem: (ETLayoutItem *)anItem
-{
-
-}
-
-- (void) prepareFlexibleItemsInItems: (NSArray *)items
-{
-	for (ETLayoutItem *item in items)
-	{
-		if ([self isFlexibleItem: item] == NO)
-			continue;
-
-		[self prepareFlexibleItem: item];
-	}
-}
-
 - (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
 {
 	return NO;
@@ -406,8 +390,6 @@ by calling -setExposedItems: on the layout context. */
 
 	[self adjustHorizontalAlignmentGuidePositionForItems: items];
 	[self adjustWidthForItems: items];
-	
-	[self prepareFlexibleItemsInItems: items];
 
 	NSSize initialLayoutSize = [self layoutSize];
 	NSArray *spacedItems = [self insertSeparatorsBetweenItems: items];
@@ -425,6 +407,8 @@ by calling -setExposedItems: on the layout context. */
 	{
 		// TODO: -generateFragmentsForItems: must be called here if we 
 		// decide to support flexible separators in ETFlowLayout or similar.
+		[[layoutModel mappedCollection] setSkipsFlexibleFragments: NO];
+
 		newLayoutSize = [self computeLocationsForFragments: layoutModel];
 		usedItems = [self itemsUsedInFragments: layoutModel];
 	}

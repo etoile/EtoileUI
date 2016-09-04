@@ -34,6 +34,7 @@
 	_maxWidth = aWidth;
 	_maxHeight = aHeight;
 	_flipped = isFlipped;
+	_skipsFlexibleFragments = YES;
 	return self;
 }
 
@@ -81,7 +82,9 @@ fragments. */
 - (CGFloat) lengthForFragment: (id <ETFragment>)aFragment
 {
 	NSRect rect = [_owner rectForItem: aFragment];
-	return [self isVerticallyOriented] ? rect.size.height : rect.size.width;
+	CGFloat length = [self isVerticallyOriented] ? rect.size.height : rect.size.width;
+	
+	return _skipsFlexibleFragments && [_owner isFlexibleItem: aFragment] ? 0 : length;
 }
 
 /** Adds the given fragments sequentially to the receiver until its length 
@@ -138,8 +141,7 @@ input. */
 
 - (NSPoint) nextOriginAfterFragment: (id <ETFragment>)aFragment withOrigin: (NSPoint)aFragmentOrigin
 {
-	// NOTE: Next line could use -lengthForFragment:
-	aFragmentOrigin.x += [_owner rectForItem: aFragment].size.width + _fragmentMargin;
+	aFragmentOrigin.x += [self lengthForFragment: aFragment] + _fragmentMargin;
 	return aFragmentOrigin;	
 }
 
@@ -197,7 +199,7 @@ space is flipped, ortherwise at the bottom left corner. */
 
 	for (id <ETFragment> fragment in _fragments)
 	{
-		totalFragmentWidth += [_owner rectForItem: fragment].size.width;
+		totalFragmentWidth += [self lengthForFragment: fragment];
 	}
 
 	return totalFragmentWidth + [self totalFragmentMargin];
@@ -273,8 +275,7 @@ Returns whether the line is vertical or horizontal. */
 	}
 	else
 	{
-		// NOTE: Next line equivalent to -lengthForFragment:
-		CGFloat fragmentHeight = [_owner rectForItem: aFragment].size.height;
+		CGFloat fragmentHeight = [self lengthForFragment: aFragment];
 		fragmentY = _origin.y + [self height] - fragmentHeight;
 	}
 
@@ -284,8 +285,7 @@ Returns whether the line is vertical or horizontal. */
 - (NSPoint) nextOriginAfterFragment: (id <ETFragment>)aFragment withOrigin: (NSPoint)aFragmentOrigin
 {
 	NSPoint nextOrigin = aFragmentOrigin;
-	// NOTE: Next line could use -lengthForFragment:
-	CGFloat advancement = [_owner rectForItem: aFragment].size.height + _fragmentMargin;
+	CGFloat advancement = [self lengthForFragment: aFragment] + _fragmentMargin;
 
 	if (_flipped)
 	{
@@ -305,7 +305,7 @@ Returns whether the line is vertical or horizontal. */
 
 	for (id <ETFragment> fragment in _fragments)
 	{
-		totalFragmentHeight += [_owner rectForItem: fragment].size.height;
+		totalFragmentHeight += [self lengthForFragment: fragment];
 	}
 
 	return totalFragmentHeight + [self totalFragmentMargin];

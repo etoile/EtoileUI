@@ -89,11 +89,6 @@ static const CGFloat undeterminedWidth = 10;
 	}
 }
 
-- (void) prepareFlexibleItem: (ETLayoutItem *)anItem
-{
-	[anItem setHeight: 0];
-}
-
 /** Returns YES if the item autoresizing mask includes ETAutoresizingFlexibleHeight. */
 - (BOOL) isFlexibleItem: (ETLayoutItem *)anItem
 {
