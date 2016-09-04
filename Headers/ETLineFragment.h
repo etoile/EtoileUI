@@ -1,7 +1,4 @@
-/** <title>ETLineFragment</title>
-
-	<abstract>Represents an horizontal or vertical line box in a layout.</abstract>
-
+/**
 	Copyright (C) 2006 Quentin Mathe
 
 	Author:  Quentin Mathe <qmathe@club-internet.fr>
@@ -13,24 +10,18 @@
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileUI/ETFragment.h>
 
-/** A line fragment is a collection of fragments to be layouted either 
-horizontally or vertically.
+/** @abstract An horizontal or vertical line box in a layout
 
-A line fragment is typically used together with ETComputedLayout to cluster 
-items spatially without requiring that these layout items belong to an item 
-group.
+A line fragment is a collection of fragments to be laid out either horizontally
+or vertically.
 
-Although we name 'items' the elements hold by a line fragment, they can be any 
-objects that comply to the ETFragment protocol when their layout implements the 
-ETLayoutFragmentOwner protocol in a compatible way.<br />
-Take note that ETComputedLayout and its EtoileUI subclasses only accept 
-ETLayoutItem objects as arguments to -rectForItem: and -setOrigin:forItem:.<br />
-You can write subclasses and override these methods to solve this limitation.
+A line fragment is commonly used in together with ETComputedLayout to cluster
+items spatially without requiring these items to belong to an item group.
 
-It is not advised to subclass ETLineFragment. In any case, the ivars must be 
-considered private. */
+ETLineFragment is not designed to be subclassed. */
 @interface ETLineFragment : NSObject <ETFragment>
 {
+	@protected
 	id <ETLayoutFragmentOwner> __weak _owner;
 	NSMutableArray *_fragments;
 	NSPoint _origin;
