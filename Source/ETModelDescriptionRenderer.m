@@ -170,8 +170,12 @@ time. For example:
 		[pointEditor height] + [sizeEditor height]);
 	ETLayoutItemGroup *editor = [_itemFactory itemGroupWithSize: size];
 
+	pointEditor.autoresizingMask = ETAutoresizingFlexibleWidth;
+	sizeEditor.autoresizingMask = ETAutoresizingFlexibleWidth;
+
 	[editor setIdentifier: @"rectEditor"];
-	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext: [editor objectGraphContext]]];
+	[editor setLayout: [ETColumnLayout layoutWithObjectGraphContext:
+		[editor objectGraphContext]]];
 	[editor addItems: @[pointEditor, sizeEditor]];
 
 	return editor;
@@ -189,10 +193,10 @@ time. For example:
 	[self setTemplateItem: [_itemFactory checkBox] forIdentifier: @"checkBox"];
 	[self setTemplateItem: [self textFieldTemplateItem] forIdentifier: @"textField"];
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
-	[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
+	/*[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
 	[self setTemplateItem: [self pointEditorTemplateItem] forIdentifier: @"pointEditor"];
 	[self setTemplateItem: [self sizeEditorTemplateItem] forIdentifier: @"sizeEditor"];
-	[self setTemplateItem: [self rectEditorTemplateItem] forIdentifier: @"rectEditor"];
+	[self setTemplateItem: [self rectEditorTemplateItem] forIdentifier: @"rectEditor"];*/
 	[self setTemplateItem: [self popUpMenuTemplateItem] forIdentifier: @"popUpMenu"];
 	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }
