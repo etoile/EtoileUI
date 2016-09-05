@@ -470,7 +470,6 @@
 	 	[aController typeObjectForAspectName: anAspectName ofObject: anObject]];
 	[typeField setName: _(@"Type")];
 	[typeField setIdentifier: @"typeField"];
-	typeField.width = _renderer.itemSize.width;
 
 	return typeField;
 }
@@ -494,6 +493,8 @@
 	//[[formLayout positionalLayout] setIsContentSizeLayout: YES];
 	[itemGroup setLayout: formLayout];
 	[itemGroup addItems: @[aspectPopUpItem, typeFieldItem]];
+	
+	[[itemGroup.items mappedCollection] setWidth: _renderer.itemSize.width];
 
 	return itemGroup;
 }
