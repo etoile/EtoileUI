@@ -529,6 +529,7 @@
 		60C81D4A196195F400AEEC68 /* ETUTITuple.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C81D48196195F400AEEC68 /* ETUTITuple.h */; };
 		60C81D4C196195F400AEEC68 /* ETUTITuple.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C81D49196195F400AEEC68 /* ETUTITuple.m */; };
 		60C81D4D196195F400AEEC68 /* ETUTITuple.m in Sources */ = {isa = PBXBuildFile; fileRef = 60C81D49196195F400AEEC68 /* ETUTITuple.m */; };
+		60CF1E9C1D7EE6A10097EF15 /* ETLayoutItemGroup+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF1E9B1D7EE6A10097EF15 /* ETLayoutItemGroup+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF709C0D4257DB00B4CA3D /* ETWindowItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		60CF709D0D4257DB00B4CA3D /* ETWindowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */; };
 		60CF717D0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1274,6 +1275,7 @@
 		60C81D48196195F400AEEC68 /* ETUTITuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUTITuple.h; path = Persistency/Model/ETUTITuple.h; sourceTree = "<group>"; };
 		60C81D49196195F400AEEC68 /* ETUTITuple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETUTITuple.m; path = Persistency/Model/ETUTITuple.m; sourceTree = "<group>"; };
 		60CA73860C494B22009D9B02 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		60CF1E9B1D7EE6A10097EF15 /* ETLayoutItemGroup+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ETLayoutItemGroup+Private.h"; path = "Headers/ETLayoutItemGroup+Private.h"; sourceTree = "<group>"; };
 		60CF6C7A0D3F6ECF00B4CA3D /* ETWindowItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETWindowItem.h; path = Headers/ETWindowItem.h; sourceTree = "<group>"; };
 		60CF6C7B0D3F6ECF00B4CA3D /* ETWindowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETWindowItem.m; path = Source/ETWindowItem.m; sourceTree = "<group>"; };
 		60CF6C800D3F739000B4CA3D /* ETController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETController.h; path = Headers/ETController.h; sourceTree = "<group>"; };
@@ -1907,6 +1909,7 @@
 				6077C1660F9801C5006CB3F5 /* ETLayoutItem+Scrollable.h */,
 				6077C16A0F9801DA006CB3F5 /* ETLayoutItem+Scrollable.m */,
 				609548CE0C0E300500068CBB /* ETLayoutItemGroup.h */,
+				60CF1E9B1D7EE6A10097EF15 /* ETLayoutItemGroup+Private.h */,
 				609548CF0C0E300500068CBB /* ETLayoutItemGroup.m */,
 				60CF717B0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.h */,
 				60CF717C0D42E75300B4CA3D /* ETLayoutItemGroup+Mutation.m */,
@@ -2379,6 +2382,7 @@
 				60BBFE0718645684006A495E /* ETEvent.h in Headers */,
 				60BBFE0B18645684006A495E /* ETFragment.h in Headers */,
 				60BBFE0D18645684006A495E /* ETResponder.h in Headers */,
+				60CF1E9C1D7EE6A10097EF15 /* ETLayoutItemGroup+Private.h in Headers */,
 				60BBFE1118645684006A495E /* ETUIItem.h in Headers */,
 				60BBFE1518645684006A495E /* ETUIObject.h in Headers */,
 				60BBFE1918645684006A495E /* ETUIStateRestoration.h in Headers */,

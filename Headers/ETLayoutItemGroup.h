@@ -159,20 +159,6 @@
 @property (nonatomic, copy) NSArray *exposedItems;
 @property (nonatomic, readonly) NSSize visibleContentSize;
 
-/** @taskunit Framework Private */
-
-@property (nonatomic, readonly) BOOL canReload;
-
-- (void) reload;
-- (void) didAttachItem: (ETLayoutItem *)item;
-- (void) handleAttachViewOfItem: (ETLayoutItem *)item;
-- (void) didDetachItem: (ETLayoutItem *)item;
-- (void) handleDetachViewOfItem: (ETLayoutItem *)item;
-- (void) didChangeSelection;
-- (instancetype) initAsLayerItemWithObjectGraphContext: (COObjectGraphContext *)aContext;
-
-@property (nonatomic, readonly) BOOL isLayerItem;
-
 /** @taskunit Deprecated */
 
 - (void) reloadAndUpdateLayout;

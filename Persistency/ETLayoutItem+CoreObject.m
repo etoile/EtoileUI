@@ -15,6 +15,7 @@
 #import "ETLayoutItem+CoreObject.h"
 #import "ETCollectionToPersistentCollection.h"
 #import "ETLayoutItem+Private.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "EtoileUIProperties.h"
 #import "ETOutlineLayout.h"
 #import "ETUIItemIntegration.h"
@@ -321,14 +322,6 @@ Will involve a unnecessary -syncView:withRepresentedObject: call. */
 		[self setView: serializedView];
 	}
 	[_deserializationState removeObjectForKey: kETViewProperty];
-}
-
-- (void) restoreViewHierarchyFromDeserialization
-{
-	if ([self isVisible] && [[[self parentItem] layout] isOpaque] == NO)
-	{
-		[[self parentItem] handleAttachViewOfItem: self];
-	}
 }
 
 #pragma mark Represented Object Persistency Support
@@ -644,7 +637,6 @@ static NSString *representedUnorderedAttributeKey = @"representedUnorderedAttrib
 	[super didLoadObjectGraph];
 
 	[self restoreTargetFromDeserialization];
-	[self restoreViewHierarchyFromDeserialization];
 
 	[self setNeedsDisplay: YES];
 }
@@ -793,11 +785,17 @@ step is skipped when loading an item not present in memory. */
 	[_deserializationState removeObjectForKey: kETSourceProperty];
 }
 
+- (void) restoreViewHierarchyFromDeserialization
+{
+	self.exposedItems = _items;
+}
+
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
 	[self restoreLayoutFromDeserialization];
 	[self restoreSourceFromDeserialization];
+	[self restoreViewHierarchyFromDeserialization];
 }
 
 @end

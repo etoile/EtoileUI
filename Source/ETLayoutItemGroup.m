@@ -190,61 +190,100 @@ See also -[NSObject descriptionWithOptions:]. */
 
 /* Manipulating Layout Item Tree */
 
-/** Inserts the display view of the given item into the receiver view.
-
-This method is used by -setExposedItems: to manage view insertion.
- 
-See also -handleDetachViewOfItem: and -[ETUItem displayView]. */
-- (void) handleAttachViewOfItem: (ETLayoutItem *)item
+- (void) setUpSupervisorViewsForItemsIfNeeded: (NSArray *)items
 {
-	// TODO: For now, item group mutation calls this method and causes item
-	// views to be attached immediately... In the future, we could skip calling
-	// -handleAttachViewOfItem: at mutation time and just wait the layout update
-	// to insert it (since all layouts call -setExposedItems:). Not yet sure though...
-	ETView *itemDisplayView = [item displayView];
-	BOOL noViewToAttach = (itemDisplayView == nil);
+	BOOL needsViewBacking = NO;
 
-	// NOTE: -[NSView addSuview: nil] results in an exception.
-	if (noViewToAttach)
-		return;
+	/* For a layout update, the given items will include items owned by the
+	   layout layer and their backing view will be created at this time */
+	NSArray *allItems = [_items arrayByAddingObjectsFromArray: items];
 
-	BOOL isAlreadyAttached = [[itemDisplayView superview] isEqual: [[self parentItem] supervisorView]];
-
-	/* We don't want to change the subview ordering when we simply switch
-	   the visibility */
-	if (isAlreadyAttached)
-		return;
-
-	[itemDisplayView removeFromSuperview];
-
-	/* Only insert the item view if the layout is a fixed/free layout.
-	   TODO: Probably make more explicit the nil layout check. */
-	if ([[self layout] isOpaque] == NO)
+	for (ETLayoutItem *item in allItems)
 	{
-		[[self setUpSupervisorView] addSubview: itemDisplayView];
+		if (item.supervisorView != nil)
+		{
+			needsViewBacking = YES;
+			break;
+		}
+	}
+
+	/* For a view-backed item, all siblings must be view-backed too to garanty a 
+	   consistent drawing order */
+	if (needsViewBacking)
+	{
+		[[allItems mappedCollection] setUpSupervisorView];
 	}
 }
 
-/** Removes the display view of the given view from the receiver view.
+/** Inserts and removes display views of the given items into the receiver 
+supervisor view.
 
-This method is used by -setExposedItems: to manage view removal.
+This method is used by -setExposedItems: to manage view insertion and removal.
  
-See also -handleAttachViewOfItem: and -[ETUIItem displayView]. */
-- (void) handleDetachViewOfItem: (ETLayoutItem *)item
+See also -[ETUItem displayView]. */
+- (void) updateExposedViewsForItems: (NSArray *)items
+                     exposedIndexes: (NSIndexSet *)exposedIndexes
+                   unexposedIndexes: (NSIndexSet *)unexposedIndexes
 {
-	if ([item displayView] == nil) /* No view to detach */
+	ETAssert(items.count == exposedIndexes.count + unexposedIndexes.count);
+
+	if ([self.layout isOpaque])
 		return;
 
-	[[item displayView] removeFromSuperview];
+	/* Will create the receiver and ancestor supervisor views when needed */
+	[self setUpSupervisorViewsForItemsIfNeeded: items];
+
+	NSMutableArray *exposedViews = [NSMutableArray new];
+	NSMutableArray *unexposedViews = [NSMutableArray new];
+
+	[items enumerateObjectsUsingBlock:
+		^(ETLayoutItem * _Nonnull item, NSUInteger i, BOOL * _Nonnull stop)
+	{
+		ETView *view = item.displayView;
+		
+		if (view == nil)
+			return;
+
+		if (item.isExposed)
+		{
+			[exposedViews addObject: view];
+		}
+		else
+		{
+			[unexposedViews addObject: view];
+		}
+	}];
+
+	ETAssert(exposedViews.isEmpty || exposedIndexes.count == exposedViews.count);
+	ETAssert(unexposedViews.isEmpty || unexposedViews.count == unexposedIndexes.count);
+	
+	/* When no view backing has been set up */
+	if (exposedViews.isEmpty && unexposedViews.isEmpty)
+		return;
+	
+	/* When items contain any layer items, these items come first and are drawn 
+	   last. Their subviews will appear last and be drawn last. */
+	[[self setUpSupervisorView] setItemViews: exposedViews];
+
+	// TODO: Probably to be removed
+	[[unexposedViews mappedCollection] removeFromSuperview];
 }
 
-- (void) attachItem: (ETLayoutItem *)item
+- (void) attachItems: (NSArray *)items atIndexes: (NSIndexSet *)indexes
 {
-	if ([item parentItem] != nil)
+	for (ETLayoutItem *item in items)
 	{
-		[[item parentItem] removeItem: item];
+		if ([item parentItem] != nil)
+		{
+			[[item parentItem] removeItem: item];
+		}
 	}
-	[self handleAttachViewOfItem: item];
+	// TODO: We need to create any missing view backing recursively, since
+	// creating it in -updateExposedViewsForItems:exposedIndexes:unexposedIndexes:
+	// won't work reliably due to layout updates not being executed in a top-down
+	// manner, when using -setNeedsLayout rather than -updateLayoutRecursively:.
+
+	[_items insertObjects: items atIndexes: indexes hints: @[]];
 }
 
 /** <override-dummy />Adjusts the item tree once the item has become a child of 
@@ -259,9 +298,9 @@ Symetric method to -didDetachItem: */
 
 }
 
-- (void) detachItem: (ETLayoutItem *)item
+- (void) detachItems: (NSArray *)items atIndexes: (NSIndexSet *)indexes
 {
-	[self handleDetachViewOfItem: item];
+	[_items removeObjects: items atIndexes: indexes hints: @[]];
 }
 
 /** <override-dummy />Adjusts the item tree once the item has been removed from 
@@ -506,7 +545,7 @@ See also -setSource:, -controllerItem and -nextResponder. */
 - (void) addItem: (ETLayoutItem *)item
 {
 	//ETDebugLog(@"Add item in %@", self);
-	[self handleInsertItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: NO];
+	[self handleInsertItem: item atIndex: _items.count hint: nil moreComing: NO];
 }
 
 /** Inserts the given item in the receiver children at a precise index. */
@@ -1135,7 +1174,10 @@ You should never need to call this method directly. */
 	return visibleItems;
 }
 
-/** Returns the receiver laid out child items. */
+/** Returns the receiver laid out child items.
+
+The returned items never include items from the layout layer unlike 
+-setExposedItems:. */
 - (NSArray *) exposedItems
 {
 	return [self exposedItemsForItems: [self items]];
@@ -1150,10 +1192,18 @@ This method is invoked by the receiver layout just before
 -[ETLayout renderWithItems:isNewContent:] returns, to adjust the visibility of 
 views and update each item 'exposed' property.
 
+The items in argument can be the receiver items and the ones from the layout layer.
+
 You shouldn't need to call this method by yourself. */
 - (void) setExposedItems: (NSArray *)exposedItems
 {
-	return [self setExposedItems: exposedItems forItems: [self items]];
+	NSArray *layerItems = _layout.layerItem.items;
+	/* Layer items are drawn on top of the receiver items, so they come first */
+	NSArray *candidateItems =
+		[(layerItems != nil ? layerItems : @[]) arrayByAddingObjectsFromArray: _items];
+
+	// TODO: Use candidate items
+	return [self setExposedItems: exposedItems forItems: _items];
 }
 
 /* See -exposedItems. */
@@ -1173,10 +1223,30 @@ You shouldn't need to call this method by yourself. */
 /* See -setExposedItems:. */
 - (void) setExposedItems: (NSArray *)exposedItems forItems: (NSArray *)items
 {
-	for (ETLayoutItem *item in items)
+	NSMutableIndexSet *exposedIndexes = [NSMutableIndexSet new];
+	NSMutableIndexSet *unexposedIndexes = [NSMutableIndexSet new];
+
+	[items enumerateObjectsUsingBlock:
+		^(ETLayoutItem * _Nonnull item, NSUInteger index, BOOL * _Nonnull stop)
 	{
-		[item setExposed: [exposedItems containsObject: item]];
-	}
+		if ([exposedItems containsObject: item])
+		{
+			item.exposed = YES;
+			[exposedIndexes addIndex: index];
+		}
+		else
+		{
+			item.exposed = NO;
+			[unexposedIndexes addIndex: index];
+		}
+	}];
+
+	/* Views must be attached first, since the indexes are used to insert the
+	   subviews but not to remove them. After the subview insertion, the indexes
+	   are outdated to manipulate the subviews. */
+	[self updateExposedViewsForItems: items
+	                  exposedIndexes: exposedIndexes
+	                unexposedIndexes: unexposedIndexes];
 }
 
 /* Selection */

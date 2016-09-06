@@ -19,6 +19,7 @@
 #import <IconKit/IconKit.h>
 #import "CoreObjectUI.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "ETColumnLayout.h"
 #import "ETItemTemplate.h"
 #import "ETItemValueTransformer.h"

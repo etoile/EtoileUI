@@ -12,16 +12,12 @@
 #import <EtoileFoundation/NSObject+Model.h>
 #import <EtoileFoundation/Macros.h>
 #import "ETLayoutItemGroup+Mutation.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "ETItemTemplate.h"
 #import "ETController.h"
 #import "ETEvent.h"
 #import "EtoileUIProperties.h"
 #import "ETCompatibility.h"
-
-@interface ETLayoutItemGroup (ETMutationCallbacks)
-- (void) attachItem:(ETLayoutItem *)item;
-- (void) detachItem: (ETLayoutItem *)item;
-@end
 
 @interface ETLayoutItemGroup (ETSource)
 @property (nonatomic, getter=isReloading, readonly) BOOL reloading;
@@ -174,9 +170,7 @@ To do so, -canReload checks -isMutating. */
 
 	[self beginCoalescingModelMutation];
 
-	[self attachItem: item];
-	/* For ETUndeterminedIndex, will use -addObject: */
-	[_items insertObject: item atIndex: index hint: nil];
+	[self attachItems: @[item] atIndexes: INDEXSET(index)];
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
@@ -244,8 +238,8 @@ To do so, -canReload checks -isMutating. */
 {
 	NSParameterAssert(item != nil);
 
-	/* Very important to return immediately, -detachItem: execution would 
-	   lead to a weird behavior: the item parent item would be set to nil. */
+	/* We must return immediately, otherwise -detachItems:atIndexes: would
+	   result in the item parent item being set to nil. */
 	if ([[item parentItem] isEqual: self] == NO)
 		return;
 
@@ -268,9 +262,7 @@ To do so, -canReload checks -isMutating. */
 
 	[self beginCoalescingModelMutation];
 
-	[self detachItem: item];
-	/* For ETUndeterminedIndex, will use -removeObject: */
-	[_items removeObject: item atIndex: index hint: nil];
+	[self detachItems: @[item] atIndexes: indexes];
 	[self didChangeContentWithMoreComing: moreComing];
 
 	[self endCoalescingModelMutation];
@@ -321,7 +313,7 @@ To do so, -canReload checks -isMutating. */
 {
 	for (ETLayoutItem *item in items)
 	{
-		[self handleInsertItem: item atIndex: ETUndeterminedIndex hint: nil moreComing: YES];
+		[self handleInsertItem: item atIndex: _items.count hint: nil moreComing: YES];
 	}
 	[self didChangeContentWithMoreComing: NO];
 }

@@ -310,7 +310,7 @@ installed by the layout. */
 	return _temporaryView;
 }
 
-- (void) checkViewHierarchyValidity
+- (void) validateViewHierarchy
 {
 	if (_wrappedView != nil)
 	{
@@ -332,7 +332,7 @@ installed by the layout. */
 implemented behavior. */
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary
 {
-	[self checkViewHierarchyValidity];
+	[self validateViewHierarchy];
 
 	BOOL isCopying = (item == nil);
 
@@ -401,6 +401,24 @@ return the temporary view. */
 		contentView = _wrappedView;
 	
 	return contentView;
+}
+
+- (void) setItemViews: (NSArray *)itemViews
+{
+	NSMutableArray *views = [itemViews.reverseObjectEnumerator.allObjects mutableCopy];
+
+	if (_wrappedView != nil)
+	{
+		[views addObject: _wrappedView];
+	}
+	if (_temporaryView != nil)
+	{
+		[views addObject: _temporaryView];
+	}
+
+	self.subviews = views;
+	
+	[self validateViewHierarchy];
 }
 
 /* Actions */

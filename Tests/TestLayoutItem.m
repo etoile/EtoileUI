@@ -107,11 +107,19 @@
 {
 	ETLayoutItem* item = [itemFactory item];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
+	parentItem. supervisorView = [ETView new];
 
-	[parentItem setSupervisorView: [[ETView alloc] init]];
-	[parentItem handleAttachViewOfItem: item];
-	[parentItem handleDetachViewOfItem: item];
-	UKPass();
+	parentItem.exposedItems = @[item];
+	
+	UKObjectsEqual(@[item], parentItem.exposedItems);
+	UKTrue(item.isExposed);
+	UKNil(item.supervisorView);
+
+	parentItem.exposedItems = @[];
+
+	UKTrue(parentItem.exposedItems.isEmpty);
+	UKFalse(item.isExposed);
+	UKNil(item.supervisorView);
 }
 
 - (void) testAddAndRemoveItem

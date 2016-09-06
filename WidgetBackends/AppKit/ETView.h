@@ -85,6 +85,17 @@ next EtoileUI release. */
 @property (nonatomic, strong) NSView *temporaryView;
 @property (nonatomic, readonly) NSView *contentView;
 
+/** @taskunit Child Item Views */
+
+/** Inserts item views without altering the order of any pinned subviews
+(wrapped, temporary and cover style).
+
+Item views are drawn first and pinned subviews are drawn last.
+
+The subviews to insert are listed in their item order (first views being the 
+last drawn ones), so they will appear reversed in -[NSView subviews]. */
+- (void) setItemViews: (NSArray *)itemViews;
+
 /* Actions */
 
 - (IBAction) inspectItem: (id)sender;

@@ -393,7 +393,8 @@
 	/* Create a superview hierarchy from item3 to itemGroup */
 	[itemGroup addItem: item3];
 
-	/* Layout view insertion doesn't call -handleAttachViewOfItem:, the 
+	/* Layout view insertion doesn't call 
+	   -updateExposedViewsForItems:exposedIndexes:unexposedIndexes:, the 
 	   superview is nil until a layout update occurs. */
 	[itemGroup2 setLayout: [ETOutlineLayout layoutWithObjectGraphContext: [itemGroup2 objectGraphContext]]];
 	

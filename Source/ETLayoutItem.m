@@ -21,6 +21,7 @@
 #import "ETGeometry.h"
 #import "ETItemValueTransformer.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "ETLayoutItem+KVO.h"
 #import "ETLayoutItem+Private.h"
 #import "ETLayoutItem+Scrollable.h"
@@ -1238,8 +1239,11 @@ See also -setHidden: and -isVisible:. */
 The new visibility state won't be apparent until a redisplay occurs.
  
 This method doesn't mark the receiver as needing a redisplay.
+
+You must never call this method, but use -[ETLayoutItemGroup setExposedItems:]
+which updates the visibility of item views.
  
-See also -exposed and -[ETLayoutItemGroup setExposedItems:]. */
+See also -exposed. */
 - (void) setExposed: (BOOL)exposed
 {
 	if (_exposed == exposed)
@@ -1247,16 +1251,6 @@ See also -exposed and -[ETLayoutItemGroup setExposedItems:]. */
 
 	[self willChangeValueForProperty: kETExposedProperty];
 	_exposed = exposed;
-	if (exposed)
-	{
-		[[self parentItem] handleAttachViewOfItem: self];
-		ETDebugLog(@"Inserted view at %@", NSStringFromRect([self frame]));
-	}
-	else
-	{
-		[[self parentItem] handleDetachViewOfItem: self];
-		ETDebugLog(@"Removed view at %@", NSStringFromRect([self frame]));
-	}
 	[self willChangeValueForProperty: kETExposedProperty];
 }
 
@@ -1370,31 +1364,22 @@ also ETView. */
 	}
 }
 
-/** Sets the supervisor view associated with the receiver. 
+/** Sets the supervisor view associated with the receiver and marks it as 
+needing a layout update.
 
 You should never need to call this method.
 
-The view will be added as a subview to the supervisor view bound to the 
-parent item to which the given item belongs to. Which means, this method may 
-move the view to a different place in the view hierarchy.
+On the next layout update, the view will be added as a subview to the supervisor
+view bound to the parent item to which the given item belongs to. Which means, 
+the view may move to a different place in the view hierarchy.
 
 Throws an exception when item parameter is nil.
 
-See also -supervisorView:. */
+See also -supervisorView. */
 - (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
 {
 	[super setSupervisorView: aSupervisorView sync: syncDirection];
-
-	if ([[self objectGraphContext] isLoading])
-		return;
-
-	BOOL noDecorator = (_decoratorItem == nil);
-	BOOL hasParent = ([self parentItem] != nil);
-	
-	if (noDecorator && hasParent)
-	{
-		[[self parentItem] handleAttachViewOfItem: self];
-	}
+	[self setNeedsLayoutUpdate];
 }
 
 /* Inserts a supervisor view that is required to be decorated. */

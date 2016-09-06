@@ -26,6 +26,7 @@
 #import "ETLayoutItem+Scrollable.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "ETPositionalLayout.h"
 #import "ETModelBuilderUI.h" // FIXME: Remove
 #import "ETObjectValueFormatter.h"
@@ -193,10 +194,10 @@ time. For example:
 	[self setTemplateItem: [_itemFactory checkBox] forIdentifier: @"checkBox"];
 	[self setTemplateItem: [self textFieldTemplateItem] forIdentifier: @"textField"];
 	[self setTemplateItem: [_itemFactory horizontalSlider] forIdentifier: @"slider"];
-	/*[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
+	[self setTemplateItem: [self numberPickerTemplateItem] forIdentifier: @"numberPicker"];
 	[self setTemplateItem: [self pointEditorTemplateItem] forIdentifier: @"pointEditor"];
 	[self setTemplateItem: [self sizeEditorTemplateItem] forIdentifier: @"sizeEditor"];
-	[self setTemplateItem: [self rectEditorTemplateItem] forIdentifier: @"rectEditor"];*/
+	[self setTemplateItem: [self rectEditorTemplateItem] forIdentifier: @"rectEditor"];
 	[self setTemplateItem: [self popUpMenuTemplateItem] forIdentifier: @"popUpMenu"];
 	[self setTemplateItem: [self collectionEditorTemplateItem] forIdentifier: @"collectionEditor"];
 }

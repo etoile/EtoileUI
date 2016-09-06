@@ -20,6 +20,7 @@
 #import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
 #import "ETLayoutItemGroup.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "ETPositionalLayout.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"

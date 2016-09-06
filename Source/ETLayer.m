@@ -13,6 +13,7 @@
 #import "ETArrowTool.h"
 #import "ETLayoutItem+Private.h"
 #import "ETLayoutItemFactory.h"
+#import "ETLayoutItemGroup+Private.h"
 #import "ETWindowItem.h"
 // FIXME: Move related code to the Appkit widget backend (perhaps in a category or subclass)
 #import "ETWidgetBackend.h"
@@ -56,43 +57,24 @@ when a layout other than ETWindowLayout is set on the receiver. */
     [super markAsRemovedFromContext];
 }
 
-- (void) handleAttachViewOfItem: (ETLayoutItem *)item
+
+/* Prevents removing the display view.
+
+If a window decorator is bound to the item, the display view is the window view 
+(NSThemeFrame on Mac OS X). Removing NSThemeFrame results in a weird behavior, 
+the window remains visible but a -lockFocus assertion is thrown on mouse down. */
+- (void) updateExposedViewsForItems: (NSArray *)items
+                     exposedIndexes: (NSIndexSet *)exposedIndexes
+                   unexposedIndexes: (NSIndexSet *)unexposedIndexes
 {
-	// Disable ETLayoutItemGroup implementation that would remove the display 
-	// view of the item from its superview. If a window decorator is bound to 
-	// the item, the display view is the window view (NSThemeFrame on Mac OS X)
-	// Removing NSThemeFrame results in a very weird behavior: the window 
-	// remains visible but a -lockFocus assertion is thrown on mouse down.
 	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
 		return;
 
-	[super handleAttachViewOfItem: item];
+	[super updateExposedViewsForItems: items
+	                   exposedIndexes: exposedIndexes
+	                 unexposedIndexes: unexposedIndexes];
 }
 
-- (void) handleDetachViewOfItem: (ETLayoutItem *)item
-{
-	// Ditto. More explanations in -detachItem:.
-	if ([[self layout] isKindOfClass: [ETWindowLayout class]])
-		return;
-
-	[super handleDetachViewOfItem: item];
-}
-
-/* Before setting the decorator, the item must have become a child of the window
-layer, because -[super attachItem:] triggers -detachItem: in the existing parent 
-of this item.
-
--[previousParent handleDetachItem:] then removes the item display view from its 
-superview by the mean of -[previousParent handleDetachViewOfItem:], and if
- -setDecoratorItem: has already been called, removing the item display view will 
- mean removing the window view returned by -[ETWindowItem supervisorView] 
- (NSThemeFrame on Mac OS X).
-	   
-Hence you can expect problems similar to what is described in
--[ETWindowLayer handleAttachViewOfItem:] if you change the order of the code.
-
-Take note that the overriden -handleDetachViewOfItem: in ETWindowLayer doesn't 
-help here, because -handleDetachViewOfItem: is called on the old parent. */
 - (void) didAttachItem: (ETLayoutItem *)item
 {
 	// NOTE: We could eventually check whether the item to decorate already 
@@ -104,9 +86,6 @@ help here, because -handleDetachViewOfItem: is called on the old parent. */
 	}
 }
 
-/* Detaching the item before removing the window decorator doesn't result in 
-removing the window view (NSThemeFrame on Mac OS X) because ETWindowLayer 
-overrides -handleDetachViewOfItem:. */
 - (void) didDetachItem: (ETLayoutItem *)item
 {
 	if ([[self layout] isKindOfClass: [ETWindowLayout class]])

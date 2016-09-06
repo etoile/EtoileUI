@@ -297,7 +297,7 @@ See +setActiveTool:, -targetItem and -layoutOwner. */
 	// }
 	//
 	// We could put this code in -[ETLayout setUp], -[ETLayout tearDown],
-	// -[ETLayoutItemGrup detachItem:] or -[ETLayoutItemGrup detachItem:].
+	// -[ETLayoutItemGrup detachItems:atIndexes:] or -[ETLayoutItemGrup detachItems:atIndexes:].
 	BOOL mustHaveValidLayoutOwner = (activeTool != mainTool);
 
 	if (mustHaveValidLayoutOwner)
