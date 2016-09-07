@@ -144,9 +144,9 @@ given layout area size. */
 	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
 		return;
 
-	NSLog(@"Resize line from %@ to %@ for %@ - %@", NSStringFromSize(oldLayoutSize),
-		NSStringFromSize(newLayoutSize), [(id)[self layoutContext] primitiveDescription],
-		[[(id)[self layoutContext] ifResponds] identifier]);
+	//NSLog(@"Resize line from %@ to %@ for %@ - %@", NSStringFromSize(oldLayoutSize),
+	//	NSStringFromSize(newLayoutSize), [(id)[self layoutContext] primitiveDescription],
+	//	[[(id)[self layoutContext] ifResponds] identifier]);
 
 	for (ETLayoutItem *item in items)
 	{

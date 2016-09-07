@@ -132,9 +132,9 @@ static const CGFloat undeterminedWidth = 10;
 	if (NSEqualSizes(newLayoutSize, oldLayoutSize))
 		return;
 
-	NSLog(@"Resize column from %@ to %@ for %@ - %@", NSStringFromSize(oldLayoutSize),
-		NSStringFromSize(newLayoutSize), [(id)[self layoutContext] primitiveDescription],
-		[[(id)[self layoutContext] ifResponds] identifier]);
+	//NSLog(@"Resize column from %@ to %@ for %@ - %@", NSStringFromSize(oldLayoutSize),
+	//	NSStringFromSize(newLayoutSize), [(id)[self layoutContext] primitiveDescription],
+	//	[[(id)[self layoutContext] ifResponds] identifier]);
 
 	for (ETLayoutItem *item in items)
 	{
