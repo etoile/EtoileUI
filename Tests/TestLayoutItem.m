@@ -103,23 +103,46 @@
 	UKObjectsSame([item3 rootItem], item1);
 }
 
-- (void) testAttachAndDetachItemWithoutView
+- (void) testExposeItem
 {
-	ETLayoutItem* item = [itemFactory item];
-	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
-	parentItem. supervisorView = [ETView new];
+	ETLayoutItem *item = [itemFactory item];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroupWithItem: item];
 
 	parentItem.exposedItems = @[item];
 	
 	UKObjectsEqual(@[item], parentItem.exposedItems);
 	UKTrue(item.isExposed);
+	UKNil(parentItem.supervisorView);
 	UKNil(item.supervisorView);
 
 	parentItem.exposedItems = @[];
 
 	UKTrue(parentItem.exposedItems.isEmpty);
 	UKFalse(item.isExposed);
+	UKNil(parentItem.supervisorView);
 	UKNil(item.supervisorView);
+}
+
+- (void) testExposeItemWithView
+{
+	ETLayoutItem *item = [itemFactory itemWithView: [NSView new]];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroupWithItem: item];
+
+	parentItem.exposedItems = @[item];
+	
+	UKObjectsEqual(@[item], parentItem.exposedItems);
+	UKTrue(item.isExposed);
+	UKNotNil(parentItem.supervisorView);
+	UKNotNil(item.supervisorView);
+	UKObjectsSame(parentItem.supervisorView, item.supervisorView.superview);
+
+	parentItem.exposedItems = @[];
+
+	UKTrue(parentItem.exposedItems.isEmpty);
+	UKFalse(item.isExposed);
+	UKNotNil(parentItem.supervisorView);
+	UKNotNil(item.supervisorView);
+	UKNil(item.supervisorView.superview);
 }
 
 - (void) testAddAndRemoveItem
@@ -134,6 +157,13 @@
 	UKTrue([parentItem containsItem: item]);
 	UKNil([item supervisorView]);
 	UKNil([parentItem supervisorView]);
+	UKFalse(item.exposed);
+
+	[parentItem updateLayout];
+
+	UKNil([item supervisorView]);
+	UKNil([parentItem supervisorView]);
+	UKTrue(item.exposed);
 
 	[parentItem removeItem: item];
 
@@ -141,23 +171,77 @@
 	UKFalse([parentItem containsItem: item]);
 	UKNil([item supervisorView]);
 	UKNil([parentItem supervisorView]);
+	// Exposed items will be updated on the next layout update
+	UKTrue(item.exposed);
+}
+
+- (void) testAddAndRemoveItemAndSiblingItemWithView
+{
+	ETLayoutItem *item = [itemFactory item];
+	ETLayoutItem *siblingItem = [itemFactory itemWithView: [NSView new]];
+	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
+
+	[parentItem addItems: @[item, siblingItem]];
+
+	UKObjectsSame(parentItem, item.parentItem);
+	UKObjectsSame(parentItem, siblingItem.parentItem);
+	UKObjectsEqual(A(item, siblingItem), parentItem.items);
+
+	UKNotNil(item.supervisorView);
+	UKNotNil(siblingItem.supervisorView);
+	UKNotNil(parentItem.supervisorView);
+	UKFalse(item.exposed);
+	UKFalse(siblingItem.exposed);
+
+	[parentItem updateLayout];
+
+	UKNotNil(siblingItem.supervisorView);
+	UKNotNil(parentItem.supervisorView);
+	UKTrue([SA(A(item.supervisorView, siblingItem.supervisorView))
+		isSubsetOfSet: SA(parentItem.supervisorView.subviews)]);
+	UKTrue(item.exposed);
+	UKTrue(siblingItem.exposed);
+
+	[parentItem removeItems: @[item, siblingItem]];
+
+	UKNil(item.parentItem);
+	UKNil(siblingItem.parentItem);
+	UKTrue(parentItem.items.isEmpty);
+
+	UKNotNil(item.supervisorView);
+	UKNotNil(siblingItem.supervisorView);
+	UKNotNil(parentItem.supervisorView);
+	// Exposed items will be updated on the next layout update
+	UKTrue([SA(A(item.supervisorView, siblingItem.supervisorView))
+		isSubsetOfSet: SA(parentItem.supervisorView.subviews)]);
+	UKTrue(item.exposed);
+	UKTrue(siblingItem.exposed);
 }
 
 - (void) testAddAndRemoveItemWithView
 {
 	// TODO: Test when the item has a parent item already
-	ETLayoutItem* item = [itemFactory itemWithView: [[NSView alloc] init]];
+	ETLayoutItem *item = [itemFactory itemWithView: [[NSView alloc] init]];
 	ETLayoutItemGroup *parentItem = [itemFactory itemGroup];
 
 	[parentItem addItem: item];
 
-	UKNil([[parentItem supervisorView] superview]);	
-	UKObjectsSame([parentItem supervisorView], [[item supervisorView] superview]);
+	UKNotNil([parentItem supervisorView]);
+	UKNil([[item supervisorView] superview]);
+	UKFalse(item.exposed);
 	
+	[parentItem updateLayout];
+
+	UKNotNil([parentItem supervisorView]);
+	UKObjectsSame([parentItem supervisorView], [[item supervisorView] superview]);
+	UKTrue(item.exposed);
+
 	[parentItem removeItem: item];
 
-	UKNil([[parentItem supervisorView] superview]);
-	UKNil([[item supervisorView] superview]);
+	UKNotNil([parentItem supervisorView]);
+	// Exposed items will be updated on the next layout update
+	UKNotNil([[item supervisorView] superview]);
+	UKTrue(item.exposed);
 }
 
 - (void) testAddItemWithViewIntoOpaqueLayout
@@ -454,6 +538,10 @@
 	[item addItem: textFieldItem];
 	
 	UKNotNil([item supervisorView]);
+	UKFalse([[[item supervisorView] subviews] containsObject: [textFieldItem supervisorView]]);
+	
+	[item updateLayout];
+	
 	UKTrue([[[item supervisorView] subviews] containsObject: [textFieldItem supervisorView]]);
 }
 
@@ -469,6 +557,10 @@
 	[intermediateParent addItem: textFieldItem];
 	
 	UKNotNil([item supervisorView]);
+	UKFalse([[[item supervisorView] subviews] containsObject: [intermediateParent supervisorView]]);
+	
+	[item updateLayout];
+
 	UKTrue([[[item supervisorView] subviews] containsObject: [intermediateParent supervisorView]]);
 }
 	
