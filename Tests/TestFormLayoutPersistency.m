@@ -40,7 +40,20 @@
 - (id) init
 {
 	SUPERINIT;
-	[self prepareMainItemAsForm];
+	
+	textItem = [itemFactory textField];
+
+	/* We must set a name, otherwise the lengthy -description is used and can  
+	   result in a 1000px label width. This puts us in trouble because of the 
+	   bounding size in -[ETFormLayout resizeLayoutItems:toScaleFactor:] and the 
+	   smaller itemGroup width. */
+    item.name = @"Untitled";
+    buttonItem.name = @"Button";
+	textItem.name = @"Place";
+	
+	[itemGroup addItem: textItem];
+	[itemGroup updateLayoutIfNeeded];
+
 	placeName = @"Kyoto";
 	return self;
 }
@@ -58,18 +71,6 @@
 - (NSArray *) propertyNames
 {
 	return [[super propertyNames] arrayByAddingObject: @"placeName"];
-}
-
-- (void) prepareMainItemAsForm
-{
-	textItem = [itemFactory textField];
-	
-	/* We must set a name, otherwise the lengthy -description is used and can  
-	   result in a 1000px label width. This puts us in trouble because of the 
-	   bounding size in -[ETFormLayout resizeLayoutItems:toScaleFactor:] and the 
-	   smaller itemGroup width. */
-	[textItem setName: @"Place"];
-	[itemGroup addItem: textItem];
 }
 
 - (NSUInteger) sizableViewMask
