@@ -278,6 +278,8 @@ inside the content bounds. */
 	[[[[item1 scrollableAreaItem] scrollView] ifResponds] setScrollerStyle: NSScrollerStyleLegacy];
 #endif
 
+	[mainItem updateLayout];
+
 	/* Hit inside the scrollers */
 #ifdef GNUSTEP
 	// NOTE: Scroller buttons are on the left side of the window on GNUstep.

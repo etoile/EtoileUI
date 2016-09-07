@@ -66,8 +66,9 @@
 	/* NSView with subviews are turned into ETView and discarded */
 	UKObjectKindOf([itemForSubview0 supervisorView], ETView);
 	UKNil([itemForSubview0 view]);
-	/* NSView without subviews are discarded */
-	UKNil([itemForSubview00 supervisorView]);
+	/* NSView without subviews are discarded (the supervisor view is not nil due 
+	   to sibling items being view-backed) */
+	UKNotNil([itemForSubview00 supervisorView]);
 	UKNil([itemForSubview00 view]);
 
 	/* NSView subclass are not turned into ETView, but becomes item view */
