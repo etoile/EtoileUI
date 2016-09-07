@@ -11,6 +11,7 @@
 #import "ETActionHandler.h" /* For +sharedFallbackResponder */
 #import "ETGeometry.h"
 #import "ETUIItem.h"
+#import "ETUIItemIntegration.h"
 #import "ETView.h"
 #import "ETCompatibility.h"
 
@@ -436,8 +437,12 @@ Take in account that parentView can be nil. */
 	}
 	[self restoreAutoresizingMaskOfDecoratedItem: item];
 	[[self displayView] removeFromSuperview];
-	/* Insert the new item display view into the parent view */
-	[parentView addSubview: [item supervisorView]];
+
+	/* Insert the new item display view into the parent view, but never into NSThemeFrame */
+	if (parentView.isSupervisorView)
+	{
+		[parentView addSubview: [item supervisorView]];
+	}
 }
 
 /** <override-dummy />
