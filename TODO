@@ -1,6 +1,10 @@
 TODO
 ====
 
+- EtoileUI
+
+  - Standardizing on -setValue:forProperty: and -valueForProperty: for COObject/NSObject. Existing methods in ETLayoutItem and ETViewpoint will become -setValue:forRepresentedProperty: and -valueForRepresentedProperty:.
+
 Open Issues
 -----------
 
