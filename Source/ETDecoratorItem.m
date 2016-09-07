@@ -387,24 +387,22 @@ Take in account that parentView can be nil. */
 		[self setDecoratedView: decoratedView];
 	}
 
-	/* If the display view bound to item was part of the view hierarchy owned by 
-	   the layout item tree, inserts the new display view into the existing 
-	   parent view. */
-	if (parentView != nil)
-	{
-		ETDebugLog(@"Handle decorate with parent %@ parent view %@ item "
-			"display view %@", [item parentItem], parentView, [item displayView]);
+	/* Inserts the item display view into the parent view, but never into NSThemeFrame */
+	if (!parentView.isSupervisorView)
+		return;
 
-		/* We don't insert the decorator supervisor view, but the decorator 
-		   display view, because this decorator could be a decorator chain (by 
-		   being decorated itself too). The new display view is thus the 
-		   supervisor view of the last decorator item. */
-		[parentView addSubview: [self displayView]]; // More sure than [item displayView]
+	ETDebugLog(@"Handle decorate with parent %@ parent view %@ item "
+		"display view %@", [item parentItem], parentView, [item displayView]);
 
-		/* No need to update the layout since the new display view will have 
-		   the size and location of the previous one. Unlike when you add or
-		   or remove an item which involves to recompute the layout. */
-	}
+	/* We don't insert the decorator supervisor view, but the decorator display 
+	   view, because this decorator could be a decorator chain (by being 
+	   decorated itself too). The new display view is thus the supervisor view 
+	   of the last decorator item. */
+	[parentView addSubview: [self displayView]];
+
+	/* No need to update the layout since the new display view will have the 
+	   size and location of the previous one. Unlike when you add or remove an 
+	   item which involves to recompute the layout. */
 }
 
 /** <override-dummy /> 
@@ -438,11 +436,15 @@ Take in account that parentView can be nil. */
 	[self restoreAutoresizingMaskOfDecoratedItem: item];
 	[[self displayView] removeFromSuperview];
 
-	/* Insert the new item display view into the parent view, but never into NSThemeFrame */
-	if (parentView.isSupervisorView)
-	{
-		[parentView addSubview: [item supervisorView]];
-	}
+	/* Insert the item display view into the parent view, but never into NSThemeFrame */
+	if (!parentView.isSupervisorView)
+		return;
+
+	[parentView addSubview: [item supervisorView]];
+
+	/* No need to update the layout since the new display view will have the 
+	   size and location of the previous one. Unlike when you add or remove an 
+	   item which involves to recompute the layout. */
 }
 
 /** <override-dummy />
