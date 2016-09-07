@@ -787,15 +787,15 @@ step is skipped when loading an item not present in memory. */
 
 - (void) restoreViewHierarchyFromDeserialization
 {
-	self.exposedItems = _items;
+	[self setUpSupervisorViewsForNewItemsIfNeeded: @[]];
 }
 
 - (void) didLoadObjectGraph
 {
 	[super didLoadObjectGraph];
+	[self restoreViewHierarchyFromDeserialization];
 	[self restoreLayoutFromDeserialization];
 	[self restoreSourceFromDeserialization];
-	[self restoreViewHierarchyFromDeserialization];
 }
 
 @end

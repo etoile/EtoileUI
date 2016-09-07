@@ -190,7 +190,7 @@ See also -[NSObject descriptionWithOptions:]. */
 
 /* Manipulating Layout Item Tree */
 
-- (void) setUpSupervisorViewsForItemsIfNeeded: (NSArray *)items
+- (void) setUpSupervisorViewsForNewItemsIfNeeded: (NSArray *)items
 {
 	BOOL needsViewBacking = NO;
 
@@ -211,6 +211,10 @@ See also -[NSObject descriptionWithOptions:]. */
 	   consistent drawing order */
 	if (needsViewBacking)
 	{
+		/* When the receiver is empty, the new items have no parent item yet 
+		   when this method is called, so we must request the receiver 
+		   supervisor view creation explicitly. */
+		[self setUpSupervisorView];
 		[[allItems mappedCollection] setUpSupervisorView];
 	}
 }
@@ -229,9 +233,6 @@ See also -[ETUItem displayView]. */
 
 	if ([self.layout isOpaque])
 		return;
-
-	/* Will create the receiver and ancestor supervisor views when needed */
-	[self setUpSupervisorViewsForItemsIfNeeded: items];
 
 	NSMutableArray *exposedViews = [NSMutableArray new];
 	NSMutableArray *unexposedViews = [NSMutableArray new];
@@ -261,14 +262,20 @@ See also -[ETUItem displayView]. */
 	if (exposedViews.isEmpty && unexposedViews.isEmpty)
 		return;
 	
+	ETAssert(supervisorView != nil);
+	
 	/* When items contain any layer items, these items come first and are drawn 
 	   last. Their subviews will appear last and be drawn last. */
-	[[self setUpSupervisorView] setItemViews: exposedViews];
+	[supervisorView setItemViews: exposedViews];
 
 	// TODO: Probably to be removed
 	[[unexposedViews mappedCollection] removeFromSuperview];
 }
 
+/* We need to create any missing view backing recursively, since creating it in 
+-updateExposedViewsForItems:exposedIndexes:unexposedIndexes: won't work reliably 
+due to layout updates not being executed in a top-down manner, when using 
+-setNeedsLayout rather than -updateLayoutRecursively:. */
 - (void) attachItems: (NSArray *)items atIndexes: (NSIndexSet *)indexes
 {
 	for (ETLayoutItem *item in items)
@@ -278,10 +285,8 @@ See also -[ETUItem displayView]. */
 			[[item parentItem] removeItem: item];
 		}
 	}
-	// TODO: We need to create any missing view backing recursively, since
-	// creating it in -updateExposedViewsForItems:exposedIndexes:unexposedIndexes:
-	// won't work reliably due to layout updates not being executed in a top-down
-	// manner, when using -setNeedsLayout rather than -updateLayoutRecursively:.
+	/* Will create the receiver, child and ancestor supervisor views when needed */
+	[self setUpSupervisorViewsForNewItemsIfNeeded: items];
 
 	[_items insertObjects: items atIndexes: indexes hints: @[]];
 }
@@ -1147,16 +1152,16 @@ You should never need to call this method directly. */
 
 	if (nil != anImage)
 	{
-		_wasViewHidden = [[[self supervisorView] wrappedView] isHidden];
-		[[[self supervisorView] subviews] setValue: @YES
-		                                    forKey: @"hidden"];
-		//[[[[self supervisorView] subviews] map] setHidden: YES];
+		_wasViewHidden = [[supervisorView wrappedView] isHidden];
+		[[supervisorView subviews] setValue: @YES
+		                             forKey: @"hidden"];
+		//[[[supervisorView subviews] map] setHidden: YES];
 	}
 	else
 	{
-		[[[self supervisorView] subviews] setValue: @NO
-		                                    forKey: @"hidden"];
-		//[[[self supervisorView] wrappedView] setHidden: _wasViewHidden];
+		[[supervisorView subviews] setValue: @NO
+		                             forKey: @"hidden"];
+		//[[supervisorView wrappedView] setHidden: _wasViewHidden];
 	}
 }
 

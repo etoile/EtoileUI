@@ -1367,6 +1367,8 @@ also ETView. */
 /** Sets the supervisor view associated with the receiver and marks it as 
 needing a layout update.
 
+Will set up a supervisor view for ancestor items recursively when they miss one.
+
 You should never need to call this method.
 
 On the next layout update, the view will be added as a subview to the supervisor
@@ -1378,6 +1380,10 @@ Throws an exception when item parameter is nil.
 See also -supervisorView. */
 - (void) setSupervisorView: (ETView *)aSupervisorView sync: (ETSyncSupervisorView)syncDirection
 {
+	if (self.parentItem.supervisorView == nil)
+	{
+		[self.parentItem setUpSupervisorView];
+	}
 	[super setSupervisorView: aSupervisorView sync: syncDirection];
 	[self setNeedsLayoutUpdate];
 }
