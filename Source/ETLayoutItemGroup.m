@@ -1823,7 +1823,7 @@ See -[ETController nextResponder]. */
 	-templateItemGroup is retrieved (-isGroup returns YES). */
 - (void) addObject: (id)object
 {
-	[self insertObject: object atIndex: ETUndeterminedIndex hint: nil boxingForced: NO];
+	[self insertObject: object atIndex: _items.count hint: nil boxingForced: NO];
 }
 
 - (void) insertObject: (id)object atIndex: (NSUInteger)index hint: (id)hint
