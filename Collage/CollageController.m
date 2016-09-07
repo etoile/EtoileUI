@@ -8,6 +8,10 @@
 
 #import "CollageController.h"
 
+@interface ETModelDescriptionRenderer()
+- (ETLayoutItem *)pointEditorTemplateItem;
+- (ETLayoutItem *)rectEditorTemplateItem;
+@end
 
 @implementation CollageController
 
@@ -37,6 +41,11 @@
 - (void) prepareUI
 {
 	ETLayoutItemFactory *itemFactory = [ETLayoutItemFactory factory];
+	ETModelDescriptionRenderer *renderer = [ETModelDescriptionRenderer new];
+	
+	//[itemFactory.windowGroup addItem: [renderer rectEditorTemplateItem]];
+	//return;
+
 	ETLayoutItem *collageItem =
 		[[ETApp UIStateRestoration] provideItemForName: [self collagePersistentUIName]];
 
