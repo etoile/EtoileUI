@@ -268,8 +268,8 @@ See also -[ETUItem displayView]. */
 	   last. Their subviews will appear last and be drawn last. */
 	[supervisorView setItemViews: exposedViews];
 
-	// TODO: Probably to be removed
-	[[unexposedViews mappedCollection] removeFromSuperview];
+	/* All unexposed views should have been automatically removed by -setItemViews: */
+	ETAssert([unexposedViews.firstObject superview] == nil);
 }
 
 /* We need to create any missing view backing recursively, since creating it in 
