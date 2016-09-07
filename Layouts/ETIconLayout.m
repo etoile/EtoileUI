@@ -86,17 +86,22 @@ Initializes and returns a new icon layout. */
 /* Mainly useful for debugging... */
 - (void) setUpTemplateElementsForItem: (ETLayoutItem *)item
 {
-	/* We insert the item display view into the view hierarchy to let us take a 
-	   snapshot with -icon */
-	[item setExposed: YES];
-
 	[super setUpTemplateElementsForItem: item];
-
-	[item setExposed: NO];
 
 	//[item setFrame: [[item coverStyle] boundingFrameForItem: item]];
 	// FIXME: Shouldn't be needed if we set on the template view already
 	[item setAutoresizingMask: NSViewNotSizable | NSViewMinYMargin | NSViewMinXMargin |	NSViewMaxXMargin | NSViewMaxYMargin];
+}
+
+- (void) prepareNewItems: (NSArray *)items
+{
+	/* We insert the item display views into the view hierarchy to let us take a
+	   snapshot with -icon */
+	self.layoutContext.exposedItems = items;
+
+	[super prepareNewItems: items];
+
+	self.layoutContext.exposedItems = @[];
 }
 
 - (void) setItemTitleFont: (NSFont *)font

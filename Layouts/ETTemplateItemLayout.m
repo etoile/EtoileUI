@@ -283,11 +283,8 @@ by the value returned by the template item. */
 their initial state. */
 - (void) restoreAllItems
 {
-	FOREACH(_renderedItems,item, ETLayoutItem *)
+	for (ETLayoutItem *item in _renderedItems)
 	{
-		/* Equivalent to [item setExposed: NO] */
-		[[item displayView] removeFromSuperview];
-
 		for (NSString *key in _renderedTemplateKeys)
 		{
 			id restoredValue = [item defaultValueForProperty: key];
