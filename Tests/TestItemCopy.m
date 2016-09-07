@@ -51,17 +51,6 @@
 }
 @end
 
-@interface ETLayoutItem (TestItemCopy)
-- (BOOL) isNotVisible;
-@end
-
-@implementation ETLayoutItem (TestItemCopy)
-- (BOOL) isNotVisible
-{
-	return [self isVisible] == NO;
-}
-@end
-
 @interface TestItemCopy: TestCommon <UKTest>
 {
 	ETLayoutItem *item;
@@ -390,7 +379,7 @@
 	[itemGroup10 addItem: item101];
 	[itemGroup addItem: itemGroup2];
 	[itemGroup2 addItem: itemGroup20];
-	/* Create a superview hierarchy from item3 to itemGroup */
+	/* Turn itemGroup, item and itemGroup1 into view-backed items */
 	[itemGroup addItem: item3];
 
 	/* Layout view insertion doesn't call 
@@ -417,7 +406,7 @@
 	UKIntsEqual(1, [[layoutCopy outlineView] numberOfRows]);
 
 	UKNotNil([newItemGroup supervisorView]);
-	UKNil([[newItemGroup itemAtIndex: 1] supervisorView]);
+	UKNotNil([[newItemGroup itemAtIndex: 1] supervisorView]);
 	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"1.0")] supervisorView]);
 	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"1.0.0")] supervisorView]);
 	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"1.0.1")] supervisorView]);
@@ -425,9 +414,9 @@
 	UKNil([[newItemGroup itemAtIndexPath: IPATH(@"2.0")] supervisorView]);
 	UKNotNil([[newItemGroup itemAtIndex: 3] supervisorView]);
 
-	NSMutableArray *allNewItems = [NSMutableArray arrayWithArray: [newItemGroup items]];
-	[[allNewItems filter] isNotVisible];
-	// FIXME: UKObjectsEqual(A(itemGroup20), allNewItems);
+	UKObjectsEqual(newItemGroup.items, newItemGroup.exposedItems);
+	// Items are not exposed in an opaque layout
+	UKTrue([(ETLayoutItemGroup *)[newItemGroup itemAtIndex: 2] exposedItems].isEmpty);
 
 	ETLayoutItem *newOutlineItem = [newItemGroup itemAtIndex: 2] ;
 	ETLayoutItem *newButtonItem = [newItemGroup itemAtIndex: 3];
