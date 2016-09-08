@@ -60,6 +60,12 @@
 
 - (void) refreshIfNeeded;
 
+/** @taskunit Drawing */
+
+- (void) render: (NSMutableDictionary *)inputValues
+      dirtyRect: (NSRect)dirtyRect
+      inContext: (id)ctxt;
+
 /** @taskunit Layout Update Integration */
 
 @property (nonatomic, readonly) BOOL usesFlexibleLayoutFrame;

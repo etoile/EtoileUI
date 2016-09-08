@@ -1007,6 +1007,10 @@ means the dirty rect needs no adjustments. */
       dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt
 {
+
+	if (supervisorView != nil)
+		return;
+
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
 
 	/* Using the drawing box, we limit the redrawn area to the cover style area 

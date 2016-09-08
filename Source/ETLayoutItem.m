@@ -61,6 +61,7 @@ NSString *ETLayoutItemLayoutDidChangeNotification = @"ETLayoutItemLayoutDidChang
 
 @dynamic boundingInsets, hostItem;
 
+static BOOL showsViewItemMarker = NO;
 static BOOL showsBoundingBox = NO;
 static BOOL showsFrame = NO;
 
@@ -1621,21 +1622,27 @@ now, the context is nil and must be ignored.  */
 {
 	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", 
 	//	NSStringFromRect([self drawingFrame]), self, NSStringFromRect(dirtyRect), ctxt);
-	BOOL reponsibleToDrawCoverStyle = (nil == _decoratorItem);
 
-	[[self styleGroup] render: inputValues layoutItem: self dirtyRect: dirtyRect];
+	[_styleGroup render: inputValues
+	         layoutItem: self
+	          dirtyRect: dirtyRect];
 
-	/* When we have no decorator, the cover style is rendered here, otherwise the 
+	/* When we have no view, the cover style is rendered here, otherwise the 
 	   last decorator renders it (see -[ETDecoratorItem render:dirtyRect:inContext:). */
-	if (reponsibleToDrawCoverStyle)
+	if (supervisorView != nil)
 	{
 		[NSGraphicsContext saveGraphicsState];
 		[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
-		[_coverStyle render: inputValues layoutItem: self dirtyRect: dirtyRect];
+		[_coverStyle render: inputValues
+		         layoutItem: self
+		          dirtyRect: dirtyRect];
 		[NSGraphicsContext restoreGraphicsState];
 	}
 
-	//[self drawViewItemMarker];
+	if (showsViewItemMarker)
+	{
+		[self drawViewItemMarker];
+	}
 	if (showsBoundingBox)
 	{
 		[self drawBoundingBoxWithRect: [self boundingBox]];

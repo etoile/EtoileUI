@@ -10,16 +10,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <AppKit/NSView.h>
+#import <EtoileUI/ETFlippableView.h>
 
 @class ETLayoutItem, ETUIItem;
-
-#ifdef GNUSTEP
-// NOTE: This hack is needed because GNUstep doesn't retrieve -isFlipped in a 
-// consistent way. For example in -[NSView _rebuildCoordinates] doesn't call 
-// -isFlipped and instead retrieve it directly from the rFlags structure.
-#define USE_NSVIEW_RFLAGS
-#endif
 
 /** ETView is the generic view class extensively used by EtoileUI and whose 
 instance are named 'supervisor view'.
@@ -38,7 +31,7 @@ You must not subclass ETView.
 
 Take note that we plan to eliminate ETView and the supervisor view concept in a 
 next EtoileUI release. */
-@interface ETView : NSView
+@interface ETView : ETFlippableView
 {
 	@private
 	IBOutlet ETUIItem * __weak item;
@@ -51,9 +44,6 @@ next EtoileUI release. */
 	   we must update _temporaryView with -setLayoutView: otherwise the ivar
 	   might reference a freed object. See -[ETLayoutItem setLayout:]. */
 	NSView * __weak _temporaryView;
-#ifndef USE_NSVIEW_RFLAGS
-	BOOL _flipped;
-#endif
 #ifndef GNUSTEP
 	BOOL _wasJustRedrawn;
 #endif
@@ -64,12 +54,12 @@ next EtoileUI release. */
 
 @property (nonatomic, readonly, copy) NSArray *propertyNames;
 
-/* Geometry Constraints */
+/** @taskunit Geometry Constraints */
 
 @property (nonatomic) NSSize minSize;
 @property (nonatomic) NSSize maxSize;
 
-/* Basic Accessors */
+/** @taskunit Item */
 
 // TODO: Rename -layoutItem to -item. Will be done separately because it is a 
 // pretty big change which needs to be handled very carefully.
@@ -77,9 +67,7 @@ next EtoileUI release. */
 
 - (void) setItemWithoutInsertingView: (ETUIItem *)item;
 
-@property (nonatomic, getter=isFlipped) BOOL flipped;
-
-/* Embbeded Views */
+/** @taskunit Embbeded Views */
 
 @property (nonatomic, strong) NSView *wrappedView;
 @property (nonatomic, strong) NSView *temporaryView;
@@ -96,7 +84,11 @@ The subviews to insert are listed in their item order (first views being the
 last drawn ones), so they will appear reversed in -[NSView subviews]. */
 - (void) setItemViews: (NSArray *)itemViews;
 
-/* Actions */
+/** @taskunit Drawing */
+
+@property (nonatomic, strong) NSMutableDictionary *inputValues;
+
+/** @taskunit Actions */
 
 - (IBAction) inspectItem: (id)sender;
 

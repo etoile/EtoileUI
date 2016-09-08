@@ -123,6 +123,10 @@
 		605F0D870C0F4049003AE3E6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */; };
 		605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		605F33461D7D828000DCFB74 /* ETFlippableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F33441D7D828000DCFB74 /* ETFlippableView.h */; };
+		605F33471D7D828000DCFB74 /* ETFlippableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F33441D7D828000DCFB74 /* ETFlippableView.h */; };
+		605F33481D7D828000DCFB74 /* ETFlippableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F33451D7D828000DCFB74 /* ETFlippableView.m */; };
+		605F33491D7D828000DCFB74 /* ETFlippableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F33451D7D828000DCFB74 /* ETFlippableView.m */; };
 		6061F4CE1945ADE7008637A7 /* ETUTIToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 6061F4CC1945ADE7008637A7 /* ETUTIToString.h */; };
 		6061F4CF1945ADE7008637A7 /* ETUTIToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 6061F4CD1945ADE7008637A7 /* ETUTIToString.m */; };
 		6061F4DE1945ADFB008637A7 /* ETCollectionToPersistentCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 608E631618FD9CD8005FB6C7 /* ETCollectionToPersistentCollection.h */; };
@@ -1008,6 +1012,8 @@
 		605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectManagerController.m; path = ObjectManagerExample/ObjectManagerController.m; sourceTree = "<group>"; };
 		605F0CCA0C0F400D003AE3E6 /* ObjectManagerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectManagerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		605F0CCC0C0F400D003AE3E6 /* ObjectManagerExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObjectManagerExample-Info.plist"; path = "ObjectManagerExample/ObjectManagerExample-Info.plist"; sourceTree = "<group>"; };
+		605F33441D7D828000DCFB74 /* ETFlippableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETFlippableView.h; path = WidgetBackends/AppKit/ETFlippableView.h; sourceTree = "<group>"; };
+		605F33451D7D828000DCFB74 /* ETFlippableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETFlippableView.m; path = WidgetBackends/AppKit/ETFlippableView.m; sourceTree = "<group>"; };
 		605F354A17172DF600E9355A /* TestFormLayoutPersistency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestFormLayoutPersistency.m; path = Tests/TestFormLayoutPersistency.m; sourceTree = "<group>"; };
 		605F354C1717305500E9355A /* TestCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCommon.h; path = Tests/TestCommon.h; sourceTree = "<group>"; };
 		6061F4CC1945ADE7008637A7 /* ETUTIToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETUTIToString.h; path = Persistency/ValueTransformers/ETUTIToString.h; sourceTree = "<group>"; };
@@ -1744,6 +1750,8 @@
 		6063FD5A1744CD6B00E4350E /* AppKit */ = {
 			isa = PBXGroup;
 			children = (
+				605F33441D7D828000DCFB74 /* ETFlippableView.h */,
+				605F33451D7D828000DCFB74 /* ETFlippableView.m */,
 				6019779A185F61C600635BE2 /* ETView.h */,
 				6019779B185F61C600635BE2 /* ETView.m */,
 				6063FD5B1744CD9300E4350E /* ETNumberPicker.h */,
@@ -2291,6 +2299,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				605F33471D7D828000DCFB74 /* ETFlippableView.h in Headers */,
 				6061F4DF1945ADFB008637A7 /* ETItemValueTransformerToString.h in Headers */,
 				607676E6176DD411009FA5F2 /* ETUIBuilderBrowserController.h in Headers */,
 				604B1C2D1D67D74D00C2C3C2 /* ETUUIDToString.h in Headers */,
@@ -2322,6 +2331,7 @@
 				60EF8EA80C5E4D8500C97C41 /* ETLayoutItem.h in Headers */,
 				60EF8EA90C5E4D8500C97C41 /* ETLayoutItemGroup.h in Headers */,
 				60EF8EAA0C5E4D8500C97C41 /* ETLayer.h in Headers */,
+				605F33461D7D828000DCFB74 /* ETFlippableView.h in Headers */,
 				6061F4CE1945ADE7008637A7 /* ETUTIToString.h in Headers */,
 				60EF8EB10C5E4D8500C97C41 /* ETLineFragment.h in Headers */,
 				60B9F0831A1AB8F000412B46 /* ETLayoutItem+Private.h in Headers */,
@@ -3168,6 +3178,7 @@
 				60D30279194B75B1006BA5A9 /* TestWidgetLayout.m in Sources */,
 				6077C1820F9802E1006CB3F5 /* NSImage+Etoile.m in Sources */,
 				604B1BE91D66069A00C2C3C2 /* ETAspectCategory+ModelDescription.m in Sources */,
+				605F33491D7D828000DCFB74 /* ETFlippableView.m in Sources */,
 				60D30288194BCB42006BA5A9 /* TestWindowLayout.m in Sources */,
 				6000978F0FAB479500622E5D /* ETModelDescriptionRenderer.m in Sources */,
 				604B1C2F1D67D74D00C2C3C2 /* ETUUIDToString.m in Sources */,
@@ -3439,6 +3450,7 @@
 				60197796185F480600635BE2 /* ETUIItemIntegration.m in Sources */,
 				6019779E185F61C600635BE2 /* ETTitleBarView.m in Sources */,
 				601977A2185F61C600635BE2 /* ETView.m in Sources */,
+				605F33481D7D828000DCFB74 /* ETFlippableView.m in Sources */,
 				601977A8185F6B4B00635BE2 /* ETUIItemCellIntegration.m in Sources */,
 				601977BF18604E3700635BE2 /* NSView+EtoileUI.m in Sources */,
 				60908DE6186195DC00E44F24 /* ETTool+ModelDescription.m in Sources */,

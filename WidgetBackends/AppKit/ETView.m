@@ -13,6 +13,7 @@
 #import "ETGeometry.h"
 #import "ETLayoutItem.h"
 #import "ETLayoutItem+Private.h"
+#import "ETLayoutItemGroup.h"
 #import "ETUIItemIntegration.h"
 #import "NSObject+EtoileUI.h"
 #import "NSView+EtoileUI.h"
@@ -21,15 +22,11 @@
 
 #define NC [NSNotificationCenter defaultCenter]
 
-#ifndef GNUSTEP
-@interface NSView (CocoaPrivate)
-- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)aRect;
-- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
-	isVisibleRect: (BOOL)isVisibleRect rectIsVisibleRectForView: (BOOL)isRectForView topView: (BOOL)isTopView;
+@interface ETForegroundView : ETFlippableView
 @end
-#endif
 
-@interface ETView (Private)
+@interface ETView ()
+@property (nonatomic, strong) ETFlippableView *foregroundView;
 - (void) setContentView: (NSView *)view temporary: (BOOL)temporary;
 @end
 
@@ -61,10 +58,19 @@ See also -[ETUIItem supervisorView]. */
 
 	_minSize = NSZeroSize;
 	_maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
-	/* For a leaf item, autoresizesSubviews is NO, unless a view is set.
+	/* To let ETLayoutItem and ETLayout resize views according to content aspect
+	   and autoresizing policies, we disable the built-in autoresizing.
+	
+	   For a leaf item, autoresizesSubviews is NO, unless a view is set.
 	   For a group item, autoresizesSubviews is NO, unless a layout view is set.
+
 	   We update the view autoresizing policy in -setContentView:isTemporary:. */
 	[self setAutoresizesSubviews: NO];
+
+	_foregroundView = [[ETForegroundView alloc] initWithFrame: ETMakeRect(NSZeroPoint, frame.size)];
+	_foregroundView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+	
+	[self addSubview: _foregroundView];
 
 	return self;
 }
@@ -190,39 +196,18 @@ The item isn't retained. */
 	return item;
 }
 
-/** This method is only exposed to be used internally by EtoileUI.<br />
-You must never call this method but -[ETLayoutItem isFlipped:].
-
-Returns whether the receiver uses flipped coordinates or not.
-
-Default returned value is YES. */
-- (BOOL) isFlipped
-{
-#ifdef USE_NSVIEW_RFLAGS
- 	return _rFlags.flipped_view;
-#else
-	return _flipped;
-#endif
-}
-
-/** This method is only exposed to be used internally by EtoileUI.<br />
-You must never call this method but -[ETLayoutItem setFlipped:].
-
-Unlike NSView, ETView uses flipped coordinates by default.
-
-You can revert to non-flipped coordinates by passing NO to this method. */
 - (void) setFlipped: (BOOL)flag
 {
-#ifdef USE_NSVIEW_RFLAGS
-	_rFlags.flipped_view = flag;
-	[self _invalidateCoordinates];
-	[self _rebuildCoordinates];
-#else
-	_flipped = flag;
-#endif
+	[super setFlipped: flag];
+	_foregroundView.flipped = flag;
 }
 
 /* Embbeded Views */
+
+- (void) tile
+{
+	_foregroundView.frame = ETMakeRect(NSZeroPoint, self.frame.size);
+}
 
 /* When a temporary view is just removed and the wrapped view is reinserted, 
 isTemporary is NO and the code below takes care to resize the wrapped view 
@@ -269,6 +254,7 @@ You must never call this method but -[ETLayoutItem setView:]. */
 
 	[self setContentView: view temporary: NO];
 	_wrappedView = view;
+	[self updateSubviews];
 	[self tileContentView: view temporary: NO];
 }
 
@@ -291,6 +277,7 @@ If you pass nil, the visible view is reverted to -wrappedView. */
 
 	[self setContentView: subview temporary: YES];
 	_temporaryView = subview;
+	[self updateSubviews];
 	if (nil != subview)
 	{
 		[self tileContentView: subview temporary: YES];
@@ -312,20 +299,28 @@ installed by the layout. */
 
 - (void) validateViewHierarchy
 {
+	NSMutableArray *internalSubviews = [NSMutableArray new];
+
 	if (_wrappedView != nil)
 	{
-		NSAssert1([[_wrappedView superview] isEqual: self], @"The wrapped view"
-			"%@ has been wrongly moved to a superview without first removing "
-			"it explicitely with -[ETLayoutItem setView: nil] or "
-			"-[ETView setWrappedView: nil]", _wrappedView);
+		[internalSubviews addObject: _wrappedView];
 	}
 	if (_temporaryView != nil)
 	{
-		NSAssert1([[_temporaryView superview] isEqual: self], @"The temporary view"
-			"%@ has been wrongly moved to a superview without first removing "
-			"it explicitely with -[ETLayoutItem setLayoutView: nil] or "
-			"-[ETView setTemporaryView: nil]", _temporaryView);
+		[internalSubviews addObject: _temporaryView];
 	}
+	if (_foregroundView != nil)
+	{
+		[internalSubviews addObject: _foregroundView];
+	}
+	NSArray *lastSubviews =
+		[self.subviews subarrayFromIndex: self.subviews.count - internalSubviews.count];
+
+	ETAssert(internalSubviews.count >= 1);
+	/* When this assertions fails, this usually means the internal subviews 
+	   ordering is incorrect, or that the wrapped or temporary view has been
+	   moved to a superview without removing it with -setWrapped/TemporaryView:. */
+	ETAssert([internalSubviews isEqual: lastSubviews]);
 }
 
 /* See -setWrappedView: and -setTemporaryView: documentation which explains the 
@@ -355,7 +350,6 @@ implemented behavior. */
 
 		if (view != nil)
 		{
-			[self addSubview: view];
 			[_wrappedView setHidden: YES];
 		}
 		else /* Passed a nil temporary view */
@@ -369,15 +363,6 @@ implemented behavior. */
 
 		/* In case a wrapped view is already in use, we remove it */
 		[_wrappedView removeFromSuperview];
-
-		if (view != nil)
-		{
-			[self addSubview: view];
-		}
-		else /* Passed a nil wrapped view */
-		{
-
-		}
 	}
 	
 	/* Ensure the resizing of all subviews is handled automatically if needed */
@@ -403,6 +388,30 @@ return the temporary view. */
 	return contentView;
 }
 
+- (void) updateSubviews
+{
+	NSMutableArray *views = [self.subviews mutableCopy];
+
+	if (_wrappedView != nil)
+	{
+		[views removeObject: _wrappedView];
+		[views addObject: _wrappedView];
+	}
+	if (_temporaryView != nil)
+	{
+		[views removeObject: _temporaryView];
+		[views addObject: _temporaryView];
+	}
+	if (_foregroundView != nil)
+	{
+		[views removeObject: _foregroundView];
+		[views addObject: _foregroundView];
+	}
+
+	self.subviews = views;
+	[self validateViewHierarchy];
+}
+
 - (void) setItemViews: (NSArray *)itemViews
 {
 	NSMutableArray *views = [itemViews.reverseObjectEnumerator.allObjects mutableCopy];
@@ -415,9 +424,12 @@ return the temporary view. */
 	{
 		[views addObject: _temporaryView];
 	}
+	if (_foregroundView != nil)
+	{
+		[views addObject: _foregroundView];
+	}
 
 	self.subviews = views;
-	
 	[self validateViewHierarchy];
 }
 
@@ -461,6 +473,7 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 		ETConstrainedSizeFromSize(frame.size, self.minSize, self.maxSize));
 
 	[super setFrame: constrainedFrame];
+	[self tile];
 
 	if ([item shouldSyncSupervisorViewGeometry] == NO)
 		return;
@@ -484,6 +497,8 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 {
 	CHECKSIZE(size)
 	[super setFrameSize: size];
+	[self tile];
+	
 	if ([item shouldSyncSupervisorViewGeometry] == NO)
 		return;
 
@@ -528,6 +543,15 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 /* Rendering Tree */
 
+- (NSMutableDictionary *) inputValues
+{
+	if (_inputValues == nil)
+	{
+		return [NSMutableDictionary new];
+	}
+	return _inputValues;
+}
+
 #ifdef DEBUG_DRAWING
 
 - (void) drawInvalidatedAreaWithRect: (NSRect)needsDisplayRect
@@ -551,90 +575,71 @@ NSAssert1(size.width >= 0 && size.height >= 0, @"For a supervisor view, the " \
 
 #endif
 
-/* INTERLEAVED_DRAWING must always be enabled. 
-   You might want to disable it for debugging how the control of the drawing is 
-   handed by ETView to the layout item tree.
-   
-   With INTERLEAVED_DRAWING, the drawing of the layout item follows the drawing
-   of the view its represents and all related subviews. This view is called the 
-   supervisor view and is an ETView instance. The supervisor view can embed a 
-   subview that is returned by -[ETLayoutItem view] and -[ETView wrappedView].
-   Hence the layout item is able to draw its style (border, selection indicators 
-   etc.) on top of the wrapped view.
+/** Draws the background inside the item content drawing box.
 
-   Without INTERLEAVED_DRAWING, the drawing of the layout item only occurs 
-   within -drawRect: and precedes the drawing of the view its represents and all 
-   related subviews. Thereby the drawing of the style of an item will be covered 
-   by the drawing of its view. If the item has no view, the issue doesn't exist. 
-   This view is a subview of our closest ancestor view where the item style is 
-   drawn through -drawRect:, but a superview -drawRect: is followed by the 
-   -drawRect: of subviews, that's why the item style cannot be drawn properly 
-   in such cases. */
-#define INTERLEAVED_DRAWING 1
+The drawing occurs when the receiver is a ETLayoutItem.
 
-#ifndef INTERLEAVED_DRAWING
+For a custom bounding box without a decorator, the content drawing box remains 
+identical to the content bounds (e.g. labels drawn outside the content bounds
+must be drawn by a cover style).
 
-/** Now we must let layout items handles their custom drawing through their 
-style object. For example, by default an item with or without a view has a style 
-to draw its selection state. 
-
-In addition, this style implements the logic to draw layout items without 
-view that plays a role similar to cell.
+We let items handle their custom drawing through their style objects. For 
+example, by default an item with or without a view has a style to draw its 
+selection state.
 
 Layout items are smart enough to avoid drawing their view when they have one. */
-- (void) drawRect: (NSRect)rect
+- (void) drawRect: (NSRect)dirtyRect
 {
-	[super drawRect: rect];
+	[super drawRect: dirtyRect];
 
+	if (!item.isLayoutItem)
+		return;
+
+	/* When drawing the content, the dirty rect can be left unchanged, because
+	   it already orresponds to the content drawing box */
+	[NSGraphicsContext saveGraphicsState];
+	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
 	/* We always composite the rendering chain on top of each view -drawRect: 
 	   drawing sequence (triggered by display-like methods). */
-	[item render: nil dirtyRect: rect inContext: nil];
+	[(ETLayoutItem *)item render: self.inputValues
+	                   dirtyRect: dirtyRect
+	                   inContext: nil];
+	[NSGraphicsContext restoreGraphicsState];
 }
 
-#else
+/** Draws the foreground.
 
-- (void) drawRect: (NSRect)rect
+The drawing occurs when the receiver is a ETLayoutItem.
+
+For a window item decoration, the drawing box prevents any drawing to be done on 
+the title bar, . */
+- (void) drawForegroundRect: (NSRect)dirtyRect
 {
-	// NOTE: Rounding error prevents the assertion below to work
-	//ETAssert(NSEqualRects(rect, _rectToRedraw));
-}
+	if (!item.isLayoutItem)
+		return;
 
-#ifdef GNUSTEP
-- (void) displayIfNeeded
-{
-	//ETLog(@"-displayIfNeeded");
-	[super displayIfNeeded];
-}
-#endif
+	ETLayoutItemGroup *layerItem = [((ETLayoutItem *)item).layout layerItem];
 
-- (void) displayIfNeededInRect:(NSRect)aRect
-{
-	//ETLog(@"-displayIfNeededInRect:");
-	[super displayIfNeededInRect: aRect];
-}
+	/* Draw the layer item style */
 
-- (void) displayIfNeededInRectIgnoringOpacity:(NSRect)aRect
-{
-	//ETLog(@"-displayIfNeededInRectIgnoringOpacity:");
-	[super displayIfNeededInRectIgnoringOpacity: aRect];
-}
+	[NSGraphicsContext saveGraphicsState];
+	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
+	[layerItem render: self.inputValues
+	        dirtyRect: dirtyRect
+	        inContext: nil];
+	[NSGraphicsContext restoreGraphicsState];
 
-- (void) display
-{	
-	//ETLog(@"-display");
-	[super display];
-}
+	NSRect adjustedDirtyRect =
+		[self adjustedDirtyRectInDrawingBox: ((ETLayoutItem *)item).drawingBox];
+	
+	/* Draw the cover style */
 
-- (void) displayRect:(NSRect)aRect
-{
-	//ETLog(@"-displayRect:");
-	[super displayRect: aRect];
-}
-
-- (void) displayRectIgnoringOpacity:(NSRect)aRect
-{
-	//ETLog(@"-displayRectIgnoringOpacity:");
-	[super displayRectIgnoringOpacity: aRect];
+	[NSGraphicsContext saveGraphicsState];
+	[[NSBezierPath bezierPathWithRect: adjustedDirtyRect] setClip];
+	[[(ETLayoutItem *)item coverStyle] render: nil
+	                               layoutItem: (ETLayoutItem *)item
+	                                dirtyRect: adjustedDirtyRect];
+	[NSGraphicsContext restoreGraphicsState];
 }
 
 - (NSRect) dirtyRect
@@ -660,155 +665,27 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 	[super viewWillDraw];
 }
 
-- (NSRect) coverStyleDirtyRectForItem: (ETLayoutItem *)anItem 
-                         inParentView: (ETView *)parentView
-{
-	NSParameterAssert([anItem isLayoutItem]);
+/** Returns a dirty rect that takes in account a drawing box larger than the 
+receiver bounds.
 
-	NSRect parentDirtyRect = [self convertRect: [parentView dirtyRect] 
+The dirty rect argument is one that doesn't extend beyond the receiver bounds
+e.g. the one received in -drawRect:.
+
+The drawing box is larger with a decorator (the outer decoration rect) or a 
+custom bounding box that enlarges the item bounds.
+
+When the drawing box is equal to the receiver bounds (e.g. 
+-[ETLayoutItem contentDrawingBox]), the returned dirty rect is left unchanged. */
+- (NSRect) adjustedDirtyRectInDrawingBox: (NSRect)drawingBox
+{
+	ETLayoutItemGroup *parentItem = ((ETLayoutItem *)item).parentItem;
+	ETView *parentView =
+		(parentItem.supervisorView ? parentItem.supervisorView : item.displayView);
+	NSRect parentDirtyRect = [self convertRect: parentView.dirtyRect
 	                                  fromView: parentView];
-	return NSIntersectionRect(parentDirtyRect, [anItem drawingBox]);
+
+	return NSIntersectionRect(parentDirtyRect, drawingBox);
 }
-
-- (NSRect) adjustedDirtyRectWithRect: (NSRect)dirtyRect
-{
-	BOOL shouldDrawCoverStyle = ([item decoratorItem] == nil);
-
-	if (NO == shouldDrawCoverStyle)
-		return dirtyRect;
-
-	NSView *parentView = [self superview];
-
-	if (NO == [parentView isSupervisorView])
-		return dirtyRect;
-
-	return [self coverStyleDirtyRectForItem: [item firstDecoratedItem] 
-	                           inParentView: (ETView *)parentView];
-}
-
-#ifdef GNUSTEP
-
-/* Main and canonical method which is used to take control of the drawing on 
-GNUstep and pass it to the layout item tree as needed. */
-- (void) displayRectIgnoringOpacity: (NSRect)aRect 
-                          inContext: (NSGraphicsContext *)context
-{
-	//ETLog(@"-displayRectIgnoringOpacity:inContext:");
-
-	if ([self canDraw] == NO)
-		return;
-
-	// FIXME: We cannot call -getRectsBeingDrawn:count: now on GNUstep (crash with libobjc2)
-	//[self viewWillDraw];
-	[super displayRectIgnoringOpacity: aRect inContext: context];
-	
-	if ([self lockFocusIfCanDrawInContext: context] == NO)
-		return;
-
-	// FIXME: Use...
-	//NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: aRect];
-
-	[item render: nil dirtyRect: aRect inContext: nil];
-	[self unlockFocus];
-}
-
-#else
-
-- (BOOL) lockFocusInRect: (NSRect)rectToRedraw
-{
-	BOOL lockFocus = [self lockFocusIfCanDraw];
-	NSRectClip(rectToRedraw);
-	return lockFocus;
-}
-
-// NOTE: Very often NSView instance which has been sent a display message will 
-// call this method on its subviews. These subviews will do the same with their own 
-// subviews. Here is the other method often used in the same way:
-//_recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:
-// The previous method usually follows the message on next line:
-//_displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:
-
-/* First canonical method which is used to take control of the drawing on 
-Cocoa and pass it to the layout item tree as needed. 
-
-visibleRect is the same than [self visibleRect]. */
-- (void) _recursiveDisplayAllDirtyWithLockFocus: (BOOL)lockFocus visRect: (NSRect)visibleRect
-{
-	ETDebugLog(@"-_recursiveDisplayAllDirtyWithLockFocus:visRect: %@", self);
-
-	if (NSEqualRects(visibleRect, NSZeroRect))
-		return;
-
-	[super _recursiveDisplayAllDirtyWithLockFocus: lockFocus visRect: visibleRect];
-
-	/* Most of the time, the focus isn't locked */
-	if ([self lockFocusInRect: _rectToRedraw])
-	{
-		NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
-
-		[item render: nil dirtyRect: adjustedDirtyRect inContext: nil];
-		[self unlockFocus];
-		[[self window] flushWindow];
-	}
-
-	_wasJustRedrawn = YES;
-}
-
-/* Second canonical method which is used to take control of the drawing on 
-Cocoa and pass it to the layout item tree as needed. */
-- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
-	isVisibleRect: (BOOL)isVisibleRect rectIsVisibleRectForView: (BOOL)isRectForView topView: (BOOL)isTopView
-{
-	_wasJustRedrawn = NO;
-
-	[super _recursiveDisplayRectIfNeededIgnoringOpacity: aRect 
-		isVisibleRect: isVisibleRect rectIsVisibleRectForView: isRectForView topView: isTopView];
-
-	ETDebugLog(@"-_recursiveDisplayRectIfNeededIgnoringOpacity:XXX %@ %@", self, NSStringFromRect(aRect));
-	
-	/* From what I have observed, _recursiveDisplayAllDirtyXXX was only called 
-	   when isVisibleRect and isRectForView are both NO, or when live resize 
-	   was underway (in that case the invalidated area was the entire view).
-	   If we don't make the check below _recursiveDisplayAllDirtyXXX  will draw 
-	   and this method will then draw another time in the same view/receiver with 
-	   with -render:dirtyRect:inContext:. 
-	   The next line works pretty well... 
-	   BOOL needsRedraw = (isRectForView && [self needsDisplay] && [self inLiveResize]);
-	   ... but we rather use the _wasJustRedrawn flag which is a safer way to 
-	   check whether _recursiveDisplayAllDirtyXXX was called by the call to 
-	   super at the beginning of this method or not.
-	   isVisibleRect seems to be YES when -displayXXX was used but NO when 
-	   -displayIfNeededXXX was. */
-	BOOL needsRedraw = (isRectForView && [self needsDisplay] && _wasJustRedrawn == NO);
-
-	if (needsRedraw && [self lockFocusInRect: _rectToRedraw])
-	{
-		NSRect adjustedDirtyRect = [self adjustedDirtyRectWithRect: _rectToRedraw];
-
-		[item render: nil dirtyRect: adjustedDirtyRect inContext: nil];
-		[self unlockFocus];
-		[[self window] flushWindow];
-	}
-
-	_wasJustRedrawn = NO;
-}
-
-- (void) _recursiveDisplayRectIfNeededIgnoringOpacity: (NSRect)aRect 
-	inContext: (NSGraphicsContext *)ctxt topView: (BOOL)isTopView
-{
-	ASSERT_FAIL(@"This method is never called based on our tests... As it "
-		"clearly got called now, we need to find out why and override it properly.");
-}
-
-- (void) _lightWeightRecursiveDisplayInRect: (NSRect)aRect
-{
-	ASSERT_FAIL(@"This method is never called based on our tests... As it "
-		"clearly got called now, we need to find out why and override it properly.");
-}
-
-#endif
-
-#endif /* INTERLEAVED_DRAWING */
 
 /* Intercept and Discard Events */
 
@@ -844,5 +721,15 @@ Cocoa and pass it to the layout item tree as needed. */
 - (void) touchesEndedWithEvent: (NSEvent *)event { }
 - (void) touchesCancelledWithEvent: (NSEvent *)event { }
 #endif
+
+@end
+
+
+@implementation ETForegroundView
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[(ETView *)self.superview drawForegroundRect: dirtyRect];
+}
 
 @end
