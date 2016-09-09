@@ -989,6 +989,12 @@ to control more precisely how the items get resized per layout. */
 
 /* Rendering */
 
+- (void) drawDirectDrawingMarkerForItem: (ETLayoutItem *)item
+{
+	NSRect itemRect = [item convertRectFromParent: [item frame]];
+	[[NSColor yellowColor] set];
+	NSFrameRectWithWidth(itemRect, 4.0);
+}
 /* For debugging */
 - (void) drawDirtyRectItemMarkerWithRect: (NSRect)dirtyRect
 {
@@ -996,89 +1002,100 @@ to control more precisely how the items get resized per layout. */
 	[NSBezierPath fillRect: dirtyRect];
 }
 
-/** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition of
-this method is to manage the drawing of children items by calling this method
+/** See -[ETLayoutItem render:dirtyRect:inContext:]. The most important addition 
+of this method is to manage the drawing of children items by calling this method
 recursively on them.
  
 The supervisor view or parent item intersects the dirty rect against the 
 receiver drawing box just before calling -render:dirtyRect:inContext:. Which 
 means the dirty rect needs no adjustments. */
-- (void) render: (NSMutableDictionary *)inputValues
-      dirtyRect: (NSRect)dirtyRect
-      inContext: (id)ctxt
+- (void) renderBackground: (NSMutableDictionary *)inputValues
+                dirtyRect: (NSRect)dirtyRect
+                inContext: (id)ctxt
 {
-
-	if (supervisorView != nil)
-		return;
-
 	//ETLog(@"Render %@ dirtyRect %@ in %@", self, NSStringFromRect(dirtyRect), ctxt);
 
+	if (self.isLayerItem)
+	{
+		//[[NSColor redColor] set];
+		//NSFrameRectWithWidth(dirtyRect, 4.0);
+	}
 	/* Using the drawing box, we limit the redrawn area to the cover style area 
 	   or the content bounds in case a decorator is set (we don't want to draw 
 	   over the decorators). */
 	NSRect drawingBox = [self drawingBox];
 
-	/* Use the display cache when there is one */
-	if (nil != _cachedDisplayImage)
-	{
-		ETBasicItemStyle *basicItemStyle =
-			[ETBasicItemStyle sharedInstanceForObjectGraphContext: [self objectGraphContext]];
-		
-		[basicItemStyle drawImage: _cachedDisplayImage
-		                  flipped: [self isFlipped]
-		                   inRect: drawingBox];
-		return;
-	}
-
 	/* Otherwise redisplay the receiver and its descendants recursively */
 	if ([self usesFlexibleLayoutFrame] || NSIntersectsRect(dirtyRect, drawingBox))
 	{
-		/* There is no need to set dirtyRect with -[NSBezierPath setClip]
+		/* To draw the background, we should adjust the coordinate matrix to the 
+		   content bounds on the paper, but since the supervisor view won't call 
+		   this method when the item is decorated, we can use the same 
+		   coordinates matrix to draw the background, foreground and layout layer.
+		
+		   There is no need to set dirtyRect with -[NSBezierPath setClip]
 		   because the right clip rect should have been set by our supervisor
 		   view or our parent item (when when we have no decorator) */
-		[super render: inputValues dirtyRect: dirtyRect inContext: ctxt];
+		[super renderBackground: inputValues dirtyRect: dirtyRect inContext: ctxt];
 
 		/* Render child items (if the layout doesn't handle it) */
 
 		[NSGraphicsContext saveGraphicsState];
 		if ([[self layout] isOpaque] == NO)
 		{
-			NSEnumerator *e = [[self arrangedItems] reverseObjectEnumerator];
-
-			FOREACHE(nil, item, ETLayoutItem *, e)
+			for (ETLayoutItem *item in [self.arrangedItems reverseObjectEnumerator])
 			{
 				if ([item isVisible] == NO)
 					continue;
 
-				/* We intersect our dirtyRect with the drawing frame of the item to be
-				   drawn, so the child items don't receive the drawing frame of their
-				   parent, but their own. Also restricts the dirtyRect so it doesn't
-				   encompass any decorators set on the item. */
+				/* We intersect our dirtyRect with the drawing frame of the item 
+				   to be drawn, so the child items don't receive the drawing 
+				   frame of their parent, but their own. Also restricts the 
+				   dirtyRect to the bounding box. */
 				NSRect childDirtyRect = [item convertRectFromParent: dirtyRect];
 				childDirtyRect = NSIntersectionRect(childDirtyRect, [item drawingBox]);
 
-				/* In case, dirtyRect is only a redraw rect on the parent and not on
-				   the entire parent frame, we try to optimize by not redrawing the
-				   items that lies outside of the dirtyRect. */
+				/* In case, dirtyRect is only a redraw rect on the parent and 
+				   not on the entire parent frame, we try to optimize by not 
+				   redrawing the items that lies outside of the dirtyRect. */
 				if (NSEqualRects(childDirtyRect, NSZeroRect))
 					continue;
 
-				[self display: inputValues
-						 item: item
-					dirtyRect: childDirtyRect
-					inContext: ctxt];
+				[self render: inputValues
+				        item: item
+				   dirtyRect: childDirtyRect
+				   inContext: ctxt];
 			}
 		}
 		[NSGraphicsContext restoreGraphicsState]; /* Restore the receiver clipping rect */
-
-		/* Render the layout-specific tree if needed */
-
-		[self display: inputValues
-		         item: [[self layout] layerItem]
-		    dirtyRect: dirtyRect
-		    inContext: ctxt];
 	}
 }
+
+- (void) render: (NSMutableDictionary *)inputValues
+      dirtyRect: (NSRect)dirtyRect 
+      inContext: (id)ctxt 
+{
+	ETAssert(supervisorView == nil);
+
+	[self renderBackground: inputValues
+	             dirtyRect: dirtyRect
+	             inContext: nil];
+
+	/* To draw the layout layer, we should adjust the coordinate matrix to the 
+	   content bounds on the paper, but since the supervisor view won't call 
+	   this method when the item is decorated, we don't have to. */
+	[[self.layout layerItem] renderBackground: inputValues
+	                                dirtyRect: dirtyRect
+	                                inContext: ctxt];
+
+	[self renderForeground: inputValues
+	             dirtyRect: dirtyRect
+	             inContext: nil];
+
+}
+
+static BOOL showsDirectDrawingMarker = NO;
+static BOOL showsDirtyItemRectMarker = NO;
 
 /** Displays the given item by adjusting the graphic context for the drawing,
 then calling -render:dirtyRect:inContext: on it, and finally restoring the
@@ -1086,64 +1103,47 @@ graphic context.
 
 Take note this method doesn't save and restore the graphics state.
 
-newDirtyRect is expressed in the given item coordinate space.
+newDirtyRect is expressed in the given item coordinate space and is restricted 
+to the drawing box.
 
 You should never need to call this method directly. */
-- (void) display: (NSMutableDictionary *)inputValues
-            item: (ETLayoutItem *)item
+- (void) render: (NSMutableDictionary *)inputValues
+           item: (ETLayoutItem *)item
        dirtyRect: (NSRect)newDirtyRect
        inContext: (id)ctxt
 {
-	 /* When the item has a view, it waits to be asked to draw directly by its
-	    view before rendering anything.
-		To explain it in a more detailed but complex way... If a parent item
-		indirectly requests to draw the item by asking us to redraw, we decline
-		and wait the control return to the view who initiated the drawing and
-		this view asks the item view to draw itself as a subview.
-		Hence we only draw child items with no display view (no supervisor view
-		as a byproduct).
-
-		FIXME: Verifying the item has no supervisor view isn't enough, because it
-		may be enclosed in a view owned by a decorator. In such case, this view
-		will be asked to draw by the view hierarchy and overwrite the item
-		drawing since it occurs below it (in a superview).
-
-		See also INTERLEAVED_DRAWING in ETView. */
-
-	// NOTE: On GNUstep unlike Cocoa, a nil item  will alter the coordinates
-	// when concat/invert is executed. For example, in -render:dirtyRect:inContext:
-	// a nil item can be returned by -[ETLayout layerItem].
-	BOOL shouldDrawItem = (item != nil && [item displayView] == nil);
-
-	if (shouldDrawItem == NO)
+	/* For a layout, the layer item might be nil. 
+	   For an item group backed by a view, items may not be backed by a view. */
+	if (item == nil || supervisorView != nil)
 		return;
 
-#ifdef DEBUG_DRAWING
-	NSRect itemRect = [item convertRectFromParent: [item frame]];
-	[[NSColor yellowColor] set];
-	NSFrameRectWithWidth(itemRect, 4.0);
-#endif
+	if (showsDirectDrawingMarker && item.isLayerItem)
+	{
+		[self drawDirectDrawingMarkerForItem: item];
+	}
+	
+	/* Adjust coordinates matrix */
 
 	NSAffineTransform *transform = [NSAffineTransform transform];
 
-	/* Modify coordinate matrix when the layout item doesn't use a view for
-	   drawing. */
-	if ([item supervisorView] == nil)
-	{
-		/* Translate */
-		[transform translateXBy: [item x] yBy: [item y]];
-	}
-	/* Flip if needed */
+	[transform translateXBy: [item x] yBy: [item y]];
+
 	if ([self isFlipped] != [item isFlipped]) /* != [NSGraphicContext/renderView isFlipped] */
 	{
 		[transform translateXBy: 0.0 yBy: [item height]];
 		[transform scaleXBy: 1.0 yBy: -1.0];
 	}
 	[transform concat];
+	
+	/* Draw the item */
 
 	[[NSBezierPath bezierPathWithRect: newDirtyRect] setClip];
 	[item render: inputValues dirtyRect: newDirtyRect inContext: ctxt];
-	//[self drawDirtyRectItemMarkerWithRect: newDirtyRect];
+	
+	if (showsDirtyItemRectMarker)
+	{
+		[self drawDirtyRectItemMarkerWithRect: newDirtyRect];
+	}
 
 	/* Reset the coordinates matrix */
 	[transform invert];

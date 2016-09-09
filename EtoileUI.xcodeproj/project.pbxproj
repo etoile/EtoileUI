@@ -123,8 +123,7 @@
 		605F0D870C0F4049003AE3E6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		605F0D8E0C0F4049003AE3E6 /* ObjectManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F0CC30C0F3F8F003AE3E6 /* ObjectManagerController.m */; };
 		605F0E360C0F5310003AE3E6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		605F33461D7D828000DCFB74 /* ETFlippableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F33441D7D828000DCFB74 /* ETFlippableView.h */; };
-		605F33471D7D828000DCFB74 /* ETFlippableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F33441D7D828000DCFB74 /* ETFlippableView.h */; };
+		605F33461D7D828000DCFB74 /* ETFlippableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 605F33441D7D828000DCFB74 /* ETFlippableView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		605F33481D7D828000DCFB74 /* ETFlippableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F33451D7D828000DCFB74 /* ETFlippableView.m */; };
 		605F33491D7D828000DCFB74 /* ETFlippableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 605F33451D7D828000DCFB74 /* ETFlippableView.m */; };
 		6061F4CE1945ADE7008637A7 /* ETUTIToString.h in Headers */ = {isa = PBXBuildFile; fileRef = 6061F4CC1945ADE7008637A7 /* ETUTIToString.h */; };
@@ -2299,7 +2298,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				605F33471D7D828000DCFB74 /* ETFlippableView.h in Headers */,
 				6061F4DF1945ADFB008637A7 /* ETItemValueTransformerToString.h in Headers */,
 				607676E6176DD411009FA5F2 /* ETUIBuilderBrowserController.h in Headers */,
 				604B1C2D1D67D74D00C2C3C2 /* ETUUIDToString.h in Headers */,

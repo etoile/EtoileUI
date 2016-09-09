@@ -65,6 +65,12 @@
 - (void) render: (NSMutableDictionary *)inputValues
       dirtyRect: (NSRect)dirtyRect
       inContext: (id)ctxt;
+- (void) renderBackground: (NSMutableDictionary *)inputValues
+                dirtyRect: (NSRect)dirtyRect
+                inContext: (id)ctxt;
+- (void) renderForeground: (NSMutableDictionary *)inputValues
+                dirtyRect: (NSRect)dirtyRect
+                inContext: (id)ctxt;
 
 /** @taskunit Layout Update Integration */
 

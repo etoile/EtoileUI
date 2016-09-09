@@ -1583,13 +1583,12 @@ The returned rect is the visible content bounds. */
 }
 
 /** <override-dummy />
-Renders or draws the receiver in the given rendering context. 
+Renders or draws the receiver in the given rendering context.
 
-The rendering is entirely delegated to the style group.<br />
-Subclasses such as ETLayoutItemGroup can override this method to extend, alter 
-or replace this behavior.
+The coordinates matrix must be adjusted to the receiver coordinate space, before 
+calling this method.
 
-EtoileUI will lock and unlock the focus when needed around this method, unless 
+EtoileUI will lock and unlock the focus when needed around this method, unless
 you call this method directly. In this case, you are responsible to lock/unlock 
 the focus.
 
@@ -1603,7 +1602,7 @@ icon badge, control points etc.
 
 dirtyRect indicates the receiver portion that needs to be redrawn and is 
 expressed in the receiver coordinate space. This rect is is usally equal to 
--drawingFrame. But it can be smaller when the parent item doesn't need to be 
+-drawingBox. But it can be smaller when the parent item doesn't need to be
 entirely redrawn and the portion to redraw intersects the receiver area 
 (without covering it).<br />
 Warning: When -decoratorItem is not nil, the receiver coordinate space is not  
@@ -1616,28 +1615,69 @@ This key/value pair list will be carried downwards until the rendering is finish
 
 ctxt represents the rendering context which encloses the drawing context. For 
 now, the context is nil and must be ignored.  */
-- (void) render: (NSMutableDictionary *)inputValues 
+- (void) render: (NSMutableDictionary *)inputValues
       dirtyRect: (NSRect)dirtyRect 
       inContext: (id)ctxt 
 {
+	ETAssert(supervisorView == nil);
+
 	//ETLog(@"Render frame %@ of %@ dirtyRect %@ in %@", 
 	//	NSStringFromRect([self drawingFrame]), self, NSStringFromRect(dirtyRect), ctxt);
 
+	/* To draw the background, we should adjust the coordinate matrix to the 
+	   content bounds on the paper, but since the supervisor view won't call 
+	   this method when the item is decorated, we can use the same coordinates 
+	   matrix to draw both the foreground and background. */
+	[self renderBackground: inputValues
+	             dirtyRect: dirtyRect
+	             inContext: nil];
+	[self renderForeground: inputValues
+	             dirtyRect: dirtyRect
+	             inContext: nil];
+
+}
+
+/** Draws the background style.
+
+The dirty rect is expressed in the receiver content coordinate space.
+
+The coordinates matrix must be adjusted to the receiver content coordinate space, 
+before calling this method.
+
+See -render:dirtyRect:inContext: and -contentDrawingBox. */
+- (void) renderBackground: (NSMutableDictionary *)inputValues
+                dirtyRect: (NSRect)dirtyRect
+                inContext: (id)ctxt
+{
+	[NSGraphicsContext saveGraphicsState];
+	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
 	[_styleGroup render: inputValues
 	         layoutItem: self
 	          dirtyRect: dirtyRect];
+	[NSGraphicsContext restoreGraphicsState];
+}
 
-	/* When we have no view, the cover style is rendered here, otherwise the 
-	   last decorator renders it (see -[ETDecoratorItem render:dirtyRect:inContext:). */
-	if (supervisorView != nil)
-	{
-		[NSGraphicsContext saveGraphicsState];
-		[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
-		[_coverStyle render: inputValues
-		         layoutItem: self
-		          dirtyRect: dirtyRect];
-		[NSGraphicsContext restoreGraphicsState];
-	}
+/** Draws the foreground style.
+
+The dirty rect is expressed in the receiver coordinate space.
+
+The coordinates matrix must be adjusted to the receiver coordinate space, before 
+calling this method.
+
+See -render:dirtyRect:inContext: and -drawingBox. */
+- (void) renderForeground: (NSMutableDictionary *)inputValues
+                dirtyRect: (NSRect)dirtyRect
+                inContext: (id)ctxt
+{
+	/* When we have no view, we render the cover style */
+	[NSGraphicsContext saveGraphicsState];
+	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
+	[_coverStyle render: inputValues
+	         layoutItem: self
+	          dirtyRect: dirtyRect];
+	//[[NSColor yellowColor] set];
+	//NSFrameRectWithWidth(dirtyRect, 4.0);
+	[NSGraphicsContext restoreGraphicsState];
 
 	if (showsViewItemMarker)
 	{

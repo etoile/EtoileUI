@@ -597,19 +597,19 @@ Layout items are smart enough to avoid drawing their view when they have one. */
 
 	/* When drawing the content, the dirty rect can be left unchanged, because
 	   it already orresponds to the content drawing box */
-	[NSGraphicsContext saveGraphicsState];
-	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
-	/* We always composite the rendering chain on top of each view -drawRect: 
-	   drawing sequence (triggered by display-like methods). */
-	[(ETLayoutItem *)item render: self.inputValues
-	                   dirtyRect: dirtyRect
-	                   inContext: nil];
-	[NSGraphicsContext restoreGraphicsState];
+	[(ETLayoutItem *)item renderBackground: self.inputValues
+	                             dirtyRect: dirtyRect
+	                             inContext: nil];
 }
 
 /** Draws the foreground.
 
 The drawing occurs when the receiver is a ETLayoutItem.
+
+The coordinates matrix must be adjusted to the item content coordinate space, 
+before calling this method. For drawing the cover style, this method will adjust
+the coordinates matrix to the item coordinate space (to take account the 
+decorators).
 
 For a window item decoration, the drawing box prevents any drawing to be done on 
 the title bar, . */
@@ -619,27 +619,32 @@ the title bar, . */
 		return;
 
 	ETLayoutItemGroup *layerItem = [((ETLayoutItem *)item).layout layerItem];
-
-	/* Draw the layer item style */
-
-	[NSGraphicsContext saveGraphicsState];
-	[[NSBezierPath bezierPathWithRect: dirtyRect] setClip];
-	[layerItem render: self.inputValues
-	        dirtyRect: dirtyRect
-	        inContext: nil];
-	[NSGraphicsContext restoreGraphicsState];
-
-	NSRect adjustedDirtyRect =
-		[self adjustedDirtyRectInDrawingBox: ((ETLayoutItem *)item).drawingBox];
 	
-	/* Draw the cover style */
+	//ETAssert(layerItem == nil || layerItem.supervisorView == nil);
 
-	[NSGraphicsContext saveGraphicsState];
-	[[NSBezierPath bezierPathWithRect: adjustedDirtyRect] setClip];
-	[[(ETLayoutItem *)item coverStyle] render: nil
-	                               layoutItem: (ETLayoutItem *)item
-	                                dirtyRect: adjustedDirtyRect];
-	[NSGraphicsContext restoreGraphicsState];
+	/* Draw the layer item style in the item content coordinate space */
+
+	[layerItem renderBackground: self.inputValues
+	                  dirtyRect: dirtyRect
+	                  inContext: nil];
+
+	/* Draw the cover style in the item coordinate space */
+
+	NSRect drawingBox = ((ETLayoutItem *)item).drawingBox;
+	// FIXME: NSRect adjustedDirtyRect = [self adjustedDirtyRect: dirtyRect inDrawingBox: drawingBox];
+	NSRect adjustedDirtyRect = drawingBox;
+	NSAffineTransform *transform = [NSAffineTransform transform];
+	NSPoint contentOriginInBounds = [self adjustedOriginInDrawingBox: drawingBox];
+
+	[transform translateXBy: contentOriginInBounds.x yBy: contentOriginInBounds.y];
+	[transform concat];
+	
+	[(ETLayoutItem *)item renderForeground: self.inputValues
+	                             dirtyRect: adjustedDirtyRect
+	                             inContext: nil];
+
+	[transform invert];
+	[transform concat];
 }
 
 - (NSRect) dirtyRect
@@ -649,6 +654,8 @@ the title bar, . */
 
 - (void) viewWillDraw
 {
+	[super viewWillDraw];
+	
 	const NSRect *rects = NULL;
 	NSInteger nbOfRects = 0;
 	
@@ -661,8 +668,13 @@ the title bar, . */
 		_rectToRedraw = NSUnionRect(_rectToRedraw, rects[i]);
 	}
 	//ETLog(@"Rect to redraw %@ for %@", NSStringFromRect(_rectToRedraw), self);
+}
 
-	[super viewWillDraw];
+- (NSPoint) adjustedOriginInDrawingBox: (NSRect)drawingBox
+{
+	ETAssert(NSEqualPoints(((ETLayoutItem *)item).contentBounds.origin, NSZeroPoint));
+	
+	return [self convertPoint: NSZeroPoint toView: item.displayView];
 }
 
 /** Returns a dirty rect that takes in account a drawing box larger than the 
@@ -676,15 +688,17 @@ custom bounding box that enlarges the item bounds.
 
 When the drawing box is equal to the receiver bounds (e.g. 
 -[ETLayoutItem contentDrawingBox]), the returned dirty rect is left unchanged. */
-- (NSRect) adjustedDirtyRectInDrawingBox: (NSRect)drawingBox
+- (NSRect) adjustedDirtyRect: (NSRect)dirtyRect inDrawingBox: (NSRect)drawingBox
 {
 	ETLayoutItemGroup *parentItem = ((ETLayoutItem *)item).parentItem;
 	ETView *parentView =
-		(parentItem.supervisorView ? parentItem.supervisorView : item.displayView);
+		(parentItem.supervisorView != nil ? parentItem.supervisorView : item.displayView);
 	NSRect parentDirtyRect = [self convertRect: parentView.dirtyRect
 	                                  fromView: parentView];
+	/* Sometimes the parent dirty rect is smaller than the one received in -drawRect: */
+	NSRect unionDirtyRect = NSUnionRect(dirtyRect, parentDirtyRect);
 
-	return NSIntersectionRect(parentDirtyRect, drawingBox);
+	return NSIntersectionRect(unionDirtyRect, drawingBox);
 }
 
 /* Intercept and Discard Events */
