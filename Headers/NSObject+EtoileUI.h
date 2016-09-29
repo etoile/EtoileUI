@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <EtoileUI/ETGraphicsBackend.h>
 #import <EtoileFoundation/ETKeyValuePair.h>
+#import <CoreObject/COObject.h>
 
 @class ETModelDescriptionRepository;
 
@@ -90,4 +91,12 @@
 
 @interface ETKeyValuePair (EtoileUI)
 @property (nonatomic, readonly) NSImage *icon;
+@end
+
+@interface COObject (EtoileUI)
+/** <override-dummy />
+Returns <em>CO</em>.
+ 
+See +[NSObject typePrefix]. */
++ (NSString *) typePrefix;
 @end

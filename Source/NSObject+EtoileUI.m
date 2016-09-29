@@ -534,3 +534,7 @@ conveniency. */
 - (NSImage *) icon { return [[self value] icon]; }
 @end
 
+@implementation COObject (EtoileUI)
++ (NSString *)typePrefix { return @"CO"; }
+@end
+
