@@ -12,7 +12,7 @@
 @interface ETObservation : COObject
 
 @property (nonatomic, retain) COObject *object;
-@property (nonatomic, retain) NSString *name;
+@property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) SEL selector;
 
 @end

@@ -191,7 +191,7 @@ If a host item is set, returns -hostItem. */
 /** @taskunit Name and Identifier */
 
 @property (nonatomic, copy) NSString *identifier;
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *displayName;
 
 /** @taskunit Native Widget */

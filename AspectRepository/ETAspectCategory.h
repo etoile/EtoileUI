@@ -63,7 +63,7 @@ invalid arguments. */
 /** The category name.
 
 Must not be nil. */
-@property (retain, nonatomic) NSString *name;
+@property (nonatomic, copy) NSString *name;
 /** Returns the category name. */
 @property (readonly, nonatomic) NSString *displayName;
 /** The category icon. */
